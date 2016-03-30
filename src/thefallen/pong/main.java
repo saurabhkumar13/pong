@@ -291,7 +291,7 @@ public class main implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
         }
     }
 
-    final List<Ball> f_balls = new ArrayList<Ball>();
+    final List<Ball> f_balls = new ArrayList<>();
 
     @Override
     public void renderSetup(GraphicsConfiguration gc) {
@@ -299,7 +299,7 @@ public class main implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
         int index = 0;
         for (String resourceName : Resources.SPHERES) {
             try {
-                f_ballImages[index++] = ImageIO.read(Resources.getResource(resourceName));
+                f_ballImages[index++] = ImageIO.read(Resources.getResource(Resources.PONG_SPHERE));
             } catch (IOException e) {
                 throw new IllegalStateException("Unable to load image: " + resourceName, e);
             }

@@ -18,8 +18,9 @@ public final class Resources {
     public static final String GREEN_SPHERE = "green-sphere.png";
     public static final String RED_SPHERE = "red-sphere.png";
     public static final String YELLOW_SPHERE = "yellow-sphere.png";
+    public static final String PONG_SPHERE = "ping_pong_png10383.png";
 
-    public static final String[] SPHERES = { BLUE_SPHERE, GRAY_SPHERE, GREEN_SPHERE, RED_SPHERE, YELLOW_SPHERE };
+    public static final String[] SPHERES = { BLUE_SPHERE, GRAY_SPHERE, GREEN_SPHERE, RED_SPHERE, YELLOW_SPHERE};
 
     private static final String PREFIX = "res/";
 
@@ -33,7 +34,7 @@ public final class Resources {
     public static URL getResource(String name) {
         final URL result = Thread.currentThread().getContextClassLoader().getResource(PREFIX + name);
         if (result == null)
-            throw new IllegalStateException("Unable to load resource: " + name + Thread.currentThread().getContextClassLoader().getResource("").getPath());
+            throw new IllegalStateException("Unable to load resource: " + name);
         else
             return result;
     }
