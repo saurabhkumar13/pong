@@ -1,4 +1,6 @@
 package thefallen.pong;
+import static com.sun.java.accessibility.util.AWTEventMonitor.addKeyListener;
+import static java.lang.System.out;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
 import java.awt.BorderLayout;
@@ -7,10 +9,7 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -39,6 +38,7 @@ import org.jdesktop.core.animation.timing.interpolators.SplineInterpolator;
 import org.jdesktop.swing.animation.rendering.JRendererFactory;
 import org.jdesktop.swing.animation.rendering.JRendererPanel;
 import org.jdesktop.swing.animation.timing.sources.SwingTimerTimingSource;
+import sun.rmi.runtime.Log;
 import thefallen.pong.Resources;
 /**
  * This demonstration is a variant of the demonstration by Chet Haase at JavaOne
@@ -114,7 +114,7 @@ public class main implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
                 f_renderer.invokeLater(new Runnable() {
                     @Override
                     public void run() {
-                        addBall();
+                        addBall();initRacket();
                     }
                 });
                 f_ballCount++;
@@ -190,7 +190,22 @@ public class main implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
         buttonPanel.add(remove10Balls);
         f_infoLabel = new JLabel();
         topPanel.add(f_infoLabel, BorderLayout.EAST);
+        addBall.addKeyListener(new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                r1.typed(e.getKeyCode());
+            }
 
+            @Override
+            public void keyPressed(KeyEvent e) {
+                r1.pressed(e.getKeyCode());
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+                r1.released(e.getKeyCode());
+            }
+        });
         f_panel = new JRendererPanel();
         f_frame.add(f_panel, BorderLayout.CENTER);
         f_panel.setBackground(Color.white);
@@ -227,6 +242,23 @@ public class main implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
     private static final Interpolator ACCEL_4_4 = new AccelerationInterpolator(0.4, 0.4);
     private static final Interpolator SPLINE_0_1_1_0 = new SplineInterpolator(0.00, 1.00, 1.00, 1.00);
     private static final Interpolator SPLINE_1_0_1_1 = new SplineInterpolator(1.00, 0.00, 1.00, 1.00);
+
+    void initRacket(){
+        r1.v=1;
+        r1.frame=f_panel.getHeight();
+        final int duration = 4 + f_die.nextInt(10);
+        final TimingTarget circularMovement = new TimingTargetAdapter() {
+            @Override
+            public void timingEvent(Animator source, double fraction) {
+                r1.update();
+            }
+        };
+        final Interpolator i = f_die.nextBoolean() ? ACCEL_4_4 : null;
+        r1.animator = new Animator.Builder().setDuration(duration, SECONDS).addTarget(circularMovement)
+                .setRepeatCount(Animator.INFINITE).setRepeatBehavior(Animator.RepeatBehavior.LOOP).setInterpolator(i).build();
+        r1.animator.start();
+
+    }
 
     void addBall() {
         final Ball ball = new Ball();
@@ -292,7 +324,7 @@ public class main implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
     }
 
     final List<Ball> f_balls = new ArrayList<>();
-
+    final Racket r1 = new Racket();
     @Override
     public void renderSetup(GraphicsConfiguration gc) {
         f_ballImages = new BufferedImage[Resources.SPHERES.length];
@@ -318,6 +350,7 @@ public class main implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
 
         for (Ball ball : f_balls) {
             g2d.drawImage(f_ballImages[ball.imageIndex], ball.getX(), ball.getY(), null);
+            g2d.fillRect(r1.getX(),r1.getY(),r1.getH(),r1.getW());
         }
     }
 
@@ -325,5 +358,7 @@ public class main implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
     public void renderShutdown() {
         // Nothing to do
     }
+
+
 }
 
