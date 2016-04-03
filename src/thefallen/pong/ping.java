@@ -2,6 +2,7 @@ package thefallen.pong;
 
 
 import org.json.JSONObject;
+import org.omg.CORBA.COMM_FAILURE;
 
 import javax.swing.*;
 import java.awt.event.KeyEvent;
@@ -29,7 +30,7 @@ public class ping extends Thread {
     static JSONObject initmsgreply;
 
     public static enum Command{
-        START,STOP,REPLY,GAMING,UpKey,DownKey,ReleaseKey
+        START,STOP,REPLY,GAMING,UpKey,DownKey,ReleaseKey,RequestBall,GotBall
     }
 
 
@@ -73,7 +74,7 @@ public class ping extends Thread {
 
     void handleComms(String sender, String m)
     {
-        out.println("got msg: "+m);
+        out.println("got msg: \""+m+"\" sender: "+sender);
         JSONObject message = new JSONObject(m);
         int command = message.getInt("command");
         if(command==Command.START.ordinal())
@@ -81,14 +82,12 @@ public class ping extends Thread {
             if(!sender.equals(myIP))
             {
                 if (!IPlist.contains(sender))
-                    addGamer(sender,null);
-                Ball ball = game.f_balls.get(0);
-                initmsgreply.put("sync",new JSONObject().accumulate("ax",ball.ax).accumulate("ay",ball.ay).accumulate("vx",ball.vx).accumulate("vy",ball.vy).accumulate("x",ball.x).accumulate("y",ball.y));
+                    addGamer(sender);
                 sendMessage(initmsgreply.toString(),sender,Port);
             }
         }
         else if (command==Command.REPLY.ordinal())
-            addGamer(sender,message.getJSONObject("sync"));
+            addGamer(sender);
         else if (command==Command.STOP.ordinal())
             IPlist.remove(sender);
         else if (command==Command.GAMING.ordinal())
@@ -103,10 +102,19 @@ public class ping extends Thread {
                     r.released(0);
 
             }
+        else if (command==Command.RequestBall.ordinal())
+        {
+            Ball ball = game.f_balls.get(0);
+            broadcastToGroup(new JSONObject().put("command",Command.GotBall).put("sync",new JSONObject().accumulate("ax",ball.ax).accumulate("ay",ball.ay).accumulate("vx",ball.vx).accumulate("vy",ball.vy).accumulate("x",ball.x).accumulate("y",ball.y)).toString());
+        }
+        else if (command==Command.GotBall.ordinal())
+        {
+            game.initBALLproperties = message.getJSONObject("sync");
+        }
 
     }
 
-    void addGamer(String sender,JSONObject Sync)
+    void addGamer(String sender)
     {
         IPlist.add(sender);
         if(game.r2==null)
@@ -114,16 +122,17 @@ public class ping extends Thread {
             game.initRacket2();
             players.put(sender, game.r2);
         }
-        if(Sync!=null)
-        {
-            Ball b = game.f_balls.get(0);
-            b.x = Sync.getInt("x");
-            b.y = Sync.getInt("y");
-            b.ax = Sync.getInt("ax");
-            b.ay = Sync.getInt("ay");
-            b.vx = Sync.getInt("vx");
-            b.vy = Sync.getInt("vy");
-        }
+
+//        if(Sync!=null)
+//        {
+//            Ball b = game.f_balls.get(0);
+//            b.x = Sync.getInt("x");
+//            b.y = Sync.getInt("y");
+//            b.ax = Sync.getInt("ax");
+//            b.ay = Sync.getInt("ay");
+//            b.vx = Sync.getInt("vx");
+//            b.vy = Sync.getInt("vy");
+//        }
     }
 
     public void Stop() {
@@ -136,7 +145,7 @@ public class ping extends Thread {
 
     public void broadcastToGroup(String message)
     {
-        out.println("msg to send: "+message);
+        out.println("trying to broadcast: "+message+" "+IPlist.size());
         for(String ips : IPlist)
         {
             sendMessage(message,ips,Port);
@@ -160,7 +169,7 @@ public class ping extends Thread {
     }
     public static void broadcast(String message,String myIP,int Port){
         String prefix = myIP.substring(0,myIP.lastIndexOf('.')+1);
-        for(int i=0;i<256;i++) {
+        for(int i=1;i<255;i++) {
             sendMessage(message,prefix+i,Port);
         }
     }
@@ -194,6 +203,16 @@ public class ping extends Thread {
             @Override
             public void run() {
                 game = new pong(master);
+                game.f_renderer.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        master.broadcastToGroup(new JSONObject().accumulate("command",Command.RequestBall.ordinal()).toString());
+                        game.addBall();
+                        game.initRacket1();
+                    }
+                });
+                game.f_ballCount++;
+                game.updateBallCount();
                 broadcast(initmsg.toString(), master.myIP, master.Port);
             }
         });

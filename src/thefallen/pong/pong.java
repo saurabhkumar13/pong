@@ -1,4 +1,5 @@
 package thefallen.pong;
+import static java.lang.System.err;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
 import java.awt.BorderLayout;
@@ -36,6 +37,7 @@ import org.jdesktop.core.animation.timing.interpolators.SplineInterpolator;
 import org.jdesktop.swing.animation.rendering.JRendererFactory;
 import org.jdesktop.swing.animation.rendering.JRendererPanel;
 import org.jdesktop.swing.animation.timing.sources.SwingTimerTimingSource;
+import org.json.JSONObject;
 
 /**
  * This demonstration is a variant of the demonstration by Chet Haase at JavaOne
@@ -236,6 +238,7 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
     private static final Interpolator ACCEL_4_4 = new AccelerationInterpolator(0.4, 0.4);
     private static final Interpolator SPLINE_0_1_1_0 = new SplineInterpolator(0.00, 1.00, 1.00, 1.00);
     private static final Interpolator SPLINE_1_0_1_1 = new SplineInterpolator(1.00, 0.00, 1.00, 1.00);
+    JSONObject initBALLproperties = null;
 
     void initRacket1(){
         r1.v=1;
@@ -266,42 +269,29 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
                 .setRepeatCount(Animator.INFINITE).setRepeatBehavior(Animator.RepeatBehavior.LOOP).build();
         r2.animator.start();
     }
-
     void addBall() {
         final Ball ball = new Ball();
         ball.imageIndex = f_die.nextInt(5);
         BufferedImage ballImage = f_ballImages[ball.imageIndex];
-
-        ball.setX(f_die.nextInt(f_panel.getWidth() - ballImage.getWidth()));
-        ball.setY(f_die.nextInt(f_panel.getHeight() - ballImage.getHeight()));
+        if (initBALLproperties==null)
+        {
+            ball.setX(f_die.nextInt(f_panel.getWidth() - ballImage.getWidth()));
+            ball.setY(f_die.nextInt(f_panel.getHeight() - ballImage.getHeight()));
+            ball.vx=f_die.nextInt(20);
+            ball.vy=f_die.nextInt(20);
+        }
+        else
+        {
+            ball.setX(initBALLproperties.getInt("x"));
+            ball.setY(initBALLproperties.getInt("y"));
+            ball.vx=initBALLproperties.getInt("vx");
+            ball.vy=initBALLproperties.getInt("vy");
+        }
+        err.println("init: "+initBALLproperties);
         ball.frameW = f_panel.getWidth() - ballImage.getWidth();
         ball.frameH = f_panel.getHeight() - ballImage.getHeight();
-        ball.vx=f_die.nextInt(20);
-        ball.vy=f_die.nextInt(20);
-        final int duration = 4 + f_die.nextInt(10);
 
-    /*
-     * Create a circular movement.
-     */
-        int radiusX = f_die.nextInt(400);
-        if (f_die.nextBoolean())
-            radiusX = -radiusX;
-        int radiusY = f_die.nextInt(300);
-        if (f_die.nextBoolean())
-            radiusY = -radiusY;
-        KeyFrames.Builder<Integer> builder = new KeyFrames.Builder<Integer>(ball.getX());
-        builder.addFrame(ball.getX() + radiusX, SPLINE_0_1_1_0);
-        builder.addFrame(ball.getX(), SPLINE_1_0_1_1);
-        builder.addFrame(ball.getX() - radiusX, SPLINE_0_1_1_0);
-        builder.addFrame(ball.getX(), SPLINE_1_0_1_1);
-        final KeyFrames<Integer> framesX = builder.build();
-
-        builder = new KeyFrames.Builder<Integer>(ball.getY());
-        builder.addFrame(ball.getY() + radiusY, SPLINE_1_0_1_1);
-        builder.addFrame(ball.getY() + (2 * radiusY), SPLINE_0_1_1_0);
-        builder.addFrame(ball.getY() + radiusY, SPLINE_1_0_1_1);
-        builder.addFrame(ball.getY(), SPLINE_0_1_1_0);
-        final KeyFrames<Integer> framesY = builder.build();
+        final int duration = 4;
 
         final TimingTarget circularMovement = new TimingTargetAdapter() {
             @Override
