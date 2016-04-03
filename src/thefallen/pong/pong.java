@@ -1,6 +1,4 @@
 package thefallen.pong;
-import static com.sun.java.accessibility.util.AWTEventMonitor.addKeyListener;
-import static java.lang.System.out;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
 import java.awt.BorderLayout;
@@ -38,8 +36,7 @@ import org.jdesktop.core.animation.timing.interpolators.SplineInterpolator;
 import org.jdesktop.swing.animation.rendering.JRendererFactory;
 import org.jdesktop.swing.animation.rendering.JRendererPanel;
 import org.jdesktop.swing.animation.timing.sources.SwingTimerTimingSource;
-import sun.rmi.runtime.Log;
-import thefallen.pong.Resources;
+
 /**
  * This demonstration is a variant of the demonstration by Chet Haase at JavaOne
  * 2008. Chet discussed the problem in the original Timing Framework where, by
@@ -58,23 +55,12 @@ import thefallen.pong.Resources;
  *
  * @author Tim Halloran
  */
-public class main implements JRendererTarget<GraphicsConfiguration, Graphics2D> {
+public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> {
 
     /**
      * Used to update the FPS display once a second.
      */
     static final TimingSource f_infoTimer = new SwingTimerTimingSource(1, SECONDS);
-
-    public static void main(String[] args) {
-        System.setProperty("swing.defaultlaf", "com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
-
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                new main();
-            }
-        });
-    }
 
   /*
    * EDT methods and state
@@ -85,16 +71,24 @@ public class main implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
     final JRenderer f_renderer;
     final JLabel f_infoLabel;
     int f_ballCount = 0;
+    final ping f_ping;
+    final Racket r1;
+    public Racket r2;
+    public Racket r3;
+    public Racket r4;
 
-    public main() {
+    public pong(ping master) {
         final String rendererType = JRendererFactory.useActiveRenderer() ? "Active" : "Passive";
         f_frame = new JFrame("Swing Too Many Balls! - " + rendererType + " Rendering");
         f_frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         f_frame.setResizable(false);
+        f_ping = master;
+        r1 = new Racket(f_ping,true);
         f_frame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosed(WindowEvent e) {
                 super.windowClosed(e);
+                f_ping.Stop();
                 f_infoTimer.dispose();
                 f_renderer.getTimingSource().dispose();
                 f_renderer.shutdown();
@@ -114,7 +108,8 @@ public class main implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
                 f_renderer.invokeLater(new Runnable() {
                     @Override
                     public void run() {
-                        addBall();initRacket();
+                        addBall();
+                        initRacket1();
                     }
                 });
                 f_ballCount++;
@@ -243,21 +238,34 @@ public class main implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
     private static final Interpolator SPLINE_0_1_1_0 = new SplineInterpolator(0.00, 1.00, 1.00, 1.00);
     private static final Interpolator SPLINE_1_0_1_1 = new SplineInterpolator(1.00, 0.00, 1.00, 1.00);
 
-    void initRacket(){
+    void initRacket1(){
         r1.v=1;
         r1.frame=f_panel.getHeight();
-        final int duration = 4 + f_die.nextInt(10);
+        final int duration = 4;
         final TimingTarget circularMovement = new TimingTargetAdapter() {
             @Override
             public void timingEvent(Animator source, double fraction) {
                 r1.update();
             }
         };
-        final Interpolator i = f_die.nextBoolean() ? ACCEL_4_4 : null;
         r1.animator = new Animator.Builder().setDuration(duration, SECONDS).addTarget(circularMovement)
-                .setRepeatCount(Animator.INFINITE).setRepeatBehavior(Animator.RepeatBehavior.LOOP).setInterpolator(i).build();
+                .setRepeatCount(Animator.INFINITE).setRepeatBehavior(Animator.RepeatBehavior.LOOP).build();
         r1.animator.start();
 
+    }
+    void initRacket2(){
+        r2 = new Racket(null,false);
+        r2.frame=f_panel.getHeight();
+        final int duration = 4;
+        final TimingTarget circularMovement = new TimingTargetAdapter() {
+            @Override
+            public void timingEvent(Animator source, double fraction) {
+                r2.update();
+            }
+        };
+        r2.animator = new Animator.Builder().setDuration(duration, SECONDS).addTarget(circularMovement)
+                .setRepeatCount(Animator.INFINITE).setRepeatBehavior(Animator.RepeatBehavior.LOOP).build();
+        r2.animator.start();
     }
 
     void addBall() {
@@ -324,14 +332,13 @@ public class main implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
     }
 
     final List<Ball> f_balls = new ArrayList<>();
-    final Racket r1 = new Racket();
     @Override
     public void renderSetup(GraphicsConfiguration gc) {
-        f_ballImages = new BufferedImage[Resources.SPHERES.length];
+        f_ballImages = new BufferedImage[thefallen.pong.Resources.SPHERES.length];
         int index = 0;
-        for (String resourceName : Resources.SPHERES) {
+        for (String resourceName : thefallen.pong.Resources.SPHERES) {
             try {
-                f_ballImages[index++] = ImageIO.read(Resources.getResource(Resources.PONG_SPHERE));
+                f_ballImages[index++] = ImageIO.read(thefallen.pong.Resources.getResource(thefallen.pong.Resources.PONG_SPHERE));
             } catch (IOException e) {
                 throw new IllegalStateException("Unable to load image: " + resourceName, e);
             }
@@ -351,6 +358,8 @@ public class main implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
         for (Ball ball : f_balls) {
             g2d.drawImage(f_ballImages[ball.imageIndex], ball.getX(), ball.getY(), null);
             g2d.fillRect(r1.getX(),r1.getY(),r1.getH(),r1.getW());
+            if(r2!=null)
+                g2d.fillRect(r2.getX()+f_panel.getWidth()-r2.width,r2.getY(),r2.getH(),r2.getW());
         }
     }
 
