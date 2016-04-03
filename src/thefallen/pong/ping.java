@@ -81,12 +81,14 @@ public class ping extends Thread {
             if(!sender.equals(myIP))
             {
                 if (!IPlist.contains(sender))
-                    addGamer(sender);
-                sendMessage(initmsg.toString(),sender,Port);
+                    addGamer(sender,null);
+                Ball ball = game.f_balls.get(0);
+                initmsgreply.put("sync",new JSONObject().accumulate("ax",ball.ax).accumulate("ay",ball.ay).accumulate("vx",ball.vx).accumulate("vy",ball.vy).accumulate("x",ball.x).accumulate("y",ball.y));
+                sendMessage(initmsgreply.toString(),sender,Port);
             }
         }
         else if (command==Command.REPLY.ordinal())
-            addGamer(sender);
+            addGamer(sender,message.getJSONObject("sync"));
         else if (command==Command.STOP.ordinal())
             IPlist.remove(sender);
         else if (command==Command.GAMING.ordinal())
@@ -94,9 +96,9 @@ public class ping extends Thread {
                 Racket r = players.get(sender);
                 int key = message.getInt("key");
                 if(key==Command.UpKey.ordinal())
-                    r.pressed(KeyEvent.VK_UP);
+                    r.pressed(KeyEvent.VK_LEFT);
                 else if(key==Command.DownKey.ordinal())
-                    r.pressed(KeyEvent.VK_DOWN);
+                    r.pressed(KeyEvent.VK_RIGHT);
                 if(key==Command.ReleaseKey.ordinal())
                     r.released(0);
 
@@ -104,14 +106,23 @@ public class ping extends Thread {
 
     }
 
-    void addGamer(String sender)
+    void addGamer(String sender,JSONObject Sync)
     {
         IPlist.add(sender);
         if(game.r2==null)
         {
             game.initRacket2();
-//            game.r2 = new Racket(null,false);
             players.put(sender, game.r2);
+        }
+        if(Sync!=null)
+        {
+            Ball b = game.f_balls.get(0);
+            b.x = Sync.getInt("x");
+            b.y = Sync.getInt("y");
+            b.ax = Sync.getInt("ax");
+            b.ay = Sync.getInt("ay");
+            b.vx = Sync.getInt("vx");
+            b.vy = Sync.getInt("vy");
         }
     }
 
@@ -183,13 +194,14 @@ public class ping extends Thread {
             @Override
             public void run() {
                 game = new pong(master);
+                broadcast(initmsg.toString(), master.myIP, master.Port);
             }
         });
     }
 
     public static void main(String[] args) {
         try{
-            int Port = 71;
+            int Port = 69;
             String ip = getmyIP();
             if(ip.equals("")) {
                 out.println("Could not get host .. Are You connected to a network?");
@@ -197,7 +209,6 @@ public class ping extends Thread {
             else {
                 ping messageSender = new ping(ip, Port);
                 startGame(messageSender);
-                broadcast(initmsg.toString(),ip,Port);
                 out.println("myIP: "+ip);
                 Scanner scanner = new Scanner(System.in);
                 while (true) {

@@ -204,7 +204,7 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
         f_panel = new JRendererPanel();
         f_frame.add(f_panel, BorderLayout.CENTER);
         f_panel.setBackground(Color.white);
-
+        f_panel.setPreferredSize(new Dimension(600,600));
         f_renderer = JRendererFactory.getDefaultRenderer(f_panel, this, false);
 
         f_infoTimer.addTickListener(new TickListener() {
@@ -215,7 +215,6 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
         });
         f_infoTimer.init();
 
-        f_frame.setPreferredSize(new Dimension(800, 600));
         f_frame.pack();
         f_frame.setVisible(true);
     }
@@ -240,7 +239,7 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
 
     void initRacket1(){
         r1.v=1;
-        r1.frame=f_panel.getHeight();
+        r1.frame=f_panel.getWidth();
         final int duration = 4;
         final TimingTarget circularMovement = new TimingTargetAdapter() {
             @Override
@@ -255,7 +254,7 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
     }
     void initRacket2(){
         r2 = new Racket(null,false);
-        r2.frame=f_panel.getHeight();
+        r2.frame=f_panel.getWidth();
         final int duration = 4;
         final TimingTarget circularMovement = new TimingTargetAdapter() {
             @Override
@@ -357,10 +356,10 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
 
         for (Ball ball : f_balls) {
             g2d.drawImage(f_ballImages[ball.imageIndex], ball.getX(), ball.getY(), null);
-            g2d.fillRect(r1.getX(),r1.getY(),r1.getH(),r1.getW());
-            if(r2!=null)
-                g2d.fillRect(r2.getX()+f_panel.getWidth()-r2.width,r2.getY(),r2.getH(),r2.getW());
-        }
+            }
+        g2d.fillRect(r1.getY(),r1.getX()+f_panel.getHeight()-r1.width,r1.getW(),r1.getH());
+        if(r2!=null)
+            g2d.fillRect(f_panel.getWidth()-r2.getY()-r2.height,r2.getX(),r2.getW(),r2.getH());
     }
 
     @Override
