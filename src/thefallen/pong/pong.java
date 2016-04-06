@@ -73,7 +73,7 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
     final JLabel f_infoLabel;
     final Racket[] rackets;
     final Polygon base;
-    final int N;
+    final int N,N_;
     public static void main(String args[]){
         System.setProperty("swing.defaultlaf", "com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
         SwingUtilities.invokeLater(new Runnable() {
@@ -94,10 +94,7 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
         f_frame = new JFrame("ping pong " + rendererType + " Rendering");
         f_frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         f_frame.setResizable(false);
-        rackets = new Racket[n];
-        base = new Polygon();
-        base.npoints=n+1;
-        N=n;
+
         f_frame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosed(WindowEvent e) {
@@ -146,9 +143,15 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
 
         f_frame.pack();
         f_frame.setVisible(true);
+        if(n==2) N=4;
+        else N=n;
+        N_=n;
+        rackets = new Racket[N_];
+        base = new Polygon();
+        base.npoints=N+1;
         r=floor(min(f_frame.getHeight(),f_frame.getWidth())/200)*100-50;
         center = new Point(f_frame.getWidth()/2,f_frame.getHeight()/2);
-        for(int i=0;i<n;i++) {
+        for(int i=0;i<N_;i++) {
             rackets[i] = new Racket();
             rackets[i].width = (int) (r * sin(PI / N) / 2);
             final Racket racket =rackets[i];
@@ -288,7 +291,6 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
         g2d.fillPolygon(base);
         g2d.setPaint(Color.black);
         double th = 0;
-
         for(int i=0;i<rackets.length;i++)
         {
             Rectangle pad = new Rectangle();
@@ -296,17 +298,18 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
                 g2d.setPaint(Color.green);
             else
             g2d.setPaint(Color.black);
-            pad.setRect(rackets[i].getX() + base.xpoints[rackets.length / 2], rackets[i].getY() + base.ypoints[rackets.length / 2] - rackets[i].height, rackets[i].width, 2*rackets[i].height);
+            pad.setRect(rackets[i].getX() + base.xpoints[N/ 2], rackets[i].getY() + base.ypoints[N/ 2] - rackets[i].height, rackets[i].width, 2*rackets[i].height);
             g2d.fill(AffineTransform.getRotateInstance(
                     th, center.getX(), center.getY())
                     .createTransformedShape(pad));
-            th-=2*PI/N;
+            th-=2*PI*N/(N_*N);
 //            g2d.fill(pad);
         }
         g2d.setPaint(Color.darkGray);
 
         for (Ball ball : f_balls) {
-            g2d.fillOval((int)ball.getX()-25, (int)ball.getY()-25,50,50);
+            g2d.drawOval((int)ball.getX()-25, (int)ball.getY()-25,50,50);
+            g2d.fillOval((int)ball.getX()-5, (int)ball.getY()-5,10,10);
         }    }
 
     @Override
