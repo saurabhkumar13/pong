@@ -11,7 +11,7 @@ import static java.lang.Math.*;
 import static java.lang.System.out;
 
 public class Ball {
-    double x, y,vx,vy,ax,ay;
+    double x, y,vx,vy,ax,ay,omega,theta,mu=0.3,r=10;
     int imageIndex,frameH,frameW;
     private int dt=1;
     Animator animator;
@@ -51,19 +51,25 @@ public class Ball {
     public void update(){
         vx+=ax*dt;
         vy+=ay*dt;
+        theta+=omega*dt*0.1;
         if(!base.contains(x+vx*dt,y+vy*dt)) {
             int n=getSideofPolygon();
             double angleInRadians = Math.atan2(-vy,vx);
             double normal = 2*PI*n/N-PI/2;
             double toRotate = 2*(angleInRadians-normal)+PI;
-            double vx_ = vx;
+            double vn,vt,vn_,vt_;
             if(angleInRadians-normal<PI/2)
             {
-                out.println(angleInRadians*180/PI+" "+normal*180/PI+" "+toRotate*180/PI+" "+vx+" "+vy+" "+toRotate);
-//                mew=true;
-                vx = (vx*cos(toRotate) - vy*sin(toRotate));
-                vy = (vx_*sin(toRotate) + vy*cos(toRotate));
-                out.println(angleInRadians*180/PI+" "+vx+" "+vy);
+//                out.println(angleInRadians*180/PI+" "+normal*180/PI+" "+toRotate*180/PI+" "+vx+" "+vy);
+                vn = vx*cos(normal)-vy*sin(normal);
+                vt = vx*sin(normal)+vy*cos(normal);
+                vn_=-vn;
+                vt_ = vt - mininum(vt-omega*r,2*mu*vn);
+                out.println(omega+"  "+(vt-omega*r)+" "+2*mu*vn);
+                omega = omega + mininum(vt-omega*r,2*mu*vn)/r;
+                vx = (vt_*sin(normal) + vn_*cos(normal));
+                vy = (vt_*cos(normal) - vn_*sin(normal));
+//                out.println(angleInRadians*180/PI+" "+vx+" "+vy);
             }
         }
         if(x+vx*dt>frameW||x+vx<0) vx=-vx;
@@ -71,5 +77,12 @@ public class Ball {
         x+=vx*dt;
         y+=vy*dt;
 
+    }
+    double mininum(double a, double b)
+    {
+        if(a>0&&b>0) return min(a,b);
+        else if(a<0&&b<0) return -min(-a,-b);
+        else if(a<0) return a;
+        else return b;
     }
 }

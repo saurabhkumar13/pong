@@ -93,6 +93,10 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
         final String rendererType = JRendererFactory.useActiveRenderer() ? "Active" : "Passive";
         f_frame = new JFrame("ping pong " + rendererType + " Rendering");
         f_frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+
+        f_frame.setUndecorated(true);
+        GraphicsEnvironment
+                .getLocalGraphicsEnvironment().getScreenDevices()[0].setFullScreenWindow(f_frame);
         f_frame.setResizable(false);
 
         f_frame.addWindowListener(new WindowAdapter() {
@@ -109,7 +113,7 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
         f_frame.add(topPanel, BorderLayout.NORTH);
         topPanel.setLayout(new BorderLayout());
         f_infoLabel = new JLabel();
-        topPanel.add(f_infoLabel, BorderLayout.EAST);
+//        topPanel.add(f_infoLabel, BorderLayout.EAST);
         f_frame.addKeyListener(new KeyListener() {
             @Override
             public void keyTyped(KeyEvent e) {
@@ -129,8 +133,7 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
         });
         f_panel = new JRendererPanel();
         f_frame.add(f_panel, BorderLayout.CENTER);
-        f_panel.setBackground(Color.white);
-        f_panel.setPreferredSize(new Dimension(800 ,600));
+        f_panel.setPreferredSize(new Dimension(1366 ,768));
         f_renderer = JRendererFactory.getDefaultRenderer(f_panel, this, false);
 
         f_infoTimer.addTickListener(new TickListener() {
@@ -214,6 +217,7 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
         ball.base=base;
         ball.center=center;
         ball.N=N;
+        ball.omega=0.1;
         BufferedImage ballImage = f_ballImages[ball.imageIndex];
         if (initBALLproperties==null)
         {
@@ -310,6 +314,8 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
         for (Ball ball : f_balls) {
             g2d.drawOval((int)ball.getX()-25, (int)ball.getY()-25,50,50);
             g2d.fillOval((int)ball.getX()-5, (int)ball.getY()-5,10,10);
+            g2d.setPaint(Color.white);
+            g2d.fillOval((int)ball.getX()+(int)(25*cos(ball.theta))-5, (int)ball.getY()+(int)(25*sin(ball.theta))-5,10,10);
         }    }
 
     @Override
