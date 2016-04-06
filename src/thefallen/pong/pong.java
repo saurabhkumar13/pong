@@ -79,7 +79,7 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                pong game = new pong(3);
+                pong game = new pong(7);
                 SwingUtilities.invokeLater(new Runnable() {
                     @Override
                     public void run() {
