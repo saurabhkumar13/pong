@@ -1,22 +1,22 @@
 package thefallen.pong;
+import static java.lang.Integer.min;
+import static java.lang.Math.*;
 import static java.lang.System.err;
+import static java.lang.System.out;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Graphics2D;
-import java.awt.GraphicsConfiguration;
+import java.awt.*;
 import java.awt.event.*;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
 import javax.imageio.ImageIO;
-import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -27,7 +27,6 @@ import org.jdesktop.core.animation.rendering.JRenderer;
 import org.jdesktop.core.animation.rendering.JRendererTarget;
 import org.jdesktop.core.animation.timing.Animator;
 import org.jdesktop.core.animation.timing.Interpolator;
-import org.jdesktop.core.animation.timing.KeyFrames;
 import org.jdesktop.core.animation.timing.TimingSource;
 import org.jdesktop.core.animation.timing.TimingSource.TickListener;
 import org.jdesktop.core.animation.timing.TimingTarget;
@@ -72,25 +71,37 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
     final JRendererPanel f_panel;
     final JRenderer f_renderer;
     final JLabel f_infoLabel;
-    int f_ballCount = 0;
-    final ping f_ping;
-    final Racket r1;
-    public Racket r2;
-    public Racket r3;
-    public Racket r4;
-
-    public pong(ping master) {
+    final Racket[] rackets;
+    final Polygon base;
+    final int N;
+    public static void main(String args[]){
+        System.setProperty("swing.defaultlaf", "com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                pong game = new pong(3);
+                SwingUtilities.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        game.addBall();}});
+            }
+        });
+    }
+    final double r;
+    final Point2D center;
+    public pong(int n) {
         final String rendererType = JRendererFactory.useActiveRenderer() ? "Active" : "Passive";
-        f_frame = new JFrame("Swing Too Many Balls! - " + rendererType + " Rendering");
+        f_frame = new JFrame("ping pong " + rendererType + " Rendering");
         f_frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         f_frame.setResizable(false);
-        f_ping = master;
-        r1 = new Racket(f_ping,true);
+        rackets = new Racket[n];
+        base = new Polygon();
+        base.npoints=n+1;
+        N=n;
         f_frame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosed(WindowEvent e) {
                 super.windowClosed(e);
-                f_ping.Stop();
                 f_infoTimer.dispose();
                 f_renderer.getTimingSource().dispose();
                 f_renderer.shutdown();
@@ -100,113 +111,29 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
         JPanel topPanel = new JPanel();
         f_frame.add(topPanel, BorderLayout.NORTH);
         topPanel.setLayout(new BorderLayout());
-        JPanel buttonPanel = new JPanel();
-        topPanel.add(buttonPanel, BorderLayout.WEST);
-        buttonPanel.setLayout(new FlowLayout());
-        final JButton addBall = new JButton("Add Ball");
-        addBall.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent arg0) {
-                f_renderer.invokeLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        addBall();
-                        initRacket1();
-                    }
-                });
-                f_ballCount++;
-                updateBallCount();
-            }
-        });
-        final JButton add10Balls = new JButton("Add 10 Balls");
-        add10Balls.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent arg0) {
-                f_renderer.invokeLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        addBall();
-                        addBall();
-                        addBall();
-                        addBall();
-                        addBall();
-                        addBall();
-                        addBall();
-                        addBall();
-                        addBall();
-                        addBall();
-                    }
-                });
-                f_ballCount += 10;
-                updateBallCount();
-            }
-        });
-        final JButton removeBall = new JButton("Remove Ball");
-        removeBall.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent arg0) {
-                f_renderer.invokeLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        removeBall();
-                    }
-                });
-                if (f_ballCount > 0)
-                    f_ballCount--;
-                updateBallCount();
-            }
-        });
-        final JButton remove10Balls = new JButton("Remove 10 Balls");
-        remove10Balls.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent arg0) {
-                f_renderer.invokeLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        removeBall();
-                        removeBall();
-                        removeBall();
-                        removeBall();
-                        removeBall();
-                        removeBall();
-                        removeBall();
-                        removeBall();
-                        removeBall();
-                        removeBall();
-                    }
-                });
-                f_ballCount -= 10;
-                if (f_ballCount < 0)
-                    f_ballCount = 0;
-                updateBallCount();
-            }
-        });
-        buttonPanel.add(addBall);
-        buttonPanel.add(add10Balls);
-        buttonPanel.add(removeBall);
-        buttonPanel.add(remove10Balls);
         f_infoLabel = new JLabel();
         topPanel.add(f_infoLabel, BorderLayout.EAST);
-        addBall.addKeyListener(new KeyListener() {
+        f_frame.addKeyListener(new KeyListener() {
             @Override
             public void keyTyped(KeyEvent e) {
-                r1.typed(e.getKeyCode());
             }
 
             @Override
             public void keyPressed(KeyEvent e) {
-                r1.pressed(e.getKeyCode());
+                rackets[0].pressed(e.getKeyCode());
+
             }
 
             @Override
             public void keyReleased(KeyEvent e) {
-                r1.released(e.getKeyCode());
+                rackets[0].released(e.getKeyCode());
+
             }
         });
         f_panel = new JRendererPanel();
         f_frame.add(f_panel, BorderLayout.CENTER);
         f_panel.setBackground(Color.white);
-        f_panel.setPreferredSize(new Dimension(600,600));
+        f_panel.setPreferredSize(new Dimension(800 ,600));
         f_renderer = JRendererFactory.getDefaultRenderer(f_panel, this, false);
 
         f_infoTimer.addTickListener(new TickListener() {
@@ -219,10 +146,47 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
 
         f_frame.pack();
         f_frame.setVisible(true);
+        r=floor(min(f_frame.getHeight(),f_frame.getWidth())/200)*100-50;
+        center = new Point(f_frame.getWidth()/2,f_frame.getHeight()/2);
+        for(int i=0;i<n;i++) {
+            rackets[i] = new Racket();
+            rackets[i].width = (int) (r * sin(PI / N) / 2);
+            final Racket racket =rackets[i];
+            final TimingTarget circularMovement = new TimingTargetAdapter() {
+                @Override
+                public void timingEvent(Animator source, double fraction) {
+                    racket.update();
+                }
+            };
+            racket.animator = new Animator.Builder().setDuration(4, SECONDS).addTarget(circularMovement)
+                    .setRepeatCount(Animator.INFINITE).setRepeatBehavior(Animator.RepeatBehavior.LOOP).build();
+            racket.animator.start();
+
+        }
+        setupBase();
+    }
+
+    void setupBase()
+    {
+        double th=PI,x,y;
+        int n = base.npoints-1;
+        int[] xpoints=new int[n+1],ypoints=new int[n+1];
+        if(n%2==0) th-=PI/n;
+        for(int i=0;i<=n;i++)
+        {
+            x=r*sin(th);
+            y=r*cos(th);
+            xpoints[i]=(int)x;
+            ypoints[i]=(int)y;
+            th+=2*PI/n;
+        }
+        base.xpoints=xpoints;
+        base.ypoints=ypoints;
+        base.translate(f_frame.getWidth()/2,f_frame.getHeight()/2);
     }
 
     void updateBallCount() {
-        f_infoLabel.setText("Balls: " + f_ballCount + "    FPS: " + f_renderer.getFPS());
+        f_infoLabel.setText("    FPS: " + f_renderer.getFPS());
         f_frame.validate();
     }
 
@@ -240,45 +204,20 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
     private static final Interpolator SPLINE_1_0_1_1 = new SplineInterpolator(1.00, 0.00, 1.00, 1.00);
     JSONObject initBALLproperties = null;
 
-    void initRacket1(){
-        r1.v=1;
-        r1.frame=f_panel.getWidth();
-        final int duration = 4;
-        final TimingTarget circularMovement = new TimingTargetAdapter() {
-            @Override
-            public void timingEvent(Animator source, double fraction) {
-                r1.update();
-            }
-        };
-        r1.animator = new Animator.Builder().setDuration(duration, SECONDS).addTarget(circularMovement)
-                .setRepeatCount(Animator.INFINITE).setRepeatBehavior(Animator.RepeatBehavior.LOOP).build();
-        r1.animator.start();
-
-    }
-    void initRacket2(){
-        r2 = new Racket(null,false);
-        r2.frame=f_panel.getWidth();
-        final int duration = 4;
-        final TimingTarget circularMovement = new TimingTargetAdapter() {
-            @Override
-            public void timingEvent(Animator source, double fraction) {
-                r2.update();
-            }
-        };
-        r2.animator = new Animator.Builder().setDuration(duration, SECONDS).addTarget(circularMovement)
-                .setRepeatCount(Animator.INFINITE).setRepeatBehavior(Animator.RepeatBehavior.LOOP).build();
-        r2.animator.start();
-    }
+//    z
     void addBall() {
         final Ball ball = new Ball();
         ball.imageIndex = f_die.nextInt(5);
+        ball.base=base;
+        ball.center=center;
+        ball.N=N;
         BufferedImage ballImage = f_ballImages[ball.imageIndex];
         if (initBALLproperties==null)
         {
-            ball.setX(f_die.nextInt(f_panel.getWidth() - ballImage.getWidth()));
-            ball.setY(f_die.nextInt(f_panel.getHeight() - ballImage.getHeight()));
-            ball.vx=f_die.nextInt(20);
-            ball.vy=f_die.nextInt(20);
+            ball.setX(center.getX());
+            ball.setY(center.getY());
+            ball.vx=f_die.nextInt(10);
+            ball.vy=-f_die.nextInt(10);
         }
         else
         {
@@ -341,16 +280,34 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
 
     @Override
     public void render(Graphics2D g2d, int width, int height) {
-        g2d.setBackground(Color.white);
+        g2d.setBackground(Color.black);
         g2d.clearRect(0, 0, width, height);
+        g2d.setStroke( new BasicStroke(4, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0,
+                new float[] { 3, 1 }, 0));
+        g2d.setPaint(Color.gray);
+        g2d.fillPolygon(base);
+        g2d.setPaint(Color.black);
+        double th = 0;
+
+        for(int i=0;i<rackets.length;i++)
+        {
+            Rectangle pad = new Rectangle();
+            if(i==1)
+                g2d.setPaint(Color.green);
+            else
+            g2d.setPaint(Color.black);
+            pad.setRect(rackets[i].getX() + base.xpoints[rackets.length / 2], rackets[i].getY() + base.ypoints[rackets.length / 2] - rackets[i].height, rackets[i].width, 2*rackets[i].height);
+            g2d.fill(AffineTransform.getRotateInstance(
+                    th, center.getX(), center.getY())
+                    .createTransformedShape(pad));
+            th-=2*PI/N;
+//            g2d.fill(pad);
+        }
+        g2d.setPaint(Color.darkGray);
 
         for (Ball ball : f_balls) {
-            g2d.drawImage(f_ballImages[ball.imageIndex], ball.getX(), ball.getY(), null);
-            }
-        g2d.fillRect(r1.getY(),r1.getX()+f_panel.getHeight()-r1.width,r1.getW(),r1.getH());
-        if(r2!=null)
-            g2d.fillRect(f_panel.getWidth()-r2.getY()-r2.height,r2.getX(),r2.getW(),r2.getH());
-    }
+            g2d.fillOval((int)ball.getX()-25, (int)ball.getY()-25,50,50);
+        }    }
 
     @Override
     public void renderShutdown() {

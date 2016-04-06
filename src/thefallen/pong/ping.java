@@ -117,11 +117,11 @@ public class ping extends Thread {
     void addGamer(String sender)
     {
         IPlist.add(sender);
-        if(game.r2==null)
-        {
-            game.initRacket2();
-            players.put(sender, game.r2);
-        }
+//        if(game.r2==null)
+//        {
+//            game.initRacket2();
+//            players.put(sender, game.r2);
+//        }
 
 //        if(Sync!=null)
 //        {
@@ -202,16 +202,14 @@ public class ping extends Thread {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                game = new pong(master);
+                game = new pong(3);
                 game.f_renderer.invokeLater(new Runnable() {
                     @Override
                     public void run() {
                         master.broadcastToGroup(new JSONObject().accumulate("command",Command.RequestBall.ordinal()).toString());
                         game.addBall();
-                        game.initRacket1();
                     }
                 });
-                game.f_ballCount++;
                 game.updateBallCount();
                 broadcast(initmsg.toString(), master.myIP, master.Port);
             }
