@@ -9,7 +9,9 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -37,6 +39,7 @@ import org.jdesktop.swing.animation.rendering.JRendererFactory;
 import org.jdesktop.swing.animation.rendering.JRendererPanel;
 import org.jdesktop.swing.animation.timing.sources.SwingTimerTimingSource;
 import org.json.JSONObject;
+import sun.rmi.runtime.Log;
 
 /**
  * This demonstration is a variant of the demonstration by Chet Haase at JavaOne
@@ -79,7 +82,7 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                pong game = new pong(7);
+                pong game = new pong(3);
                 SwingUtilities.invokeLater(new Runnable() {
                     @Override
                     public void run() {
@@ -133,7 +136,8 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
         });
         f_panel = new JRendererPanel();
         f_frame.add(f_panel, BorderLayout.CENTER);
-        f_panel.setPreferredSize(new Dimension(1366 ,768));
+        f_panel.setPreferredSize(new Dimension(800,600));
+//        f_panel.setPreferredSize(new Dimension(1366 ,768));
         f_renderer = JRendererFactory.getDefaultRenderer(f_panel, this, false);
 
         f_infoTimer.addTickListener(new TickListener() {
@@ -152,10 +156,17 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
         rackets = new Racket[N_];
         base = new Polygon();
         base.npoints=N+1;
-        r=floor(min(f_frame.getHeight(),f_frame.getWidth())/200)*100-50;
+        double scale=2;
+        if(n%2==1) scale = 1;//+ .5 * exp((-n + 3)*10);
+        else if (n>2) scale = 1;//+ exp((-n + 4)*20);
+        r=(floor(min(f_frame.getHeight(),f_frame.getWidth())/200)*100-50)*scale;
         center = new Point(f_frame.getWidth()/2,f_frame.getHeight()/2);
         for(int i=0;i<N_;i++) {
             rackets[i] = new Racket();
+            rackets[i].n = i;
+            rackets[i].N = N;
+            rackets[i].center=center;
+
             rackets[i].width = (int) (r * sin(PI / N) / 2);
             final Racket racket =rackets[i];
             final TimingTarget circularMovement = new TimingTargetAdapter() {
@@ -169,6 +180,7 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
             racket.animator.start();
 
         }
+        rackets[0].user=true;
         setupBase();
     }
 
@@ -189,6 +201,11 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
         base.xpoints=xpoints;
         base.ypoints=ypoints;
         base.translate(f_frame.getWidth()/2,f_frame.getHeight()/2);
+        for (Racket racket : rackets)
+        {
+            racket.initx = base.xpoints[N/ 2];
+            racket.frame = (int)(2*r*sin(PI/n));
+        }
     }
 
     void updateBallCount() {
@@ -213,6 +230,9 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
 //    z
     void addBall() {
         final Ball ball = new Ball();
+        for(int i=0;i<N_;i++)
+            rackets[i].ball=ball;
+        ball.rackets=rackets;
         ball.imageIndex = f_die.nextInt(5);
         ball.base=base;
         ball.center=center;
@@ -284,7 +304,7 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
     public void renderUpdate() {
         // Nothing to do
     }
-
+    float scale = 1.5f;
     @Override
     public void render(Graphics2D g2d, int width, int height) {
         g2d.setBackground(Color.black);
@@ -292,31 +312,66 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
         g2d.setStroke( new BasicStroke(4, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0,
                 new float[] { 3, 1 }, 0));
         g2d.setPaint(Color.gray);
+        if (f_balls.size()==0) return;
+        Ball ball = f_balls.get(0);
+        if(!base.contains(ball.getX(),ball.getY()))
+            g2d.setPaint(Color.black);
         g2d.fillPolygon(base);
         g2d.setPaint(Color.black);
         double th = 0;
         for(int i=0;i<rackets.length;i++)
         {
             Rectangle pad = new Rectangle();
-            if(i==1)
-                g2d.setPaint(Color.green);
-            else
-            g2d.setPaint(Color.black);
+            Rectangle pad2 = new Rectangle();
             pad.setRect(rackets[i].getX() + base.xpoints[N/ 2], rackets[i].getY() + base.ypoints[N/ 2] - rackets[i].height, rackets[i].width, 2*rackets[i].height);
-            g2d.fill(AffineTransform.getRotateInstance(
-                    th, center.getX(), center.getY())
+            pad2.setRect(rackets[i].getX() + base.xpoints[N/ 2] + 10, rackets[i].getY() + base.ypoints[N/ 2] - rackets[i].height/2, rackets[i].hp*5, rackets[i].height/2);
+            g2d.setPaint(Color.black);
+            Shape s = (AffineTransform.getRotateInstance(
+                    PI/20*rackets[i].state, pad.getCenterX(), pad.getCenterY())
                     .createTransformedShape(pad));
+
+            s = (AffineTransform.getRotateInstance(
+                    th, center.getX(), center.getY())
+                    .createTransformedShape(s));
+            Shape s2 = (AffineTransform.getRotateInstance(
+                    PI/20*rackets[i].state, pad.getCenterX(), pad.getCenterY())
+                    .createTransformedShape(pad2));
+
+            s2 = (AffineTransform.getRotateInstance(
+                    th, center.getX(), center.getY())
+                    .createTransformedShape(s2));
+            if(s.contains(f_balls.get(0).getX(),f_balls.get(0).getY()))
+            {
+                if(rackets[i].sentient) {
+                    if (i == 0) ball.padCollision(rackets[i].state);
+                    else {
+                        double normal = 2*PI*i/N-PI/2;
+                        double vn = ball.vx*cos(normal)-ball.vy*sin(normal);
+                        if(vn>0) rackets[i].safe=true;
+                    }
+                }
+                g2d.setPaint(Color.red);
+            }
+            g2d.fill(s);
+            g2d.setPaint(Color.lightGray);
+            g2d.fill(s2);
+            Point2D ballpos = new Point((int)ball.x,(int)ball.y);
+            AffineTransform.getRotateInstance(
+                    2*PI*i/(N), center.getX(), center.getY())
+                    .transform(ballpos,ballpos);
+            g2d.fillOval((int)ballpos.getX(),(int)ballpos.getY(),5,5);
+//            out.println("ping"+i+" "+(2*PI*i/(N))+" "+ballpos.getX()+" "+ballpos.getY());
             th-=2*PI*N/(N_*N);
-//            g2d.fill(pad);
+
         }
         g2d.setPaint(Color.darkGray);
 
-        for (Ball ball : f_balls) {
+
             g2d.drawOval((int)ball.getX()-25, (int)ball.getY()-25,50,50);
             g2d.fillOval((int)ball.getX()-5, (int)ball.getY()-5,10,10);
             g2d.setPaint(Color.white);
             g2d.fillOval((int)ball.getX()+(int)(25*cos(ball.theta))-5, (int)ball.getY()+(int)(25*sin(ball.theta))-5,10,10);
-        }    }
+        }
 
     @Override
     public void renderShutdown() {
