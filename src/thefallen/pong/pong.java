@@ -82,7 +82,7 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                pong game = new pong(3);
+                pong game = new pong(5);
                 SwingUtilities.invokeLater(new Runnable() {
                     @Override
                     public void run() {
@@ -314,8 +314,6 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
         g2d.setPaint(Color.gray);
         if (f_balls.size()==0) return;
         Ball ball = f_balls.get(0);
-        if(!base.contains(ball.getX(),ball.getY()))
-            g2d.setPaint(Color.black);
         g2d.fillPolygon(base);
         g2d.setPaint(Color.black);
         double th = 0;
@@ -369,8 +367,11 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
 
             g2d.drawOval((int)ball.getX()-25, (int)ball.getY()-25,50,50);
             g2d.fillOval((int)ball.getX()-5, (int)ball.getY()-5,10,10);
-            g2d.setPaint(Color.white);
-            g2d.fillOval((int)ball.getX()+(int)(25*cos(ball.theta))-5, (int)ball.getY()+(int)(25*sin(ball.theta))-5,10,10);
+//            g2d.setPaint(Color.white);
+//            g2d.fillOval((int)ball.getX()+(int)(25*cos(ball.theta))-5, (int)ball.getY()+(int)(25*sin(ball.theta))-5,10,10);
+            g2d.setPaint(new Color(ball.gravity/2+0.5f,ball.gravity/2+0.5f,ball.gravity/2+0.5f));
+            g2d.fillOval((int)center.getX()-5, (int)center.getY()-5,10,10);
+
         }
 
     @Override

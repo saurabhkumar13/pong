@@ -13,12 +13,14 @@ import static java.lang.System.out;
 public class Ball {
     double x, y,vx,vy,ax,ay,omega,theta,mu=0.3,r=1;
     int imageIndex,frameH,frameW;
-    private int dt=1;
+    float dt=1,ddt=0.001f;
     Animator animator;
     Polygon base;
     Point2D center;
     Racket[] rackets;
     int N;
+    boolean isGdecreasing;
+    float gravity=-1;
     public double getX() {
         return x;
     }
@@ -48,11 +50,24 @@ public class Ball {
         n%=N;
         return n;
     }
+
     boolean mew;
     public void update(){
         vx+=ax*dt;
         vy+=ay*dt;
         theta+=omega*dt*0.05;
+        double theta =- Math.atan2(y - center.getY(), x - center.getX()),f=0.9;
+        if(gravity>1) isGdecreasing=true;
+        else if(gravity<-1) isGdecreasing=false;
+        if(isGdecreasing) gravity-=ddt;
+        else gravity+=ddt;
+        ax = gravity*.1*cos(theta);
+        ay = -1*gravity*.1*sin(theta);
+        double modv = vx*vx+vy*vy;
+        // - mininum(vt-omega*r,2*mu*vn);
+        out.println(gravity);
+        if(modv>100) {vx*=f;vy*=f;}
+//
         if(!base.contains(x+vx*dt,y+vy*dt)) {
             int n=getSideofPolygon();
             if (!rackets[n].safe) rackets[n].hp--;
@@ -69,9 +84,8 @@ public class Ball {
                 vn = vx*cos(normal)-vy*sin(normal);
                 vt = vx*sin(normal)+vy*cos(normal);
                 vn_=-vn;
-                vt_ = vt;// - mininum(vt-omega*r,2*mu*vn);
-//                out.println(omega+"  "+(vt-omega*r)+" "+2*mu*vn);
-//                omega = omega + mininum(vt-omega*r,2*mu*vn)/r;
+                vt_ = vt;
+                  omega = omega + mininum(vt-omega*r,2*mu*vn)/r;
                 vx = (vt_*sin(normal) + vn_*cos(normal));
                 vy = (vt_*cos(normal) - vn_*sin(normal));
 //                out.println(angleInRadians*180/PI+" "+vx+" "+vy);
