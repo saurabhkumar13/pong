@@ -19,8 +19,8 @@ public class Ball {
     Point2D center;
     Racket[] rackets;
     int N;
-    boolean isGdecreasing;
-    float gravity=-1;
+    boolean isGdecreasing=true;
+    float gravity=1;
     public double getX() {
         return x;
     }
@@ -57,20 +57,20 @@ public class Ball {
         vy+=ay*dt;
         theta+=omega*dt*0.05;
         double theta =- Math.atan2(y - center.getY(), x - center.getX()),f=0.9;
-        if(gravity>1) isGdecreasing=true;
-        else if(gravity<-1) isGdecreasing=false;
+        if(gravity+dt>1) isGdecreasing=true;
+        else if(gravity-dt<-1) isGdecreasing=false;
         if(isGdecreasing) gravity-=ddt;
         else gravity+=ddt;
         ax = gravity*.1*cos(theta);
         ay = -1*gravity*.1*sin(theta);
         double modv = vx*vx+vy*vy;
         // - mininum(vt-omega*r,2*mu*vn);
-        out.println(gravity);
+//        out.println(gravity);
         if(modv>100) {vx*=f;vy*=f;}
 //
         if(!base.contains(x+vx*dt,y+vy*dt)) {
             int n=getSideofPolygon();
-            if (!rackets[n].safe) rackets[n].hp--;
+            if (!rackets[n].safe) {rackets[n].hp--;rackets[n].diedOnce=true;}
             else rackets[n].safe=false;
             double angleInRadians = Math.atan2(-vy,vx);
             double normal = 2*PI*n/N-PI/2;
@@ -79,7 +79,7 @@ public class Ball {
             if(angleInRadians-normal<PI/2)
             {
 //                for(int k=0;k<rackets.length;k++)out.print(rackets[k].hp+" ");
-                out.println();
+//                out.println();
 //                out.println(angleInRadians*180/PI+" "+normal*180/PI+" "+toRotate*180/PI+" "+vx+" "+vy);
                 vn = vx*cos(normal)-vy*sin(normal);
                 vt = vx*sin(normal)+vy*cos(normal);

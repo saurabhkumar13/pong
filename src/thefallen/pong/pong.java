@@ -97,9 +97,9 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
         f_frame = new JFrame("ping pong " + rendererType + " Rendering");
         f_frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
-        f_frame.setUndecorated(true);
-        GraphicsEnvironment
-                .getLocalGraphicsEnvironment().getScreenDevices()[0].setFullScreenWindow(f_frame);
+//        f_frame.setUndecorated(true);
+//        GraphicsEnvironment
+//                .getLocalGraphicsEnvironment().getScreenDevices()[0].setFullScreenWindow(f_frame);
         f_frame.setResizable(false);
 
         f_frame.addWindowListener(new WindowAdapter() {
@@ -348,7 +348,10 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
                         if(vn>0) rackets[i].safe=true;
                     }
                 }
+            }
+            if(rackets[i].diedOnce) {
                 g2d.setPaint(Color.red);
+                rackets[i].diedOnce=false;
             }
             g2d.fill(s);
             g2d.setPaint(Color.lightGray);

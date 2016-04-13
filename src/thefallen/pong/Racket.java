@@ -15,7 +15,7 @@ import static java.lang.System.out;
 public class Racket {
     int x, y,UPkey=KeyEvent.VK_LEFT,DOWNkey=KeyEvent.VK_RIGHT;
 //    ping master;
-    boolean sentient=true,safe=false,user=false;
+    boolean sentient=true,safe=false,user=false,diedOnce;
     float v,a,dt=.5f,f=.2f,speed=30;
     int initx,frame;
     int width=100,height=10,state=0,hp=10,n,N;
@@ -53,13 +53,20 @@ public class Racket {
                         2*PI*n/(N), center.getX(), center.getY())
                         .transform(ballpos,ballpos);
                 x =(int)ballpos.getX()-initx-width/2;//-200-40*(N-3);
+                if(x+width>frame) x = frame - width;
+                else if(x<0) x=0;
 //                y =(int)ballpos.getY();//-200-40*(N-3);
 //                out.println("racket"+n+" "+(2*PI*n/(N))+" "+ballpos.getX()+" "+ballpos.getY());
 //                out.println("RACKET"+frame+" "+width);
             }
+            else
+            {
+                if(x+v*dt>frame) x = frame;
+                else if(x+v*dt<-width) x = -width;
+                else x+=v*dt;
+            }
 
         }
-        x+=v*dt;
     }
     public void pressed(int e)
     {
@@ -76,7 +83,7 @@ public class Racket {
 //            }
         }
         if(e==KeyEvent.VK_UP)
-            state=1;
+            state=  1;
         else if(e==KeyEvent.VK_DOWN)
             state=-1;
         else state=0;
