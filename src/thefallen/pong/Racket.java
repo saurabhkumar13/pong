@@ -13,10 +13,10 @@ import static java.lang.Math.PI;
 import static java.lang.System.out;
 
 public class Racket {
-    int x, y,UPkey=KeyEvent.VK_LEFT,DOWNkey=KeyEvent.VK_RIGHT;
+    int x, y;
 //    ping master;
     boolean sentient=true,safe=false,user=false,diedOnce;
-    float v,a,dt=.5f,f=.2f,speed=30;
+    float v,a,dt=.5f,f=.2f,speed=20,ai_speed=10;
     int initx,frame;
     int width=100,height=10,state=0,hp=10,n,N;
     Animator animator;
@@ -25,7 +25,7 @@ public class Racket {
 
     //    public Racket(ping master,boolean sentient){
 //        if(master!=null) this.master=master;
-//        this.sentient=sentient;
+    //        this.sentient=sentient;
 //    }
     public int getX() {
         return x;
@@ -41,7 +41,6 @@ public class Racket {
         return width;
     }
 
-
     public void update(){
         v+=a*dt;
         if(ball!=null)
@@ -50,9 +49,15 @@ public class Racket {
             {
                 Point2D ballpos = new Point((int)ball.x,(int)ball.y);
                 AffineTransform.getRotateInstance(
-                        2*PI*n/(N), center.getX(), center.getY())
-                        .transform(ballpos,ballpos);
-                x =(int)ballpos.getX()-initx-width/2;//-200-40*(N-3);
+                        2 * PI * n / (N), center.getX(), center.getY())
+                        .transform(ballpos, ballpos);
+
+//                x = (int) ballpos.getX() - initx - width / 2;//-200-40*(N-3);
+                int dir = (int) ballpos.getX() - initx - width / 2;//-200-40*(N-3);
+                if (dir - x > width / 2) dir = 1;
+                else if (dir - x < - width / 2) dir = -1;
+                else dir = 0;
+                x+=ai_speed*dir*dt;
                 if(x+width>frame) x = frame - width;
                 else if(x<0) x=0;
 //                y =(int)ballpos.getY();//-200-40*(N-3);
@@ -70,21 +75,21 @@ public class Racket {
     }
     public void pressed(int e)
     {
-        if(e==UPkey&&v!=-speed) {
+        if(e==KeyMap.left&&v!=-speed) {
              v=-speed;
 //            if (sentient) {
 //                master.broadcastToGroup(ping.ingame.put("key",ping.Command.UpKey.ordinal()).toString());
 //            }
         }
-        else if(e==DOWNkey&&v!=speed) {
+        else if(e== KeyMap.right&&v!=speed) {
             v=speed;
 //            if (sentient) {
 //                master.broadcastToGroup(ping.ingame.put("key",ping.Command.DownKey.ordinal()).toString());
 //            }
         }
-        if(e==KeyEvent.VK_UP)
+        if(e==KeyMap.tiltLeft)
             state=  1;
-        else if(e==KeyEvent.VK_DOWN)
+        else if(e==KeyMap.tiltRight)
             state=-1;
         else state=0;
 

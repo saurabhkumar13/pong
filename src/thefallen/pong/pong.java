@@ -76,13 +76,14 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
     final JLabel f_infoLabel;
     final Racket[] rackets;
     final Polygon base;
+    static  pong game;
     final int N,N_;
     public static void main(String args[]){
         System.setProperty("swing.defaultlaf", "com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                pong game = new pong(5);
+                game = new pong(5);
                 SwingUtilities.invokeLater(new Runnable() {
                     @Override
                     public void run() {
