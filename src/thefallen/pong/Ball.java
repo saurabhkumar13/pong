@@ -21,6 +21,7 @@ public class Ball {
     int N;
     boolean isGdecreasing=true;
     float gravity=1;
+    onDiedListener diedListener;
     public double getX() {
         return x;
     }
@@ -50,7 +51,9 @@ public class Ball {
         n%=N;
         return n;
     }
-
+    interface onDiedListener{
+        void onDied(int index);
+    }
     boolean mew;
     public void update(){
         vx+=ax*dt;
@@ -70,8 +73,13 @@ public class Ball {
 //
         if(!base.contains(x+vx*dt,y+vy*dt)) {
             int n=getSideofPolygon();
-            if (!rackets[n].safe) {rackets[n].hp--;rackets[n].diedOnce=true;}
-            else rackets[n].safe=false;
+            if (!rackets[n].safe) {
+                if (rackets[n].hp > 0) rackets[n].hp--;
+                else diedListener.onDied(n);
+                rackets[n].diedOnce = true;
+            }
+            else
+                rackets[n].safe=false;
             double angleInRadians = Math.atan2(-vy,vx);
             double normal = 2*PI*n/N-PI/2;
             double toRotate = 2*(angleInRadians-normal)+PI;

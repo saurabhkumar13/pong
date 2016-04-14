@@ -2,12 +2,20 @@ package thefallen.pong;
 
 import javax.swing.*;
 
+import static java.lang.System.out;
+
 /**
  * Created by saurabh on 4/14/2016.
  */
 public class SinglePlayer {
     pong game;
     int N;
+    Ball.onDiedListener diedListener = new Ball.onDiedListener() {
+        @Override
+        public void onDied(int index) {
+            racketOnDied(index);
+        }
+    };
     public void constructGame(int i){
         N=i;
         SwingUtilities.invokeLater(new Runnable() {
@@ -17,7 +25,9 @@ public class SinglePlayer {
                 SwingUtilities.invokeLater(new Runnable() {
                     @Override
                     public void run() {
-                        game.addBall();}});
+                        game.onDiedListener = diedListener;
+                        game.addBall();
+                    }});
             }
         });
     }

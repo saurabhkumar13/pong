@@ -78,6 +78,7 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
     final Polygon base;
     static  pong game;
     final int N,N_;
+    Ball.onDiedListener onDiedListener;
     public static void main(String args[]){
         System.setProperty("swing.defaultlaf", "com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
         SwingUtilities.invokeLater(new Runnable() {
@@ -233,6 +234,7 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
         final Ball ball = new Ball();
         for(int i=0;i<N_;i++)
             rackets[i].ball=ball;
+        ball.diedListener = onDiedListener;
         ball.rackets=rackets;
         ball.imageIndex = f_die.nextInt(5);
         ball.base=base;

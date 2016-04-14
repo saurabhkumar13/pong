@@ -18,7 +18,7 @@ public class Racket {
     boolean sentient=true,safe=false,user=false,diedOnce;
     float v,a,dt=.5f,f=.2f,speed=20,ai_speed=10;
     int initx,frame;
-    int width=100,height=10,state=0,hp=10,n,N;
+    int width=100,height=10,state=0,hp=1,n,N;
     Animator animator;
     Ball ball;
     Point2D center;
