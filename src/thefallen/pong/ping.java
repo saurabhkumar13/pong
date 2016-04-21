@@ -7,17 +7,14 @@ import javax.swing.*;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.net.*;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Scanner;
+import java.util.*;
 
 import static java.lang.System.out;
 
 public class ping extends Thread {
     private int Port;
     private String myIP;
-    private ArrayList<String> IPlist;
+    private SortedSet<String> IPset;
     private HashMap<String,Racket> players;
     private static pong game;
     private DatagramSocket ds = null;
@@ -38,7 +35,7 @@ public class ping extends Thread {
     public ping(String IP, int port) throws Exception {
         Port = port;
         myIP = IP;
-        IPlist = new ArrayList<>();
+        IPset = new TreeSet<>();
         start();
         players = new HashMap<>();
     }
@@ -73,7 +70,7 @@ public class ping extends Thread {
         {
             if(!sender.equals(myIP))
             {
-                if (!IPlist.contains(sender))
+                if (!IPset.contains(sender))
                     addGamer(sender);
             }
         }
@@ -88,20 +85,20 @@ public class ping extends Thread {
         }
         else if(command.equals(Misc.Command.JOIN.toString())&&State== Misc.state.WAITmaster)
         {
-            if(IPlist.size()<serverDetails.getInt("maxPlayers")) {
-                IPlist.add(sender);
+            if(IPset.size()<serverDetails.getInt("maxPlayers")) {
+                IPset.add(sender);
                 broadcastToGroup((new JSONObject().accumulate("command",Misc.Command.JOINedslave).accumulate("SlaveIP",sender)).toString());
             }
         }
         else if(command.equals(Misc.Command.JOINedslave.toString())&&State== Misc.state.WAITslave)
         {
             out.println("Slave added "+sender+" "+message.getString("SlaveIP"));
-            IPlist.add(message.getString("SlaveIP"));
+            IPset.add(message.getString("SlaveIP"));
         }
         else if (command.equals(Command.REPLY))
             addGamer(sender);
         else if (command.equals(Command.STOP))
-            IPlist.remove(sender);
+            IPset.remove(sender);
         else if (command.equals(Command.GAMING))
             {
                 Racket r = players.get(sender);
@@ -128,7 +125,7 @@ public class ping extends Thread {
 
     void addGamer(String sender)
     {
-        IPlist.add(sender);
+        IPset.add(sender);
 //        if(game.r2==null)
 //        {
 //            game.initRacket2();
@@ -157,8 +154,8 @@ public class ping extends Thread {
 
     public void broadcastToGroup(String message)
     {
-        out.println("trying to broadcast: "+message+" "+IPlist.size());
-        for(String ips : IPlist)
+        out.println("trying to broadcast: "+message+" "+IPset.size());
+        for(String ips : IPset)
         {
             sendMessage(message,ips,Port);
         }
@@ -255,7 +252,10 @@ public class ping extends Thread {
                     else if(a.equals("find"))
                         broadcast(Misc.findServer.toString(),ip,Port);
 //                        sendMessage(Misc.findServer.toString(),ip,Port);
-
+                    else if(a.split(" ")[0].equals("join")) {
+                        sendMessage((new JSONObject().accumulate("command",Misc.Command.JOIN)).toString(),a.split(" ")[1],Port);
+                        out.println("sending "+(new JSONObject().accumulate("command",Misc.Command.JOIN)).toString()+" " + a.split(" ")[1]);
+                    }
 //                    messageSender.broadcastToGroup(a);
 
                 }
