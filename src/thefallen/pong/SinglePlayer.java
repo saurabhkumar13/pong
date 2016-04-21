@@ -15,6 +15,7 @@ public class SinglePlayer {
     int N;
     int[] HPs;
     boolean[] died;
+    boolean constructing;
     Ball.onDiedListener diedListener = new Ball.onDiedListener() {
         @Override
         public void onDied(int index) {
@@ -40,6 +41,7 @@ public class SinglePlayer {
                         }
                         HPs = new int[i];
                         died = new boolean[i];
+                        constructing = false;
                     }
                 });
             }
@@ -49,10 +51,12 @@ public class SinglePlayer {
     public void racketOnDied(int index)
     {
         out.println("dieded");
-        died[index]=true;
-        for (int i=0;i<game.rackets.length;i++)
-            HPs[i]=game.rackets[i].hp;
-        if(N>1) constructGame(N-1);
+        if (!constructing) {
+            died[index]=true;
+            for (int i=0;i<game.rackets.length;i++)
+                HPs[i]=game.rackets[i].hp;
+            if(N>1) {constructing=true;constructGame(N-1);}
+        }
     }
     static public void main(String[] args)
     {
