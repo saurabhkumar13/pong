@@ -1,6 +1,7 @@
 package thefallen.pong;
 
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import javax.swing.*;
@@ -12,6 +13,7 @@ import java.util.*;
 import static java.lang.Math.PI;
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
+import static java.lang.System.err;
 import static java.lang.System.out;
 
 public class ping extends Thread {
@@ -58,9 +60,9 @@ public class ping extends Thread {
                 handleComms(sender,s);
             }
         } catch (SocketException se) {
-            System.err.println("chat error (Socket Closed = good): " + se.getMessage());
+            err.println("chat error (Socket Closed = good): " + se.getMessage());
         } catch (IOException se) {
-            System.err.println("chat error: " + se.getMessage());
+            err.println("chat error: " + se.getMessage());
         }
     }
 
@@ -91,13 +93,18 @@ public class ping extends Thread {
             if(IPset.size()<serverDetails.getInt("maxPlayers")) {
                 IPset.add(sender);
                 sendMessage((new JSONObject().accumulate("command",Misc.Command.JOINack)).toString(),sender,Port);
-                broadcastToGroup((new JSONObject().accumulate("command",Misc.Command.JOINedslave).accumulate("SlaveIP",sender)).toString());
+                JSONArray slaves = new JSONArray();
+                slaves.put(IPset);
+                slaves = slaves.getJSONArray(0);
+                broadcastToGroup((new JSONObject().accumulate("command",Misc.Command.JOINedslave).accumulate("Slaves",slaves)).toString());
             }
         }
         else if(command.equals(Misc.Command.JOINedslave.toString())&&State== Misc.state.WAITslave)
         {
             out.println("Slave added "+sender+" "+message.getString("SlaveIP"));
-            IPset.add(message.getString("SlaveIP"));
+            JSONArray slaves = message.getJSONArray("Slaves");
+            for(int i=0;i<slaves.length();i++)
+                IPset.add(slaves.getString(i));
         }
         else if(command.equals(Misc.Command.START.toString()))
         {
@@ -200,7 +207,7 @@ public class ping extends Thread {
             out.println("\tsuccess: msg sent");
             return true;
         } catch (IOException e) {
-            System.err.println("failed: for "+recIP+" "+Port+" "+e.getLocalizedMessage());
+            err.println("failed: for "+recIP+" "+Port+" "+e.getLocalizedMessage());
             return false;
         }
     }
