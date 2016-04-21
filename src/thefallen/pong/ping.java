@@ -115,21 +115,24 @@ public class ping extends Thread {
         else if(command.equals(Misc.Command.JOINack.toString()))
         {
             IPset.add(sender);
+            IPset.add(myIP);
         }
-        else if (command.equals(Misc.Command.INITBall))
+        else if (command.equals(Misc.Command.INITBall.toString()))
         {
             Misc.INITballvx = message.getDouble("vx");
             Misc.INITballvy = message.getDouble("vy");
-            Ball ball = game.f_balls.get(0);
             double vx,vy,normal=2 * PI * IPset.headSet(sender).size() / IPset.size();
             vx = (Misc.INITballvx*cos(normal) + Misc.INITballvy*sin(normal));
             vy = (-Misc.INITballvx*sin(normal) + Misc.INITballvy*cos(normal));
             Misc.INITballvx = vx;
             Misc.INITballvy = vy;
 //
-            if(ball!=null) {
-                ball.vx = Misc.INITballvx;
-                ball.vy = Misc.INITballvy;
+            if(game!=null) {
+                Ball ball = game.f_balls.get(0);
+                if (ball!=null) {
+                    ball.vx = Misc.INITballvx;
+                    ball.vy = Misc.INITballvy;
+                }
             }
         }
         else if (command.equals(Command.STOP))
