@@ -218,7 +218,7 @@ public class ping extends Thread {
 
     public static void main(String[] args) {
         try{
-            int Port = 69;
+            int Port = 1169;
             String ip = getmyIP();
             if(ip.equals("")) {
                 out.println("Could not get host .. Are You connected to a network?");

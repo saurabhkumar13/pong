@@ -20,8 +20,9 @@ public class Ball {
     Racket[] rackets;
     int N;
     boolean isGdecreasing=true,twoP;
-    float gravity=1;
+    float gravity=0;
     onDiedListener diedListener;
+
     public double getX() {
         return x;
     }
@@ -51,9 +52,11 @@ public class Ball {
         n%=N;
         return n;
     }
+
     interface onDiedListener{
         void onDied(int index);
     }
+
     boolean mew;
     public void update(){
         vx+=ax*dt;
@@ -79,7 +82,7 @@ public class Ball {
             }
             if (!rackets[n].safe) {
                 out.println(n+" "+rackets[n].hp);
-                if (rackets[n].hp > 0) rackets[n].hp--;
+                if (rackets[n].hp > 0) rackets[n].hp -= 20 ;
                 else if(diedListener!=null) diedListener.onDied(n);
                 rackets[n].diedOnce = true;
         }
