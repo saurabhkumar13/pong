@@ -81,6 +81,7 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
     Ball.onDiedListener onDiedListener;
     double padding = 0.1;
     SinglePlayer lol;
+    ping master;
 
     public static void main(String args[]){
         System.setProperty("swing.defaultlaf", "com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
@@ -268,19 +269,11 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
         if(N_==2) ball.twoP=true;
         ball.omega=0.1;
         BufferedImage ballImage = f_ballImages[ball.imageIndex];
-        if (initBALLproperties==null)
-        {
             ball.setX(center.getX());
             ball.setY(center.getY());
+        if (master!=null) {
             ball.vx=f_die.nextInt(10);
             ball.vy=-f_die.nextInt(10)+3;
-        }
-        else
-        {
-            ball.setX(initBALLproperties.getInt("x"));
-            ball.setY(initBALLproperties.getInt("y"));
-            ball.vx=initBALLproperties.getInt("vx");
-            ball.vy=initBALLproperties.getInt("vy");
         }
         err.println("init: "+initBALLproperties);
         ball.frameW = f_panel.getWidth() - ballImage.getWidth();
@@ -303,6 +296,8 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
         ball.animator.start();
 
         f_balls.add(ball);
+        if (master!=null)
+            master.broadcastToGroup((new JSONObject().accumulate("command",Misc.Command.BallReady)).toString());
     }
 
     void removeBall() {
