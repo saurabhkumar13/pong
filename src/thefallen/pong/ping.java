@@ -1,6 +1,7 @@
 package thefallen.pong;
 
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import javax.swing.*;
@@ -9,12 +10,17 @@ import java.io.IOException;
 import java.net.*;
 import java.util.*;
 
+import static java.lang.Math.PI;
+import static java.lang.Math.cos;
+import static java.lang.Math.sin;
+import static java.lang.System.err;
 import static java.lang.System.out;
 
 public class ping extends Thread {
     private int Port;
     private String myIP;
     private SortedSet<String> IPset;
+    private SortedSet<String> initset;
     private HashMap<String,Racket> players;
     private static pong game;
     private DatagramSocket ds = null;
@@ -36,6 +42,7 @@ public class ping extends Thread {
         Port = port;
         myIP = IP;
         IPset = new TreeSet<>();
+        initset = new TreeSet<>();
         start();
         players = new HashMap<>();
     }
@@ -55,9 +62,9 @@ public class ping extends Thread {
                 handleComms(sender,s);
             }
         } catch (SocketException se) {
-            System.err.println("chat error (Socket Closed = good): " + se.getMessage());
+            err.println("chat error (Socket Closed = good): " + se.getMessage());
         } catch (IOException se) {
-            System.err.println("chat error: " + se.getMessage());
+            err.println("chat error: " + se.getMessage());
         }
     }
 
@@ -87,16 +94,57 @@ public class ping extends Thread {
         {
             if(IPset.size()<serverDetails.getInt("maxPlayers")) {
                 IPset.add(sender);
-                broadcastToGroup((new JSONObject().accumulate("command",Misc.Command.JOINedslave).accumulate("SlaveIP",sender)).toString());
+                sendMessage((new JSONObject().accumulate("command",Misc.Command.JOINack)).toString(),sender,Port);
+                JSONArray slaves = new JSONArray();
+                slaves.put(IPset);
+                slaves = slaves.getJSONArray(0);
+                broadcastToGroup((new JSONObject().accumulate("command",Misc.Command.JOINedslave).accumulate("Slaves",slaves)).toString());
             }
         }
         else if(command.equals(Misc.Command.JOINedslave.toString())&&State== Misc.state.WAITslave)
         {
             out.println("Slave added "+sender+" "+message.getString("SlaveIP"));
-            IPset.add(message.getString("SlaveIP"));
+            JSONArray slaves = message.getJSONArray("Slaves");
+            for(int i=0;i<slaves.length();i++)
+                IPset.add(slaves.getString(i));
         }
-        else if (command.equals(Command.REPLY))
-            addGamer(sender);
+        else if(command.equals(Misc.Command.START.toString()))
+        {
+            startGame(this,IPset.size());
+            if(myIP.equals(IPset.first()))
+                broadcastToGroup((new JSONObject().accumulate("command",Misc.Command.INITBall).accumulate("vx",1.5).accumulate("vy",2.1)).toString());
+        }
+        else if(command.equals(Misc.Command.JOINack.toString()))
+        {
+            IPset.add(sender);
+            IPset.add(myIP);
+        }
+        else if (command.equals(Misc.Command.INITBall.toString()))
+        {
+            Misc.INITballvx = message.getDouble("vx");
+            Misc.INITballvy = message.getDouble("vy");
+            double vx,vy,normal=2 * PI * IPset.headSet(sender).size() / IPset.size();
+            vx = (Misc.INITballvx*cos(normal) + Misc.INITballvy*sin(normal));
+            vy = (-Misc.INITballvx*sin(normal) + Misc.INITballvy*cos(normal));
+            Misc.INITballvx = vx;
+            Misc.INITballvy = vy;
+//
+            if(game!=null) {
+                Ball ball = game.f_balls.get(0);
+                if (ball!=null) {
+                    ball.vx = Misc.INITballvx;
+                    ball.vy = Misc.INITballvy;
+                }
+            }
+        }
+        else if (command.equals(Misc.Command.BallReady.toString()))
+        {
+            initset.add(sender);
+            if(initset.size()==IPset.size()) {
+                game.f_balls.get(0).vx = Misc.INITballvx;
+                game.f_balls.get(0).vy = Misc.INITballvy;
+            }
+        }
         else if (command.equals(Command.STOP))
             IPset.remove(sender);
         else if (command.equals(Command.GAMING))
@@ -172,7 +220,7 @@ public class ping extends Thread {
             out.println("\tsuccess: msg sent");
             return true;
         } catch (IOException e) {
-            System.err.println("failed: for "+recIP+" "+Port+" "+e.getLocalizedMessage());
+            err.println("failed: for "+recIP+" "+Port+" "+e.getLocalizedMessage());
             return false;
         }
     }
@@ -220,20 +268,20 @@ public class ping extends Thread {
         return "";
     }
 
-    static void startGame(ping master)
+    static void startGame(ping master,int size)
     {
         System.setProperty("swing.defaultlaf", "com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                game = new pong(3);
-//                game.f_renderer.invokeLater(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        master.broadcastToGroup(new JSONObject().accumulate("command",Command.RequestBall.ordinal()).toString());
-//                        game.addBall();
-//                    }
-//                });
+                game = new pong(size);
+                game.master=master;
+                game.f_renderer.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        game.addBall();
+                    }
+                });
 //                broadcast(initmsg.toString(), master.myIP, master.Port);
             }
         });
@@ -241,7 +289,7 @@ public class ping extends Thread {
 
     public static void main(String[] args) {
         try{
-            int Port = 6969;
+            int Port = 7071;
             String ip = getmyIP();
             if(ip.equals("")) {
                 out.println("Could not get host .. Are You connected to a network?");
@@ -256,21 +304,28 @@ public class ping extends Thread {
                     if(a.equals("stop")) {messageSender.Stop();break;}
                     else if(a.equals("start")) {
                         messageSender.State = Misc.state.WAITmaster;
+                        messageSender.IPset.add(ip);
                         messageSender.serverDetails = new JSONObject()
                                 .accumulate("name","Saurabh's server")
                                 .accumulate("mode",Misc.Modes.DEATHMATCH)
                                 .accumulate("maxPlayers",3)
                                 .accumulate("password","lollipop");
                     }
-                    else if(a.equals("find"))
+                    else if(a.equals("find")) {
+//                        messageSender.IPset.add(ip);
                         broadcast(Misc.findServer.toString(),ip,Port);
+                    }
 //                        sendMessage(Misc.findServer.toString(),ip,Port);
                     else if(a.split(" ")[0].equals("join")) {
                         sendMessage((new JSONObject().accumulate("command",Misc.Command.JOIN)).toString(),a.split(" ")[1],Port);
                         out.println("sending "+(new JSONObject().accumulate("command",Misc.Command.JOIN)).toString()+" " + a.split(" ")[1]);
                     }
-//                    messageSender.broadcastToGroup(a);
-
+                    else if(a.equals("joined"))
+                        out.println(messageSender.IPset.size());
+                    else if(a.equals("startGame"))
+                    {
+                        messageSender.broadcastToGroup((new JSONObject().accumulate("command",Misc.Command.START)).toString());
+                    }
                 }
             }
         }
