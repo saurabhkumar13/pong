@@ -163,16 +163,29 @@ public class ping extends Thread {
 
     public static boolean sendMessage(String message,String recIP,int Port) {
         try {
-//            out.print("Sending to " + recIP + " socket " + Port + " data: " + message);
+            out.print("Sending to " + recIP + " socket " + Port + " data: " + message);
             byte[] data = message.getBytes();
             DatagramSocket theSocket = new DatagramSocket();
             DatagramPacket theOutput = new DatagramPacket(data, data.length, InetAddress.getByName(recIP), Port);
             theSocket.send(theOutput);
             // Screen.writeText(message);
-//            out.println("\tsuccess: msg sent");
+            out.println("\tsuccess: msg sent");
             return true;
         } catch (IOException e) {
-//            System.err.println("failed: for "+recIP+" "+Port+" "+e.getLocalizedMessage());
+            System.err.println("failed: for "+recIP+" "+Port+" "+e.getLocalizedMessage());
+            return false;
+        }
+    }
+
+    public static boolean sendMessage_mew(String message,String recIP,int Port) {
+        try {
+            byte[] data = message.getBytes();
+            DatagramSocket theSocket = new DatagramSocket();
+            DatagramPacket theOutput = new DatagramPacket(data, data.length, InetAddress.getByName(recIP), Port);
+            theSocket.send(theOutput);
+            // Screen.writeText(message);
+            return true;
+        } catch (IOException e) {
             return false;
         }
     }
@@ -181,7 +194,7 @@ public class ping extends Thread {
         int lim = Integer.valueOf(prefix[1]);
         for(int i=0;i<=lim;i++){
             for(int j=1;j<255;j++) {
-            sendMessage(message,prefix[0]+"."+prefix[1]+"."+i+"."+j,Port);
+            sendMessage_mew(message,prefix[0]+"."+prefix[1]+"."+i+"."+j,Port);
         }}
     }
 
