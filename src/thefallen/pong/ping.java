@@ -2,7 +2,6 @@ package thefallen.pong;
 
 
 import org.json.JSONObject;
-import org.omg.CORBA.COMM_FAILURE;
 
 import javax.swing.*;
 import java.awt.event.KeyEvent;
@@ -27,27 +26,24 @@ public class ping extends Thread {
     static JSONObject initmsg;
     static JSONObject goodbye;
     static JSONObject ingame;
+    static JSONObject serverDetails;
     static JSONObject initmsgreply;
 
     public static enum Command{
         START,STOP,REPLY,GAMING,UpKey,DownKey,ReleaseKey,RequestBall,GotBall
     }
 
+    public enum state {
+        INIT,WAIT
+    }
 
 
+    state State=state.INIT;
     public ping(String IP, int port) throws Exception {
         Port = port;
         myIP = IP;
         IPlist = new ArrayList<>();
         start();
-        initmsg = new JSONObject();
-        initmsgreply = new JSONObject();
-        goodbye = new JSONObject();
-        ingame = new JSONObject();
-        initmsg.accumulate("command",Command.START.ordinal());
-        initmsgreply.accumulate("command", Command.REPLY.ordinal());
-        goodbye.accumulate("command",Command.STOP.ordinal());
-        ingame.accumulate("command",Command.GAMING.ordinal());
         players = new HashMap<>();
     }
 
@@ -76,21 +72,30 @@ public class ping extends Thread {
     {
         out.println("got msg: \""+m+"\" sender: "+sender);
         JSONObject message = new JSONObject(m);
-        int command = message.getInt("command");
-        if(command==Command.START.ordinal())
+        String command = message.getString("command");
+        if(command.equals(Command.START))
         {
             if(!sender.equals(myIP))
             {
                 if (!IPlist.contains(sender))
                     addGamer(sender);
-                sendMessage(initmsgreply.toString(),sender,Port);
+                sendMessage((new JSONObject().accumulate("server_details",initmsgreply).accumulate("command",Misc.Command.FINDreply)).toString(),sender,Port);
             }
         }
-        else if (command==Command.REPLY.ordinal())
+        else if(command.equals(Misc.Command.FIND))
+        {
+            sendMessage(serverDetails.toString(),m,Port);
+        }
+        else if(command.equals(Misc.Command.FINDreply))
+        {
+//            sendMessage(serverDetails.toString(),m,Port);
+            out.println("Found server "+sender+" "+message.getJSONObject("server_details"));
+        }
+        else if (command.equals(Command.REPLY))
             addGamer(sender);
-        else if (command==Command.STOP.ordinal())
+        else if (command.equals(Command.STOP))
             IPlist.remove(sender);
-        else if (command==Command.GAMING.ordinal())
+        else if (command.equals(Command.GAMING))
             {
                 Racket r = players.get(sender);
                 int key = message.getInt("key");
@@ -102,12 +107,12 @@ public class ping extends Thread {
                     r.released(0);
 
             }
-        else if (command==Command.RequestBall.ordinal())
+        else if (command.equals(Command.RequestBall))
         {
             Ball ball = game.f_balls.get(0);
             broadcastToGroup(new JSONObject().put("command",Command.GotBall).put("sync",new JSONObject().accumulate("ax",ball.ax).accumulate("ay",ball.ay).accumulate("vx",ball.vx).accumulate("vy",ball.vy).accumulate("x",ball.x).accumulate("y",ball.y)).toString());
         }
-        else if (command==Command.GotBall.ordinal())
+        else if (command.equals(Command.GotBall))
         {
             game.initBALLproperties = message.getJSONObject("sync");
         }
@@ -203,34 +208,42 @@ public class ping extends Thread {
             @Override
             public void run() {
                 game = new pong(3);
-                game.f_renderer.invokeLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        master.broadcastToGroup(new JSONObject().accumulate("command",Command.RequestBall.ordinal()).toString());
-                        game.addBall();
-                    }
-                });
-                game.updateBallCount();
-                broadcast(initmsg.toString(), master.myIP, master.Port);
+//                game.f_renderer.invokeLater(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        master.broadcastToGroup(new JSONObject().accumulate("command",Command.RequestBall.ordinal()).toString());
+//                        game.addBall();
+//                    }
+//                });
+//                broadcast(initmsg.toString(), master.myIP, master.Port);
             }
         });
     }
 
     public static void main(String[] args) {
         try{
-            int Port = 1169;
+            int Port = 6969;
             String ip = getmyIP();
             if(ip.equals("")) {
                 out.println("Could not get host .. Are You connected to a network?");
             }
             else {
                 ping messageSender = new ping(ip, Port);
-                startGame(messageSender);
+                broadcast(Misc.findServer.toString(),ip,Port);
+//                startGame(messageSender);
                 out.println("myIP: "+ip);
                 Scanner scanner = new Scanner(System.in);
                 while (true) {
                     String a = scanner.nextLine();
                     if(a.equals("stop")) {messageSender.Stop();break;}
+                    if(a.equals("start")) {
+                        messageSender.State = state.WAIT;
+                        messageSender.serverDetails
+                                .accumulate("name","Saurabh's server")
+                                .accumulate("mode",Misc.Modes.DEATHMATCH)
+                                .accumulate("maxPlayers",3)
+                                .accumulate("password","lollipop");
+                    }
                     messageSender.broadcastToGroup(a);
                 }
             }
