@@ -29,16 +29,12 @@ public class ping extends Thread {
     static JSONObject serverDetails;
     static JSONObject initmsgreply;
 
-    public static enum Command{
-        START,STOP,REPLY,GAMING,UpKey,DownKey,ReleaseKey,RequestBall,GotBall
-    }
-
-    public enum state {
-        INIT,WAIT
+    public static enum Command {
+        START, STOP, REPLY, GAMING, UpKey, DownKey, ReleaseKey, RequestBall, GotBall
     }
 
 
-    state State=state.INIT;
+    Misc.state State=Misc.state.INIT;
     public ping(String IP, int port) throws Exception {
         Port = port;
         myIP = IP;
@@ -70,26 +66,37 @@ public class ping extends Thread {
 
     void handleComms(String sender, String m)
     {
-        out.println("got msg: \""+m+"\" sender: "+sender);
         JSONObject message = new JSONObject(m);
         String command = message.getString("command");
+        out.println("got msg: \""+m+"\" sender: "+sender);
         if(command.equals(Command.START))
         {
             if(!sender.equals(myIP))
             {
                 if (!IPlist.contains(sender))
                     addGamer(sender);
-                sendMessage((new JSONObject().accumulate("server_details",initmsgreply).accumulate("command",Misc.Command.FINDreply)).toString(),sender,Port);
             }
         }
-        else if(command.equals(Misc.Command.FIND))
+        else if(command.equals(Misc.Command.FIND.toString())&&State== Misc.state.WAITmaster)
         {
-            sendMessage(serverDetails.toString(),m,Port);
+            sendMessage((new JSONObject().accumulate("server_details",serverDetails).accumulate("command",Misc.Command.FINDreply)).toString(),sender,Port);
         }
-        else if(command.equals(Misc.Command.FINDreply))
+        else if(command.equals(Misc.Command.FINDreply.toString())&&State==Misc.state.WAITslave)
         {
 //            sendMessage(serverDetails.toString(),m,Port);
             out.println("Found server "+sender+" "+message.getJSONObject("server_details"));
+        }
+        else if(command.equals(Misc.Command.JOIN.toString())&&State== Misc.state.WAITmaster)
+        {
+            if(IPlist.size()<serverDetails.getInt("maxPlayers")) {
+                IPlist.add(sender);
+                broadcastToGroup((new JSONObject().accumulate("command",Misc.Command.JOINedslave).accumulate("SlaveIP",sender)).toString());
+            }
+        }
+        else if(command.equals(Misc.Command.JOINedslave.toString())&&State== Misc.state.WAITslave)
+        {
+            out.println("Slave added "+sender+" "+message.getString("SlaveIP"));
+            IPlist.add(message.getString("SlaveIP"));
         }
         else if (command.equals(Command.REPLY))
             addGamer(sender);
@@ -238,7 +245,7 @@ public class ping extends Thread {
                     String a = scanner.nextLine();
                     if(a.equals("stop")) {messageSender.Stop();break;}
                     else if(a.equals("start")) {
-                        messageSender.State = state.WAIT;
+                        messageSender.State = Misc.state.WAITmaster;
                         messageSender.serverDetails = new JSONObject()
                                 .accumulate("name","Saurabh's server")
                                 .accumulate("mode",Misc.Modes.DEATHMATCH)
@@ -247,6 +254,7 @@ public class ping extends Thread {
                     }
                     else if(a.equals("find"))
                         broadcast(Misc.findServer.toString(),ip,Port);
+//                        sendMessage(Misc.findServer.toString(),ip,Port);
 
 //                    messageSender.broadcastToGroup(a);
 
