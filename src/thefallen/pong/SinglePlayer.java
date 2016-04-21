@@ -15,90 +15,100 @@ public class SinglePlayer {
 
     pong game;
     int N;
-    int[] HPs;
+    int uHP;
     boolean[] died;
     boolean constructing;
-    static int init_val = 7;
+    static int init_num = 2;
+    static int init_hp = 100;
 
-//    Ball.onDiedListener diedListener = new Ball.onDiedListener() {
-//        @Override
-//        public void onDied(int index) {
-//            racketOnDied(index);
-//        }
-//    };
-//
-//    public void constructGame(int i)
-//    {
-//        N=i;
-//        SwingUtilities.invokeLater(new Runnable() {
-//
-//            @Override
-//            public void run()
-//            {
-//                game = new pong(i);
-//
-//                SwingUtilities.invokeLater(new Runnable() {
-//
-//                    @Override
-//                    public void run() {
-//
-//                        game.onDiedListener = diedListener;
-//                        game.addBall();
-//
-//                        for (int i = 0,k = 0; i < HPs.length; i++)
-//                        {
-//                            if(died[i])
-//                            {
-//                                i++;
-//                                k++;
-//                            }
-//                            else
-//                            {
-//                                game.rackets[i-k].hp = 5;//HPs[i];
-//                            }
-//                        }
-//
-//                        HPs = new int[i];
-//                        died = new boolean[i];
-//                        constructing = false;
-//
-//                    }
-//
-//
-//                });
-//            }
-//        });
-//    }
-//
-//    public void racketOnDied(int index)
-//    {
-//        out.println("dieded");
-//
-//        if (!constructing)
-//        {
-//            died[index]=true;
-//
-//            for (int i=0;i<game.rackets.length;i++)
-//                HPs[i]=game.rackets[i].hp;
-//
-//            if(N>2)
-//            {
-//                constructing=true;
-//                constructGame(N-1);
-//            }
-//        }
-//    }
-//
-    public void setupGame(int n)
+    Ball.onDiedListener diedListener = new Ball.onDiedListener() {
+        @Override
+        public void onDied(int index,SinglePlayer lol) {
+            racketOnDied(index,lol);
+
+        }
+    };
+
+    public void racketOnDied(int index,SinglePlayer quest)
     {
+        out.println(index + " dieded");
+
+        if (!quest.constructing)
+        {
+            quest.died[index]=true;
+            quest.uHP=game.rackets[0].hp;
+
+            if(N<6)
+            {
+                out.println("New Game Called "+N);
+                quest.constructing=true;
+                setupGame(N+1,quest);
+            }
+            else
+            {
+                out.println("Game Pause "+ N);
+                for(int i = 0;i<N;i++)
+                {
+                    game.rackets[i].dt = 0f;
+                }
+                game.f_balls.get(0).dt = 0f;
+            }
+        }
+    }
+
+    public void setupGame(int n,SinglePlayer quest)
+    {
+        N = n;
+        out.println("Number of players : "+n);
+        SwingUtilities.invokeLater(new Runnable() {
+
+            @Override
+            public void run() {
+
+                game = new pong(n);
+                game.lol = quest;
+                SwingUtilities.invokeLater(new Runnable() {
+                    @Override
+                    public void run()
+                    {
+                        game.onDiedListener = quest.diedListener;
+                        game.addBall();
+
+                        for (int i = 0, k = 0; i < N; i++)
+                        {
+                            if(i == 0)
+                            {
+                                game.rackets[0].hp = quest.uHP;
+                            }
+                            else
+                            {
+                                game.rackets[i].hp = init_hp;
+                                out.println("Init_hp"+i+" "+game.rackets[i].hp);
+                            }
+                            if(i < N-1)
+                            {
+                                if (quest.died[i]) {
+                                    quest.died[i] = false;
+                                }
+                            }
+                        }
+
+                        quest.died = new boolean[n];
+                        Arrays.fill(quest.died,false);
+                        constructing = false;
+                    }
+                });
+            }
+        });
     }
 
 
     static public void main(String[] args)
     {
         SinglePlayer quest = new SinglePlayer();
-        quest.setupGame(init_val);
-        quest.died = new boolean[init_val];
-        quest.HPs = new int[init_val];
+        quest.died = new boolean[init_num];
+        Arrays.fill(quest.died,false);
+        quest.uHP = init_hp;
+        quest.setupGame(init_num,quest);
     }
 }

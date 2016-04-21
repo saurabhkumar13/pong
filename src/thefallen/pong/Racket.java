@@ -15,7 +15,7 @@ import static java.lang.System.out;
 public class Racket {
     int x, y;
 //    ping master;
-    boolean sentient=false,safe=false,user=false,diedOnce;
+    boolean sentient=true,safe=false,user=false,diedOnce;
     float v,a,dt=.5f,f=.2f,speed=20,ai_speed=10;
     int initx,frame;
     int width=100,height=10,state=0,hp=100,n,N;

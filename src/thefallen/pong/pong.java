@@ -80,6 +80,7 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
     final int N,N_;
     Ball.onDiedListener onDiedListener;
     double padding = 0.1;
+    SinglePlayer lol;
 
     public static void main(String args[]){
         System.setProperty("swing.defaultlaf", "com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
@@ -169,7 +170,7 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
         }
         else if (n>2)
         {
-            scale = 1+ exp((-n + 4)*20);
+            scale = 1;//+ exp((-n + 4)*20);
         }
         else if (n == 2)
         {
@@ -255,6 +256,7 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
 //    z
     void addBall() {
         final Ball ball = new Ball();
+        ball.lol = lol;
         for(int i=0;i<N_;i++)
             rackets[i].ball=ball;
         ball.diedListener = onDiedListener;
@@ -271,7 +273,7 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
             ball.setX(center.getX());
             ball.setY(center.getY());
             ball.vx=f_die.nextInt(10);
-            ball.vy=-f_die.nextInt(10)+1;
+            ball.vy=-f_die.nextInt(10)+3;
         }
         else
         {

@@ -22,6 +22,7 @@ public class Ball {
     boolean isGdecreasing=true,twoP;
     float gravity=0;
     onDiedListener diedListener;
+    SinglePlayer lol;
 
     public double getX() {
         return x;
@@ -54,7 +55,7 @@ public class Ball {
     }
 
     interface onDiedListener{
-        void onDied(int index);
+        void onDied(int index,SinglePlayer lol);
     }
 
     boolean mew;
@@ -83,7 +84,7 @@ public class Ball {
             if (!rackets[n].safe) {
                 out.println(n+" "+rackets[n].hp);
                 if (rackets[n].hp > 0) rackets[n].hp -= 20 ;
-                else if(diedListener!=null) diedListener.onDied(n);
+                else if(diedListener!=null) diedListener.onDied(n,lol);
                 rackets[n].diedOnce = true;
         }
             else
