@@ -19,7 +19,7 @@ public class Ball {
     Point2D center;
     Racket[] rackets;
     int N;
-    boolean isGdecreasing=true;
+    boolean isGdecreasing=true,twoP;
     float gravity=1;
     onDiedListener diedListener;
     public double getX() {
@@ -73,15 +73,21 @@ public class Ball {
 //
         if(!base.contains(x+vx*dt,y+vy*dt)) {
             int n=getSideofPolygon();
-            if (!rackets[n].safe) {
-                if (rackets[n].hp > 0) rackets[n].hp--;
-                else diedListener.onDied(n);
-                rackets[n].diedOnce = true;
+            if(twoP) {
+            if(n==1||n==3) {vx=-vx;return;}
+            n/=2;
             }
+            if (!rackets[n].safe) {
+                out.println(n+" "+rackets[n].hp);
+                if (rackets[n].hp > 0) rackets[n].hp--;
+                else if(diedListener!=null) diedListener.onDied(n);
+                rackets[n].diedOnce = true;
+        }
             else
                 rackets[n].safe=false;
             double angleInRadians = Math.atan2(-vy,vx);
             double normal = 2*PI*n/N-PI/2;
+            if(twoP) normal = 2*PI*2/N-PI/2;
             double toRotate = 2*(angleInRadians-normal)+PI;
             double vn,vt,vn_,vt_;
             if(angleInRadians-normal<PI/2)

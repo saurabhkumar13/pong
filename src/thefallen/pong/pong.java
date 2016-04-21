@@ -84,7 +84,7 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                game = new pong(5);
+                game = new pong(2);
                 SwingUtilities.invokeLater(new Runnable() {
                     @Override
                     public void run() {
@@ -160,7 +160,7 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
         base.npoints=N+1;
         double scale=2;
         if(n%2==1) scale = 1;//+ .5 * exp((-n + 3)*10);
-        else if (n>2) scale = 1;//+ exp((-n + 4)*20);
+        else if (n>=2) scale = 1;//+ exp((-n + 4)*20);
         r=(floor(min(f_frame.getHeight(),f_frame.getWidth())/200)*100-50)*scale;
         center = new Point(f_frame.getWidth()/2,f_frame.getHeight()/2);
         for(int i=0;i<N_;i++) {
@@ -168,9 +168,8 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
             rackets[i].n = i;
             rackets[i].N = N;
             rackets[i].center=center;
-
             rackets[i].width = (int) (r * sin(PI / N) / 2);
-            final Racket racket =rackets[i];
+            final Racket racket = rackets[i];
             final TimingTarget circularMovement = new TimingTargetAdapter() {
                 @Override
                 public void timingEvent(Animator source, double fraction) {
@@ -200,6 +199,7 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
             ypoints[i]=(int)y;
             th+=2*PI/n;
         }
+        out.println(r);
         base.xpoints=xpoints;
         base.ypoints=ypoints;
         base.translate(f_frame.getWidth()/2,f_frame.getHeight()/2);
@@ -240,6 +240,7 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
         ball.base=base;
         ball.center=center;
         ball.N=N;
+        if(N_==2) ball.twoP=true;
         ball.omega=0.1;
         BufferedImage ballImage = f_ballImages[ball.imageIndex];
         if (initBALLproperties==null)
