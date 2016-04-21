@@ -229,22 +229,25 @@ public class ping extends Thread {
             }
             else {
                 ping messageSender = new ping(ip, Port);
-                broadcast(Misc.findServer.toString(),ip,Port);
 //                startGame(messageSender);
                 out.println("myIP: "+ip);
                 Scanner scanner = new Scanner(System.in);
                 while (true) {
                     String a = scanner.nextLine();
                     if(a.equals("stop")) {messageSender.Stop();break;}
-                    if(a.equals("start")) {
+                    else if(a.equals("start")) {
                         messageSender.State = state.WAIT;
-                        messageSender.serverDetails
+                        messageSender.serverDetails = new JSONObject()
                                 .accumulate("name","Saurabh's server")
                                 .accumulate("mode",Misc.Modes.DEATHMATCH)
                                 .accumulate("maxPlayers",3)
                                 .accumulate("password","lollipop");
                     }
-                    messageSender.broadcastToGroup(a);
+                    else if(a.equals("find"))
+                        broadcast(Misc.findServer.toString(),ip,Port);
+
+//                    messageSender.broadcastToGroup(a);
+
                 }
             }
         }
