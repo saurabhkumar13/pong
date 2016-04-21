@@ -103,10 +103,13 @@ public class ping extends Thread {
         }
         else if(command.equals(Misc.Command.JOINedslave.toString())&&State== Misc.state.WAITslave)
         {
-            out.println("Slave added "+sender+" "+message.getString("SlaveIP"));
+//            out.println("Slave added "+sender+" "+message.getString("SlaveIP"));
             JSONArray slaves = message.getJSONArray("Slaves");
+            slaves = slaves.getJSONArray(0);
             for(int i=0;i<slaves.length();i++)
+            {
                 IPset.add(slaves.getString(i));
+            }
         }
         else if(command.equals(Misc.Command.START.toString()))
         {
@@ -289,7 +292,7 @@ public class ping extends Thread {
 
     public static void main(String[] args) {
         try{
-            int Port = 7071;
+            int Port = 7001;
             String ip = getmyIP();
             if(ip.equals("")) {
                 out.println("Could not get host .. Are You connected to a network?");
@@ -313,6 +316,7 @@ public class ping extends Thread {
                     }
                     else if(a.equals("find")) {
 //                        messageSender.IPset.add(ip);
+                        messageSender.State = Misc.state.WAITslave;
                         broadcast(Misc.findServer.toString(),ip,Port);
                     }
 //                        sendMessage(Misc.findServer.toString(),ip,Port);
@@ -322,6 +326,8 @@ public class ping extends Thread {
                     }
                     else if(a.equals("joined"))
                         out.println(messageSender.IPset.size());
+                    else if(a.equals("state"))
+                        out.println(messageSender.State);
                     else if(a.equals("startGame"))
                     {
                         messageSender.broadcastToGroup((new JSONObject().accumulate("command",Misc.Command.START)).toString());
