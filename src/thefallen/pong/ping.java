@@ -20,6 +20,7 @@ public class ping extends Thread {
     private int Port;
     private String myIP;
     private SortedSet<String> IPset;
+    private SortedSet<String> initset;
     private HashMap<String,Racket> players;
     private static pong game;
     private DatagramSocket ds = null;
@@ -41,6 +42,7 @@ public class ping extends Thread {
         Port = port;
         myIP = IP;
         IPset = new TreeSet<>();
+        initset = new TreeSet<>();
         start();
         players = new HashMap<>();
     }
@@ -133,6 +135,14 @@ public class ping extends Thread {
                     ball.vx = Misc.INITballvx;
                     ball.vy = Misc.INITballvy;
                 }
+            }
+        }
+        else if (command.equals(Misc.Command.BallReady.toString()))
+        {
+            initset.add(sender);
+            if(initset.size()==IPset.size()) {
+                game.f_balls.get(0).vx = Misc.INITballvx;
+                game.f_balls.get(0).vy = Misc.INITballvy;
             }
         }
         else if (command.equals(Command.STOP))
@@ -265,6 +275,7 @@ public class ping extends Thread {
             @Override
             public void run() {
                 game = new pong(size);
+                game.master=master;
                 game.f_renderer.invokeLater(new Runnable() {
                     @Override
                     public void run() {

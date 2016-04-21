@@ -10,7 +10,7 @@ public class Misc {
     public static JSONObject join = new JSONObject().accumulate("command",Command.JOIN);
     public static JSONObject Slavejoined = new JSONObject().accumulate("command",Command.JOINedslave);
     public enum Command{
-        START,STOP,REPLY,GAMING,UpKey,DownKey,ReleaseKey,RequestBall,GotBall,FIND,FINDreply,JOIN,JOINedslave,INITBall,JOINack
+        START,STOP,REPLY,GAMING,UpKey,DownKey,ReleaseKey,RequestBall,GotBall,FIND,FINDreply,JOIN,JOINedslave,INITBall,JOINack,BallReady
     }
     public enum Modes{
         DEATHMATCH
