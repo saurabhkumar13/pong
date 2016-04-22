@@ -292,6 +292,8 @@ public class ping extends Thread {
             @Override
             public void run() {
                 game = new pong(size);
+                for(Racket r : game.rackets)
+                r.sentient=false;
                 game.master=master;
                 game.f_renderer.invokeLater(new Runnable() {
                     @Override
@@ -342,7 +344,7 @@ public class ping extends Thread {
 
 //                        sendMessage(Misc.findServer.toString(),ip,Port);
                     else if(a.equals("join")) {
-                        sendMessage("mew",scanner.nextLine(),Port);
+                        sendMessage((new JSONObject().accumulate("command",Misc.Command.JOIN)).toString(),scanner.nextLine(),Port);
                         out.println("sending "+(new JSONObject().accumulate("command",Misc.Command.JOIN)).toString()+" " + a.split(" ")[1]);
                     }
                     else if(a.equals("joined"))
