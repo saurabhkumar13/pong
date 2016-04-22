@@ -14,11 +14,11 @@ import static java.lang.System.out;
 
 public class Racket {
     int x, y;
-//    ping master;
+    ping master;
     boolean sentient=true,safe=false,user=false,diedOnce;
     float v,a,dt=.5f,f=.2f,speed=20,ai_speed=10;
     int initx,frame;
-    int width=100,height=10,state=0,hp=100,n,N;
+    int width=100,height=10,state=0,hp=3,n,N;
     Animator animator;
     Ball ball;
     Point2D center;
@@ -73,26 +73,32 @@ public class Racket {
 
         }
     }
-    public void pressed(int e)
-    {
-        if(e==KeyMap.left&&v!=-speed) {
-             v=-speed;
-//            if (sentient) {
-//                master.broadcastToGroup(ping.ingame.put("key",ping.Command.UpKey.ordinal()).toString());
-//            }
+    public void pressed(int e) {
+        if (e == KeyMap.left && v != -speed) {
+            v = -speed;
+            if (master != null) {
+                master.broadcastToGroup((new JSONObject().accumulate("command",Misc.Command.ACTION).accumulate("action",Misc.Command.L)).toString());
+            }
+        } else if (e == KeyMap.right && v != speed) {
+            v = speed;
+            if (master != null) {
+                master.broadcastToGroup((new JSONObject().accumulate("command",Misc.Command.ACTION).accumulate("action",Misc.Command.R)).toString());
+            }
         }
-        else if(e== KeyMap.right&&v!=speed) {
-            v=speed;
-//            if (sentient) {
-//                master.broadcastToGroup(ping.ingame.put("key",ping.Command.DownKey.ordinal()).toString());
-//            }
+        if (e == KeyMap.tiltLeft){
+            if (master != null) {
+                master.broadcastToGroup((new JSONObject().accumulate("command",Misc.Command.ACTION).accumulate("action",Misc.Command.LT)).toString());
+            }
+            state = 1;
         }
+        else if(e==KeyMap.tiltRight){
+            if (master != null) {
+                master.broadcastToGroup((new JSONObject().accumulate("command",Misc.Command.ACTION).accumulate("action",Misc.Command.RT)).toString());
+            }
+        state=-1;
+    }
 
-        if(e==KeyMap.tiltLeft)
-            state =  1;
-        else if(e==KeyMap.tiltRight)
-            state =-1;
-        else state = 0;
+        else state=0;
 
     }
     public void typed(int e)
@@ -101,9 +107,9 @@ public class Racket {
     {
         if(v!=0) {
             v=0;
-//            if (sentient) {
-//                master.broadcastToGroup(ping.ingame.put("key",ping.Command.ReleaseKey.ordinal()).toString());
-//            }
+            if (master!=null) {
+                master.broadcastToGroup((new JSONObject().accumulate("command",Misc.Command.ACTION).accumulate("action",Misc.Command.ReleaseKey)).toString());
+            }
         }
     }
 }

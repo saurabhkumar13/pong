@@ -70,9 +70,10 @@ public class ping extends Thread {
 
     void handleComms(String sender, String m)
     {
+
         JSONObject message = new JSONObject(m);
         String command = message.getString("command");
-        out.println("got msg: \""+m+"\" sender: "+sender);
+        out.println("got msg: \""+m+"\" sender: "+sender+" "+System.currentTimeMillis());
         if(command.equals(Command.START))
         {
             if(!sender.equals(myIP))
@@ -126,7 +127,7 @@ public class ping extends Thread {
         {
             Misc.INITballvx = message.getDouble("vx");
             Misc.INITballvy = message.getDouble("vy");
-            double vx,vy,normal=2 * PI * IPset.headSet(sender).size() / IPset.size();
+            double vx,vy,normal=2 * PI * (IPset.headSet(sender).size() - IPset.headSet(myIP).size()) / IPset.size();
             vx = (Misc.INITballvx*cos(normal) + Misc.INITballvy*sin(normal));
             vy = (-Misc.INITballvx*sin(normal) + Misc.INITballvy*cos(normal));
             Misc.INITballvx = vx;
@@ -144,9 +145,21 @@ public class ping extends Thread {
         {
             initset.add(sender);
             if(initset.size()==IPset.size()) {
+                err.println(System.currentTimeMillis());
                 game.f_balls.get(0).vx = Misc.INITballvx;
                 game.f_balls.get(0).vy = Misc.INITballvy;
             }
+        }
+        else if(command.equals(Misc.Command.ACTION.toString()))
+        {
+            int index = (IPset.headSet(sender).size() - IPset.headSet(myIP).size());
+            if(index<0) index+=IPset.headSet(myIP).size();
+            String action = message.getString("action");
+            if(action.equals(Misc.Command.L.toString())) game.rackets[index].pressed(KeyMap.left);
+            else if(action.equals(Misc.Command.R.toString())) game.rackets[index].pressed(KeyMap.right);
+            else if(action.equals(Misc.Command.LT.toString())) game.rackets[index].pressed(KeyMap.tiltLeft);
+            else if(action.equals(Misc.Command.RT.toString())) game.rackets[index].pressed(KeyMap.tiltRight);
+            else if(action.equals(Misc.Command.ReleaseKey.toString())) game.rackets[index].released(KeyMap.tiltRight);
         }
         else if (command.equals(Command.STOP))
             IPset.remove(sender);
@@ -220,7 +233,7 @@ public class ping extends Thread {
             DatagramPacket theOutput = new DatagramPacket(data, data.length, InetAddress.getByName(recIP), Port);
             theSocket.send(theOutput);
             // Screen.writeText(message);
-            out.println("\tsuccess: msg sent");
+            out.println("\tsuccess: msg sent "+System.currentTimeMillis());
             return true;
         } catch (IOException e) {
             err.println("failed: for "+recIP+" "+Port+" "+e.getLocalizedMessage());
@@ -244,10 +257,10 @@ public class ping extends Thread {
         String[] prefix = myIP.split("\\.");
         int lim = Integer.valueOf(prefix[1]);
 //        for(int i=0;i<=lim;i++){
-            for(int j=1;j<255;j++) {
-            sendMessage_mew(message,prefix[0]+"."+prefix[1]+"."+prefix[2]+"."+j,Port);
+            for(int j=1;j<10;j++) {
+            sendMessage(message,prefix[0]+"."+prefix[1]+"."+prefix[2]+"."+j,Port);
         }
-//        }
+//    }
     }
 
     public static String getmyIP()
@@ -293,7 +306,7 @@ public class ping extends Thread {
 
     public static void main(String[] args) {
         try{
-            int Port = 7020;
+            int Port = 6969;
             String ip = getmyIP();
             if(ip.equals("")) {
                 out.println("Could not get host .. Are You connected to a network?");
@@ -320,9 +333,16 @@ public class ping extends Thread {
                         messageSender.State = Misc.state.WAITslave;
                         broadcast(Misc.findServer.toString(),ip,Port);
                     }
+
+                    else if(a.equals("findp")) {
+//                        messageSender.IPset.add(ip);
+                        messageSender.State = Misc.state.WAITslave;
+                        sendMessage(Misc.findServer.toString(),scanner.nextLine(),Port);
+                    }
+
 //                        sendMessage(Misc.findServer.toString(),ip,Port);
-                    else if(a.split(" ")[0].equals("join")) {
-                        sendMessage((new JSONObject().accumulate("command",Misc.Command.JOIN)).toString(),a.split(" ")[1],Port);
+                    else if(a.equals("join")) {
+                        sendMessage("mew",scanner.nextLine(),Port);
                         out.println("sending "+(new JSONObject().accumulate("command",Misc.Command.JOIN)).toString()+" " + a.split(" ")[1]);
                     }
                     else if(a.equals("joined"))
