@@ -10,4 +10,5 @@ public class KeyMap {
     public static int right = KeyEvent.VK_RIGHT;
     public static int tiltLeft = KeyEvent.VK_D;
     public static int tiltRight = KeyEvent.VK_A;
+    public static int exit = KeyEvent.VK_ESCAPE;
 }

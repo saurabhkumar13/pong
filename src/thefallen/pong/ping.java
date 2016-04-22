@@ -243,10 +243,11 @@ public class ping extends Thread {
     public static void broadcast(String message,String myIP,int Port){
         String[] prefix = myIP.split("\\.");
         int lim = Integer.valueOf(prefix[1]);
-        for(int i=0;i<=lim;i++){
+//        for(int i=0;i<=lim;i++){
             for(int j=1;j<255;j++) {
-            sendMessage_mew(message,prefix[0]+"."+prefix[1]+"."+i+"."+j,Port);
-        }}
+            sendMessage_mew(message,prefix[0]+"."+prefix[1]+"."+prefix[2]+"."+j,Port);
+        }
+//        }
     }
 
     public static String getmyIP()
@@ -292,7 +293,7 @@ public class ping extends Thread {
 
     public static void main(String[] args) {
         try{
-            int Port = 7001;
+            int Port = 7020;
             String ip = getmyIP();
             if(ip.equals("")) {
                 out.println("Could not get host .. Are You connected to a network?");

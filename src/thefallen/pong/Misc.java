@@ -18,7 +18,7 @@ public class Misc {
     public enum state {
         INIT,WAITmaster,WAITslave
     }
-    static double INITballvx,INITballvy;
+    static double INITballvx = 7,INITballvy = 5;
 }
 
 

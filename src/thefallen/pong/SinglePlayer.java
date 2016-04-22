@@ -1,10 +1,12 @@
 package thefallen.pong;
 
 import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
-import java.lang.reflect.Array;
-import java.util.Arrays;
-
+import static com.sun.glass.ui.Cursor.setVisible;
 import static java.lang.System.out;
 
 /**
@@ -15,100 +17,178 @@ public class SinglePlayer {
 
     pong game;
     int N;
-    int uHP;
-    boolean[] died;
-    boolean constructing;
-    static int init_num = 2;
+    int uHP = 100;
+    static int init_num = 4;
     static int init_hp = 100;
+    boolean pause_flag = false;
+    Timer[] timer = new Timer[3];
+    int tim = 0;
+    SinglePlayer quest;
+    String time;
 
-    Ball.onDiedListener diedListener = new Ball.onDiedListener() {
-        @Override
-        public void onDied(int index,SinglePlayer lol) {
-            racketOnDied(index,lol);
 
-        }
-    };
+    Timer countdownTimer;
+    int timeRemaining = 10;
 
-    public void racketOnDied(int index,SinglePlayer quest)
+    public SinglePlayer()
     {
-        out.println(index + " dieded");
+        quest = this;
+    }
 
-        if (!quest.constructing)
+    class CountdownTimerListener implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            if (--timeRemaining > 0) {
+                time = String.valueOf(timeRemaining);
+            } else {
+                time = "Time's up!";
+                countdownTimer.stop();
+            }
+        }
+    }
+
+
+    public void pressed(int e)
+    {
+        if(e == KeyMap.exit)
         {
-            quest.died[index]=true;
-            quest.uHP=game.rackets[0].hp;
-
-            if(N<6)
+            if(pause_flag)
             {
-                out.println("New Game Called "+N);
-                quest.constructing=true;
-                setupGame(N+1,quest);
+                pause_flag = false;
+                game.f_balls.get(0).dt = 1;
+                game.rackets[0].dt = 0.5f;
+                out.println("cdsjhkc");
             }
             else
             {
-                out.println("Game Pause "+ N);
-                for(int i = 0;i<N;i++)
-                {
-                    game.rackets[i].dt = 0f;
-                }
-                game.f_balls.get(0).dt = 0f;
+                pause_flag = true;
+                game.f_balls.get(0).dt = 0;
+                game.rackets[0].dt = 0f;
+                out.println("jhdcj");
             }
+
         }
     }
 
-    public void setupGame(int n,SinglePlayer quest)
+
+
+
+    public void instantiate_game(int n)
     {
-        N = n;
-        out.println("Number of players : "+n);
-        SwingUtilities.invokeLater(new Runnable() {
+        timer[0] = new Timer(0,gameInstance(n));
+        timer[0].setRepeats(false); // Only execute once
+        timer[1] = new Timer(0,gameInstance(n+1));
+        timer[1].setRepeats(false); // Only execute once
+        timer[2] = new Timer(0,gameInstance(n+2));
+        timer[2].setRepeats(false); // Only execute once
+        countdownTimer = new Timer(1000, new CountdownTimerListener());
+        countdownTimer.start();
 
+        timer[0].start(); // Go go go!
+        try
+        {
+            Thread.sleep(10000);
+            out.print("dih");
+        }
+        catch (Exception e)
+        {
+            out.println("djhc");
+        }
+        timer[0].stop();
+        tim = 1;
+        timeRemaining = 10;
+        countdownTimer.start();
+        timer[1].start(); // Go go go!
+        try
+        {
+            Thread.sleep(10000);
+            out.print("dih2");
+        }
+        catch (Exception e)
+        {
+            out.println("djhc2");
+        }
+        timer[1].stop();
+        tim = 2;
+        timer[2].start(); // Go go go!
+        timeRemaining = 10;
+        countdownTimer.start();
+        try
+        {
+            Thread.sleep(10000);
+            out.print("dih3");
+        }
+        catch (Exception e)
+        {
+            out.println("djhc3");
+        }
+        timer[2].stop();
+
+    }
+
+    public ActionListener gameInstance (int n) {
+
+        return new ActionListener() {
             @Override
-            public void run() {
-
-                game = new pong(n);
-                game.lol = quest;
+            public void actionPerformed(ActionEvent arg0) {
+                out.println("Number of players : " + n);
                 SwingUtilities.invokeLater(new Runnable() {
+
                     @Override
-                    public void run()
-                    {
-                        game.onDiedListener = quest.diedListener;
-                        game.addBall();
+                    public void run() {
 
-                        for (int i = 0, k = 0; i < N; i++)
-                        {
-                            if(i == 0)
-                            {
-                                game.rackets[0].hp = quest.uHP;
-                            }
-                            else
-                            {
-                                game.rackets[i].hp = init_hp;
-                                out.println("Init_hp"+i+" "+game.rackets[i].hp);
-                            }
-                            if(i < N-1)
-                            {
-                                if (quest.died[i]) {
-                                    quest.died[i] = false;
+                        game = new pong(n);
+                        game.lol = quest;
+
+                        SwingUtilities.invokeLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                game.addBall();
+                                game.f_balls.get(0).vx = 3;
+                                game.f_balls.get(0).vy = 5;
+
+                                for (int i = 0; i < n; i++) {
+                                    if (i == 0) {
+                                        game.rackets[0].hp = uHP;
+                                    } else {
+                                        game.rackets[i].hp = init_hp;
+                                        out.println("Init_hp" + i + " " + game.rackets[i].hp);
+                                    }
                                 }
-                            }
-                        }
+                                game.f_frame.addKeyListener(new KeyListener() {
+                                    @Override
+                                    public void keyTyped(KeyEvent e) {
 
-                        quest.died = new boolean[n];
-                        Arrays.fill(quest.died,false);
-                        constructing = false;
+                                    }
+
+                                    @Override
+                                    public void keyPressed(KeyEvent e) {
+                                        pressed(e.getKeyCode());
+                                    }
+
+                                    @Override
+                                    public void keyReleased(KeyEvent e) {
+
+                                    }
+                                });
+                            }
+                        });
                     }
                 });
             }
-        });
+        };
     }
 
+
+    public void startQuest()
+    {
+        N = init_num;
+        instantiate_game(N);
+
+    }
 
     static public void main(String[] args)
     {
         SinglePlayer quest = new SinglePlayer();
-        quest.died = new boolean[init_num];
-        Arrays.fill(quest.died,false);
-        quest.uHP = init_hp;
-        quest.setupGame(init_num,quest);
+        quest.startQuest();
     }
 }

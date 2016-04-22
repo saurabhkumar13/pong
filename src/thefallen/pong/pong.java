@@ -269,12 +269,20 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
         if(N_==2) ball.twoP=true;
         ball.omega=0.1;
         BufferedImage ballImage = f_ballImages[ball.imageIndex];
+//        if (initBALLproperties==null)
+//        {
             ball.setX(center.getX());
             ball.setY(center.getY());
-        if (master!=null) {
-            ball.vx=f_die.nextInt(10);
-            ball.vy=-f_die.nextInt(10)+3;
-        }
+//            ball.vx=Misc.INITballvx;//f_die.nextInt(10);
+//            ball.vy=Misc.INITballvy;//-f_die.nextInt(10)+3;
+//        }
+//        else
+//        {
+//            ball.setX(initBALLproperties.getInt("x"));
+//            ball.setY(initBALLproperties.getInt("y"));
+//            ball.vx=initBALLproperties.getInt("vx");
+//            ball.vy=initBALLproperties.getInt("vy");
+//        }
         err.println("init: "+initBALLproperties);
         ball.frameW = f_panel.getWidth() - ballImage.getWidth();
         ball.frameH = f_panel.getHeight() - ballImage.getHeight();
@@ -296,7 +304,7 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
         ball.animator.start();
 
         f_balls.add(ball);
-        if (master!=null)
+        if(master!=null)
             master.broadcastToGroup((new JSONObject().accumulate("command",Misc.Command.BallReady)).toString());
     }
 
@@ -380,6 +388,16 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
                     th, center.getX(), center.getY())
                     .createTransformedShape(s3));
 
+            if(lol != null) {
+                g2d.setColor(Color.white);
+                g2d.setFont(new Font("SansSerif", Font.BOLD, 12));
+                g2d.drawString("TIMER BITCH!!", 600, 100);
+                if (lol.time != null) {
+                    g2d.drawString(lol.time, 600, 120);
+                }
+            }
+            g2d.setPaint(Color.black);
+
             if(s3.contains(f_balls.get(0).getX(),f_balls.get(0).getY()))
             {
                 if(rackets[i].sentient) {
@@ -416,7 +434,7 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
             g2d.fillOval((int)ball.getX()-5, (int)ball.getY()-5,10,10);
 //            g2d.setPaint(Color.white);
 //            g2d.fillOval((int)ball.getX()+(int)(25*cos(ball.theta))-5, (int)ball.getY()+(int)(25*sin(ball.theta))-5,10,10);
-            g2d.setPaint(new Color(ball.gravity/2+0.5f,ball.gravity/2+0.5f,ball.gravity/2+0.5f));
+//            g2d.setPaint(new Color(ball.gravity/2+0.5f,ball.gravity/2+0.5f,ball.gravity/2+0.5f));
             g2d.fillOval((int)center.getX()-5, (int)center.getY()-5,10,10);
 
         }
