@@ -21,8 +21,7 @@ public class SinglePlayer {
     static int init_num = 4;
     static int init_hp = 100;
     boolean pause_flag = false;
-    Timer[] timer = new Timer[3];
-    int tim = 0;
+    Timer timer;
     SinglePlayer quest;
     String time;
 
@@ -72,71 +71,40 @@ public class SinglePlayer {
 
 
 
-    public void instantiate_game(int n)
+    public void instantiate_game()
     {
-        timer[0] = new Timer(0,gameInstance(n));
-        timer[0].setRepeats(false); // Only execute once
-        timer[1] = new Timer(0,gameInstance(n+1));
-        timer[1].setRepeats(false); // Only execute once
-        timer[2] = new Timer(0,gameInstance(n+2));
-        timer[2].setRepeats(false); // Only execute once
-        countdownTimer = new Timer(1000, new CountdownTimerListener());
-        countdownTimer.start();
-
-        timer[0].start(); // Go go go!
-        try
-        {
-            Thread.sleep(10000);
-            out.print("dih");
+        timer = new Timer(0,gameInstance());
+        timer.setRepeats(false); // Only execute once
+        while(true) {
+            countdownTimer = new Timer(1000, new CountdownTimerListener());
+            countdownTimer.start();
+            timer.start();
+            try {
+                gameInstance();
+                Thread.sleep(10000);
+                out.print("sleeping now for 10s");
+            } catch (Exception e) {
+                out.println("oops");
+            }
+            timer.stop();
+            N++;
+            timeRemaining = 10;
         }
-        catch (Exception e)
-        {
-            out.println("djhc");
-        }
-        timer[0].stop();
-        tim = 1;
-        timeRemaining = 10;
-        countdownTimer.start();
-        timer[1].start(); // Go go go!
-        try
-        {
-            Thread.sleep(10000);
-            out.print("dih2");
-        }
-        catch (Exception e)
-        {
-            out.println("djhc2");
-        }
-        timer[1].stop();
-        tim = 2;
-        timer[2].start(); // Go go go!
-        timeRemaining = 10;
-        countdownTimer.start();
-        try
-        {
-            Thread.sleep(10000);
-            out.print("dih3");
-        }
-        catch (Exception e)
-        {
-            out.println("djhc3");
-        }
-        timer[2].stop();
-
     }
 
-    public ActionListener gameInstance (int n) {
+    public ActionListener gameInstance () {
 
         return new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent arg0) {
-                out.println("Number of players : " + n);
+                out.println("Number of players : " + N);
                 SwingUtilities.invokeLater(new Runnable() {
 
                     @Override
                     public void run() {
 
-                        game = new pong(n);
+                        game = new pong(N);
+
                         game.lol = quest;
 
                         SwingUtilities.invokeLater(new Runnable() {
@@ -146,7 +114,7 @@ public class SinglePlayer {
                                 game.f_balls.get(0).vx = 3;
                                 game.f_balls.get(0).vy = 5;
 
-                                for (int i = 0; i < n; i++) {
+                                for (int i = 0; i < N; i++) {
                                     if (i == 0) {
                                         game.rackets[0].hp = uHP;
                                     } else {
@@ -182,7 +150,7 @@ public class SinglePlayer {
     public void startQuest()
     {
         N = init_num;
-        instantiate_game(N);
+        instantiate_game();
 
     }
 

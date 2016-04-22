@@ -387,7 +387,6 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
             s3 = (AffineTransform.getRotateInstance(
                     th, center.getX(), center.getY())
                     .createTransformedShape(s3));
-
             if(lol != null) {
                 g2d.setColor(Color.white);
                 g2d.setFont(new Font("SansSerif", Font.BOLD, 12));
