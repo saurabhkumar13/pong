@@ -78,7 +78,7 @@ public class Ball {
         if(!base.contains(x+vx*dt,y+vy*dt)) {
             int n=getSideofPolygon();
             if(twoP) {
-            if(n==1||n==3) {vx=-vx;return;}
+            if((n==1 && vx > 0) || (n==3 && vx <0)) {vx=-vx;return;}
             n/=2;
             }
             if (!rackets[n].safe) {
@@ -111,16 +111,23 @@ public class Ball {
         }
 //        if(x+vx*dt>frameW||x+vx<0) vx=-vx;
 //        if(y+vy*dt>frameH||y+vy<0) vy=-vy;
-        x+=vx*dt;
-        y+=vy*dt;
+        x += vx * dt;
+        y += vy * dt;
 
     }
-    void padCollision(int state)
-    {
-        if (vy<0) return;
-        double vx_ = vx, normal=PI/4*state;
-        vx = (vx_*cos(normal) + vy*sin(normal));
-        vy = (vx_*sin(normal) - vy*cos(normal));
+
+    void padCollision(int state,int i) {
+        double vy_ = vy, vx_ = vx;
+        double theta = (2 * PI * i) / N - (PI * state) / 8;
+        double temp = (vx_ * sin(theta) + vy_ * cos(theta));
+        double alpha = atan2(-vy_, vx_);
+        double delta = 2 * (theta - alpha);
+
+        if (temp < 0) return;
+
+        vx = vx_ * cos(delta) + vy_ * sin(delta);
+        vy = vy_ * cos(delta) - vx_ * sin(delta);
+
     }
 
     double pos(double a)

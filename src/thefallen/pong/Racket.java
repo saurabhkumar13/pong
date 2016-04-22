@@ -8,71 +8,111 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
+import java.util.Random;
 
 import static java.lang.Math.PI;
+import static java.lang.Math.cos;
+import static java.lang.Math.sin;
+import static java.lang.System.err;
 import static java.lang.System.out;
 
 public class Racket {
+
     int x, y;
+
     ping master;
-    boolean sentient=true,safe=false,user=false,diedOnce;
-    float v,a,dt=.5f,f=.2f,speed=20,ai_speed=10;
-    int initx,frame;
-    int width=100,height=10,state=0,hp=3,n,N;
+
+    boolean sentient = true, safe = false, user = false, diedOnce, decided = true;
+
+    float v, a, dt=.5f, f=.2f, speed=20, ai_speed=10;
+
+    int initx,inity,frame;
+
+    int width = 100, height = 10, state = 0, hp = 100, n, N;
+
+    double bvx, bvy;
+
     Animator animator;
+
     Ball ball;
+
     Point2D center;
 
-    //    public Racket(ping master,boolean sentient){
-//        if(master!=null) this.master=master;
-    //        this.sentient=sentient;
-//    }
-    public int getX() {
-        return x;
-    }
-    public int getY() {
-        return y;
-    }
+    public void update(int index){
 
-    public int getH() {
-        return height;
-    }
-    public int getW() {
-        return width;
-    }
+        v += a * dt;
 
-    public void update(){
-        v+=a*dt;
-        if(ball!=null)
+        if(ball != null)
         {
-            if(sentient&&!user)
+            if(sentient)
             {
                 Point2D ballpos = new Point((int)ball.x,(int)ball.y);
+
+                double vx_ = ball.vx;
+                double vy_ = ball.vy;
+                double theta = 2 * PI * index / N;
+                bvx = vx_ * cos(theta) - vy_ * sin(theta);
+                bvy = vx_ * sin(theta) + vy_ * cos(theta);
+
                 AffineTransform.getRotateInstance(
                         2 * PI * n / (N), center.getX(), center.getY())
                         .transform(ballpos, ballpos);
 
-//                x = (int) ballpos.getX() - initx - width / 2;//-200-40*(N-3);
-                int dir = (int) ballpos.getX() - initx - width / 2;//-200-40*(N-3);
-                if (dir - x > width / 2) dir = 1;
-                else if (dir - x < - width / 2) dir = -1;
-                else dir = 0;
-                x+=ai_speed*dir*dt;
-                if(x+width>frame) x = frame - width;
-                else if(x<0) x=0;
+                int dir_x = (int) ballpos.getX() - initx - width / 2;//-200-40*(N-3);
+                int dir_y = (int) ballpos.getY();
+
+                Random rand = new Random();
+                int t1 = 2;
+
+                if (dir_x - x > width * t1 / 20)
+                    dir_x = 1;
+
+                else if (dir_x - x < - width * t1 / 20)
+                    dir_x = -1;
+
+                else dir_x = 0;
+
+                x += ai_speed * dir_x * dt;
+
+                int t2 = rand.nextInt(30);
+
+                if(dir_y - inity + 2 * bvy > - 40)
+                {
+                    if(!decided)
+                    {
+                        if(t2 % 5 == 0) state = 1;
+                        else if (t2 % 5 == 1) state = -1;
+                        else state = 0;
+                        decided = true;
+                    }
+                }
+                else
+                {
+                    decided = false;
+                    state = 0;
+                }
+
+                if (x + width > frame)
+                    x = frame - width;
+                else if (x < 0)
+                    x = 0;
+
 //                y =(int)ballpos.getY();//-200-40*(N-3);
 //                out.println("racket"+n+" "+(2*PI*n/(N))+" "+ballpos.getX()+" "+ballpos.getY());
 //                out.println("RACKET"+frame+" "+width);
             }
+
             else
+
             {
-                if(x+v*dt>frame) x = frame;
-                else if(x+v*dt<-width) x = -width;
-                else x+=v*dt;
+                if (x + v * dt > frame - width) x = frame - width;
+                else if (x + v * dt < 0) x = 0;
+                else x += v * dt;
             }
 
         }
     }
+
     public void pressed(int e) {
         if (e == KeyMap.left && v != -speed) {
             v = -speed;
@@ -101,8 +141,10 @@ public class Racket {
         else state=0;
 
     }
+
     public void typed(int e)
     {}
+
     public void released(int e)
     {
         if(v!=0) {

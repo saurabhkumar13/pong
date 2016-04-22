@@ -89,11 +89,14 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                game = new pong(2);
+                game = new pong(5);
                 SwingUtilities.invokeLater(new Runnable() {
                     @Override
                     public void run() {
-                        game.addBall();}});
+                        game.addBall();
+                        game.ball.vx = 3;
+                        game.rackets[0].sentient = false;
+                    }});
             }
         });
     }
@@ -193,11 +196,12 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
             rackets[i].width = (int) (r * sin(PI / N) / 2);
 
             final Racket racket = rackets[i];
+            final int index = i;
 
             final TimingTarget circularMovement = new TimingTargetAdapter() {
                 @Override
                 public void timingEvent(Animator source, double fraction) {
-                    racket.update();
+                    racket.update(index);
                 }
             };
 
@@ -233,6 +237,7 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
         for (Racket racket : rackets)
         {
             racket.initx = base.xpoints[N/ 2];
+            racket.inity = base.ypoints[N/ 2] - racket.height;
             racket.frame = (int)(2*r*sin(PI/n));
         }
     }
@@ -339,7 +344,9 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
     public void renderUpdate() {
         // Nothing to do
     }
+
     float scale = 1.5f;
+
     @Override
     public void render(Graphics2D g2d, int width, int height) {
 
@@ -359,9 +366,9 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
             Rectangle pad = new Rectangle();
             Rectangle pad2 = new Rectangle();
             Rectangle pad3 = new Rectangle();
-            pad.setRect(rackets[i].getX() + base.xpoints[N/ 2], rackets[i].getY() + base.ypoints[N/ 2] - rackets[i].height, rackets[i].width, 2*rackets[i].height);
-            pad3.setRect(rackets[i].getX() + base.xpoints[N/ 2] - (padding/2) * rackets[i].width, rackets[i].getY() + base.ypoints[N/ 2] - rackets[i].height, rackets[i].width*(1+padding), 2*rackets[i].height*(1+padding/2));
-            pad2.setRect(rackets[i].getX() + base.xpoints[N/ 2] + 5, rackets[i].getY() + base.ypoints[N/ 2] - rackets[i].height/2, rackets[i].width*rackets[i].hp*9/1000, rackets[i].height/2);
+            pad.setRect(rackets[i].x + base.xpoints[N/ 2], rackets[i].y + base.ypoints[N/ 2] - rackets[i].height, rackets[i].width, 2*rackets[i].height);
+            pad3.setRect(rackets[i].x+ base.xpoints[N/ 2] - (padding/2) * rackets[i].width, rackets[i].y + base.ypoints[N/ 2] - rackets[i].height, rackets[i].width*(1+padding), 2*rackets[i].height*(1+padding/2));
+            pad2.setRect(rackets[i].x + base.xpoints[N/ 2] + 5, rackets[i].y + base.ypoints[N/ 2] - rackets[i].height/2, rackets[i].width*rackets[i].hp*9/1000, rackets[i].height/2);
             g2d.setPaint(Color.black);
 
             Shape s = (AffineTransform.getRotateInstance(
@@ -388,6 +395,7 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
             s3 = (AffineTransform.getRotateInstance(
                     th, center.getX(), center.getY())
                     .createTransformedShape(s3));
+
             if(lol != null) {
                 g2d.setColor(Color.white);
                 g2d.setFont(new Font("SansSerif", Font.BOLD, 12));
@@ -396,17 +404,23 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
                     g2d.drawString(lol.time, 600, 120);
                 }
             }
+
             g2d.setPaint(Color.black);
 
             if(s3.contains(ball.getX(),ball.getY()))
             {
                 if(rackets[i].sentient) {
-                    if (i == 0) ball.padCollision(rackets[i].state);
-                    else {
-                        double normal = 2*PI*i/N-PI/2;
-                        double vn = ball.vx*cos(normal)-ball.vy*sin(normal);
-                        if(vn>0) rackets[i].safe=true;
-                    }
+//                    if (i == 0)
+                        ball.padCollision(rackets[i].state,i);
+//                    else {
+//                        double normal = 2 * PI * i / N - PI / 2;
+//                        double vn = ball.vx * cos(normal) - ball.vy * sin(normal);
+//                        if(vn>0) rackets[i].safe = true;
+//                    }
+                }
+                else
+                {
+                    ball.padCollision(rackets[i].state,i);
                 }
             }
 
@@ -427,6 +441,7 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
             th-=2*PI*N/(N_*N);
 
         }
+
         g2d.setPaint(Color.darkGray);
 
 
