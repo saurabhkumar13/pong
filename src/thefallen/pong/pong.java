@@ -83,18 +83,19 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
     double padding = 0.1;
     SinglePlayer lol;
     ping master;
+    static int diff = 3;
 
     public static void main(String args[]){
         System.setProperty("swing.defaultlaf", "com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                game = new pong(5);
+                game = new pong(7);
                 SwingUtilities.invokeLater(new Runnable() {
                     @Override
                     public void run() {
                         game.addBall();
-                        game.ball.vx = 3;
+                        game.ball.vx = 3 + diff;
                         game.rackets[0].sentient = false;
                     }});
             }
