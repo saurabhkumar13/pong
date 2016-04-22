@@ -32,6 +32,8 @@ public class Racket {
 
     double bvx, bvy;
 
+    int difficulty = 5;
+
     Animator animator;
 
     Ball ball;
@@ -47,7 +49,7 @@ public class Racket {
             if(sentient)
             {
                 Point2D ballpos = new Point((int)ball.x,(int)ball.y);
-
+                ai_speed = 10 + 2*difficulty;
                 double vx_ = ball.vx;
                 double vy_ = ball.vy;
                 double theta = 2 * PI * index / N;
@@ -72,7 +74,10 @@ public class Racket {
 
                 else dir_x = 0;
 
-                x += ai_speed * dir_x * dt;
+                if(dir_y - inity + 2 * bvy > - difficulty * 40)
+                {
+                    x += ai_speed * dir_x * dt;
+                }
 
                 int t2 = rand.nextInt(30);
 
@@ -80,8 +85,8 @@ public class Racket {
                 {
                     if(!decided)
                     {
-                        if(t2 % 5 == 0) state = 1;
-                        else if (t2 % 5 == 1) state = -1;
+                        if(t2 % (8 - difficulty) == 0) state = 1;
+                        else if (t2 % (8 - difficulty) == 1) state = -1;
                         else state = 0;
                         decided = true;
                     }
