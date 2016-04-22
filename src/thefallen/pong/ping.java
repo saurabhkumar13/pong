@@ -134,7 +134,7 @@ public class ping extends Thread {
             Misc.INITballvy = vy;
 //
             if(game!=null) {
-                Ball ball = game.f_balls.get(0);
+                Ball ball = game.ball;
                 if (ball!=null) {
                     ball.vx = Misc.INITballvx;
                     ball.vy = Misc.INITballvy;
@@ -146,8 +146,8 @@ public class ping extends Thread {
             initset.add(sender);
             if(initset.size()==IPset.size()) {
                 err.println(System.currentTimeMillis());
-                game.f_balls.get(0).vx = Misc.INITballvx;
-                game.f_balls.get(0).vy = Misc.INITballvy;
+                game.ball.vx = Misc.INITballvx;
+                game.ball.vy = Misc.INITballvy;
             }
         }
         else if(command.equals(Misc.Command.ACTION.toString()))
@@ -177,7 +177,7 @@ public class ping extends Thread {
             }
         else if (command.equals(Command.RequestBall))
         {
-            Ball ball = game.f_balls.get(0);
+            Ball ball = game.ball;
             broadcastToGroup(new JSONObject().put("command",Command.GotBall).put("sync",new JSONObject().accumulate("ax",ball.ax).accumulate("ay",ball.ay).accumulate("vx",ball.vx).accumulate("vy",ball.vy).accumulate("x",ball.x).accumulate("y",ball.y)).toString());
         }
         else if (command.equals(Command.GotBall))

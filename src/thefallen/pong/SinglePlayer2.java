@@ -20,7 +20,7 @@ public class SinglePlayer2 {
     pong game;
     int N;
     int uHP = 100;
-    static int init_num = 7;
+    static int init_num = 2;
     static int init_hp = 0;
     boolean pause_flag = false,constructing;
     SinglePlayer2 quest;
@@ -32,7 +32,6 @@ public class SinglePlayer2 {
             {
                 err.println("started constructing");
                 uHP = game.rackets[0].hp;
-                pause();
                 startGame(N-1);
                 N--;
                 constructing=true;
@@ -51,9 +50,10 @@ public class SinglePlayer2 {
     public void pressed(int e)
     {
         if(e == KeyMap.exit)
-        {
             pause();
-        }
+        else if(e==KeyMap.resume)
+            if(!pause_flag)
+                pause();
     }
 
     void pause()
@@ -61,16 +61,14 @@ public class SinglePlayer2 {
         if(pause_flag)
         {
             pause_flag = false;
-            game.f_balls.get(0).dt = 1;
-            game.rackets[0].dt = 0.5f;
-            out.println("cdsjhkc");
+            game.pause();
+            out.println("paused");
         }
         else
         {
             pause_flag = true;
-            game.f_balls.get(0).dt = 0;
-            game.rackets[0].dt = 0f;
-            out.println("jhdcj");
+            game.resume();
+            out.println("resuming");
         }
 
     }
@@ -81,49 +79,50 @@ public class SinglePlayer2 {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
+                if(game!=null) {
+                    game.pause();
+                    game.f_frame.setVisible(false);
+                }
                 game = new pong(n);
-                game.onDiedListener = diedListener;
-                SwingUtilities.invokeLater(new Runnable() {
+                game.ball.diedListener= diedListener;
+                pause();
+                game.ball.vx = 6;
+                game.ball.vy = 6;
+                constructing = false;
+                err.println("constructing done");
+                for (int i = 0; i < n; i++) {
+                    if (i == 0) {
+                        game.rackets[0].hp = uHP;
+                    } else {
+                        game.rackets[i].hp = init_hp;
+                    }
+                }
+                game.f_frame.addKeyListener(new KeyListener() {
                     @Override
-                    public void run() {
-                        game.addBall();
-                        game.f_balls.get(0).vx = 6;
-                        game.f_balls.get(0).vy = 6;
-                        constructing = false;
-                        err.println("constructing done");
-                        for (int i = 0; i < n; i++) {
-                            if (i == 0) {
-                                game.rackets[0].hp = uHP;
-                            } else {
-                                game.rackets[i].hp = init_hp;
-                            }
-                        }
-                        game.f_frame.addKeyListener(new KeyListener() {
-                            @Override
-                            public void keyTyped(KeyEvent e) {
-                            }
+                    public void keyTyped(KeyEvent e) {
+                    }
 
-                            @Override
-                            public void keyPressed(KeyEvent e) {
-                                pressed(e.getKeyCode());
-                            }
+                    @Override
+                    public void keyPressed(KeyEvent e) {
+                        pressed(e.getKeyCode());
+                    }
 
-                            @Override
-                            public void keyReleased(KeyEvent e) {
+                    @Override
+                    public void keyReleased(KeyEvent e) {
 
-                            }
-                        });
-                    }});
+                    }
+                });
             }
         });
 
     }
 
 
-    public void startQuest()
+      public void startQuest()
     {
         N = init_num;
         startGame(N);
+        pause();
     }
 
     static public void main(String[] args)

@@ -78,6 +78,7 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
     final Polygon base;
     static  pong game;
     final int N,N_;
+    Ball ball;
     Ball.onDiedListener onDiedListener;
     double padding = 0.1;
     SinglePlayer lol;
@@ -208,6 +209,7 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
 
         rackets[0].user=true;
         setupBase();
+        addBall();
     }
 
     void setupBase()
@@ -254,13 +256,29 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
     private static final Interpolator SPLINE_1_0_1_1 = new SplineInterpolator(1.00, 0.00, 1.00, 1.00);
     JSONObject initBALLproperties = null;
 
-//    z
+    void pause()
+    {
+        ball.dt = 0;
+        rackets[0].dt=0;
+    }
+    boolean paused()
+    {
+        return ball.dt == 0;
+    }
+
+    void resume()
+    {
+        ball.dt = 1;
+        rackets[0].dt = 0.5f;
+    }
+
+
     void addBall() {
-        final Ball ball = new Ball();
+        ball = new Ball();
         ball.lol = lol;
         for(int i=0;i<N_;i++)
             rackets[i].ball=ball;
-        ball.diedListener = onDiedListener;
+        out.println("ball added "+(onDiedListener==null));
         ball.rackets=rackets;
         ball.imageIndex = f_die.nextInt(5);
         ball.base=base;
@@ -268,7 +286,6 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
         ball.N=N;
         if(N_==2) ball.twoP=true;
         ball.omega=0.1;
-        BufferedImage ballImage = f_ballImages[ball.imageIndex];
 //        if (initBALLproperties==null)
 //        {
             ball.setX(center.getX());
@@ -284,8 +301,6 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
 //            ball.vy=initBALLproperties.getInt("vy");
 //        }
         err.println("init: "+initBALLproperties);
-        ball.frameW = f_panel.getWidth() - ballImage.getWidth();
-        ball.frameH = f_panel.getHeight() - ballImage.getHeight();
 
         final int duration = 4;
 
@@ -302,23 +317,11 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
         ball.animator = new Animator.Builder().setDuration(duration, SECONDS).addTarget(circularMovement)
                 .setRepeatCount(Animator.INFINITE).setRepeatBehavior(Animator.RepeatBehavior.LOOP).setInterpolator(i).build();
         ball.animator.start();
-
-        f_balls.add(ball);
         if(master!=null)
             master.broadcastToGroup((new JSONObject().accumulate("command",Misc.Command.BallReady)).toString());
     }
 
-    void removeBall() {
-        if (f_balls.isEmpty())
-            return;
 
-        Ball ball = f_balls.remove(0);
-        if (ball != null) {
-            ball.animator.stop();
-        }
-    }
-
-    final List<Ball> f_balls = new ArrayList<>();
     @Override
     public void renderSetup(GraphicsConfiguration gc) {
         f_ballImages = new BufferedImage[thefallen.pong.Resources.SPHERES.length];
@@ -346,9 +349,7 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
                 new float[] { 3, 1 }, 0));
         g2d.setPaint(Color.gray);
 
-        if (f_balls.size()==0) return;
 
-        Ball ball = f_balls.get(0);
         g2d.fillPolygon(base);
         g2d.setPaint(Color.black);
         double th = 0;
@@ -397,7 +398,7 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
             }
             g2d.setPaint(Color.black);
 
-            if(s3.contains(f_balls.get(0).getX(),f_balls.get(0).getY()))
+            if(s3.contains(ball.getX(),ball.getY()))
             {
                 if(rackets[i].sentient) {
                     if (i == 0) ball.padCollision(rackets[i].state);
