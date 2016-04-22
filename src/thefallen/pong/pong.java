@@ -237,6 +237,7 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
         base.translate(f_frame.getWidth()/2,f_frame.getHeight()/2);
         for (Racket racket : rackets)
         {
+            racket.master=master;
             racket.initx = base.xpoints[N/ 2];
             racket.inity = base.ypoints[N/ 2] - racket.height;
             racket.frame = (int)(2*r*sin(PI/n));
