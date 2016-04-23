@@ -229,6 +229,8 @@ public class UI extends Application {
 
                 Scene sc = getcreatingserver(server_name,element,password,maxplayers);
                 stage.setScene(sc);
+                Misc.pop();
+
             }
         });
         grid.add(btn,1,4);
@@ -247,6 +249,8 @@ public class UI extends Application {
             public void handle(MouseEvent event) {
                 Scene sc= getLandingScene();
                 stage.setScene(sc);
+                Misc.pop();
+
             }
         });
 
@@ -306,7 +310,6 @@ public class UI extends Application {
 
                     @Override
                     public void onfind(String name, String password, int maxPlayers, String mode,String IP) {
-
                     }
                 };
             }
@@ -327,6 +330,7 @@ public class UI extends Application {
             public void handle(MouseEvent event) {
                 Scene sc = getLandingScene();
                 stage.setScene(sc);
+                Misc.pop();
                 if(pee!=null) pee.Stop();
                 grid1I=0;
             }
@@ -386,6 +390,8 @@ public class UI extends Application {
             public void handle(MouseEvent event) {
                 Scene sc = getLandingScene();
                 stage.setScene(sc);
+                Misc.pop();
+
                 if(pee!=null) pee.Stop();
                 grid2=null;
             }
@@ -430,6 +436,7 @@ public class UI extends Application {
                         {
                             grid2I=0;
                             Platform.runLater(() -> stage.setScene(getwaitingserver()));
+                            Misc.pop();
                         }
                         Platform.runLater(() -> Platform.runLater(() -> grid2.add(getplayerview(name, element), 0, grid2I++)));
 
@@ -459,6 +466,8 @@ public class UI extends Application {
             public void handle(MouseEvent event) {
                 Scene sc = getLandingScene();
                 stage.setScene(sc);
+                Misc.pop();
+
                 if(pee!=null) pee.Stop();
                 grid3I=0;
             }
@@ -647,6 +656,8 @@ public class UI extends Application {
 
                     Scene sc = getLandingScene();
                     stage.setScene(sc);
+                Misc.pop();
+
             }
         });
         grid.add(btn,1,4);
@@ -733,18 +744,23 @@ public class UI extends Application {
                 if(gsc==gameScreen.SETTINGS){
                     Scene sc = getSettingsScene();
                     stage.setScene(sc);
+                    Misc.pop();
+
                 }
                 if(gsc==gameScreen.LANDING){
                     Scene sc = getLandingScene();
                     stage.setScene(sc);
+                    Misc.pop();
                 }
                 if(gsc==gameScreen.CREATESERVER){
                     Scene sc = getCreateServerScene();
                     stage.setScene(sc);
+                    Misc.pop();
                 }
                 if(gsc==gameScreen.FINDSERVER){
                     Scene sc = getFindServerScene();
                     stage.setScene(sc);
+                    Misc.pop();
                 }
 
 
