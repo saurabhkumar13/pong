@@ -58,7 +58,6 @@ public class UI extends Application {
     }
 
     public Scene getLandingScene(){
-
         GridPane landingHeader = getheader("PING PONG");
 
         GridPane grid = new GridPane();
@@ -66,22 +65,6 @@ public class UI extends Application {
         grid.setHgap(10);
         grid.setVgap(10);
         grid.setPadding(new Insets(25, 25, 25, 25));
-
-//        Text scenetitle = new Text("Welcome");
-//        scenetitle.setFont(Font.font("Tahoma", FontWeight.NORMAL, 20));
-//        grid.add(scenetitle, 0, 0, 2, 1);
-//
-//        Label userName = new Label("User Name:");
-//        grid.add(userName, 0, 1);
-//
-//        TextField userTextField = new TextField();
-//        grid.add(userTextField, 1, 1);
-//
-//        Label pw = new Label("Password:");
-//        grid.add(pw, 0, 2);
-//
-//        PasswordField pwBox = new PasswordField();
-//        grid.add(pwBox, 1, 2);
 
         Button btn = getButton("NEW GAME",gameScreen.NEWGAME);
         grid.add(btn, 0, 0);
@@ -107,9 +90,138 @@ public class UI extends Application {
         return scene;
     }
 
-//    public Scene getCreateServerScene(){
-//
-//    }
+    public Scene getCreateServerScene(){
+        GridPane createserverheader = getheader("CREATE SERVER");
+
+        GridPane grid = new GridPane();
+        grid.setAlignment(Pos.CENTER);
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(25, 25, 25, 25));
+
+        Label userName = new Label("SERVER NAME             :");
+        userName.setFont(Font.loadFont(thefallen.pong.Resources.getResource(thefallen.pong.Resources.FONT1).toString(), 26));
+        userName.setTextFill(Color.valueOf("#B4B0AB"));
+        grid.add(userName, 0, 0);
+
+        Label back = new Label("");
+        back.setStyle("-fx-background-color: #B4B0AB");
+        back.setMinWidth(200);
+        back.setMinHeight(40);
+        grid.add(back, 1, 0);
+
+        TextField userTextField = new TextField();
+        userTextField.setStyle("-fx-background-color: #7C7E7C; -fx-text-fill: #333333");
+        userTextField.setPadding(new Insets(0,5,0,5));
+        userTextField.setAlignment(Pos.CENTER);
+        userTextField.setMaxHeight(30);
+        userTextField.setTranslateX(20);
+        userTextField.setMaxWidth(160);
+        userTextField.setFont(Font.loadFont(thefallen.pong.Resources.getResource(thefallen.pong.Resources.FONT1).toString(), 26));
+        grid.add(userTextField, 1, 0);
+
+        Label password= new Label("PASSWORD(OPTIONAL)     :");
+        password.setFont(Font.loadFont(thefallen.pong.Resources.getResource(thefallen.pong.Resources.FONT1).toString(), 26));
+        password.setTextFill(Color.valueOf("#B4B0AB"));
+        grid.add(password,0,1);
+
+        Label back2 = new Label("");
+        back2.setStyle("-fx-background-color: #B4B0AB");
+        back2.setMinWidth(200);
+        back2.setMinHeight(40);
+        grid.add(back2, 1, 1);
+
+        TextField passwordField = new TextField();
+        passwordField.setStyle("-fx-background-color: #7C7E7C; -fx-text-fill: #333333");
+        passwordField.setPadding(new Insets(0,5,0,5));
+        passwordField.setAlignment(Pos.CENTER);
+        passwordField.setMaxHeight(30);
+        passwordField.setTranslateX(20);
+        passwordField.setMaxWidth(160);
+        passwordField.setFont(Font.loadFont(thefallen.pong.Resources.getResource(thefallen.pong.Resources.FONT1).toString(), 26));
+        grid.add(passwordField, 1, 1);
+
+        Label maxplayers= new Label("MAX PLAYERS(OPTIONAL)  :");
+        maxplayers.setFont(Font.loadFont(thefallen.pong.Resources.getResource(thefallen.pong.Resources.FONT1).toString(), 26));
+        maxplayers.setTextFill(Color.valueOf("#B4B0AB"));
+        grid.add(maxplayers,0,2);
+
+        Label back3 = new Label("");
+        back3.setStyle("-fx-background-color: #B4B0AB");
+        back3.setMinWidth(200);
+        back3.setMinHeight(40);
+        grid.add(back3, 1, 2);
+
+        TextField maxplayersField = new TextField();
+        maxplayersField.setStyle("-fx-background-color: #7C7E7C; -fx-text-fill: #333333");
+        maxplayersField.setPadding(new Insets(0,5,0,5));
+        maxplayersField.setAlignment(Pos.CENTER);
+        maxplayersField.setMaxHeight(30);
+        maxplayersField.setTranslateX(20);
+        maxplayersField.setMaxWidth(160);
+        maxplayersField.setFont(Font.loadFont(thefallen.pong.Resources.getResource(thefallen.pong.Resources.FONT1).toString(), 26));
+        grid.add(maxplayersField, 1, 2);
+
+        Label fullscreen= new Label("GAME MODE               :");
+        fullscreen.setFont(Font.loadFont(thefallen.pong.Resources.getResource(thefallen.pong.Resources.FONT1).toString(), 26));
+        fullscreen.setTextFill(Color.valueOf("#B4B0AB"));
+        grid.add(fullscreen, 0, 3);
+
+        Button normalmode = getsettingsButton("NORMAL",0);
+        Button deathmatchmode= getsettingsButton("/DEATHMATCH",1);
+
+        normalmode.setOnAction(new EventHandler<ActionEvent>() {
+
+            @Override
+            public void handle(ActionEvent e) {
+                normalmode.setTextFill(Color.valueOf("#B4B0AB"));
+                deathmatchmode.setTextFill(Color.valueOf("#333333"));
+            }
+        });
+
+        deathmatchmode.setOnAction(new EventHandler<ActionEvent>() {
+
+            @Override
+            public void handle(ActionEvent e) {
+                deathmatchmode.setTextFill(Color.valueOf("#B4B0AB"));
+                normalmode.setTextFill(Color.valueOf("#333333"));
+            }
+        });
+
+        HBox hbox3 = new HBox();
+        hbox3.setPadding(new Insets(5,5,5,20));
+        hbox3.getChildren().addAll(normalmode,deathmatchmode);
+        grid.add(hbox3,1,3);
+
+        Button btn = getButton("CREATE SERVER",gameScreen.LANDING);
+        btn.setTranslateX(-140);
+        btn.setTranslateY(40);
+        btn.setMinWidth(100);
+        btn.setOnAction(new EventHandler<ActionEvent>() {
+
+            @Override
+            public void handle(ActionEvent e) {
+                String player_name = userTextField.getText();
+                Preferences prefs = Preferences.userRoot().node(packagePath);
+                prefs.put(PLAYER_NAME,player_name);
+
+                Scene sc = getLandingScene();
+                stage.setScene(sc);
+            }
+        });
+        grid.add(btn,1,4);
+
+        BorderPane border = new BorderPane();
+        border.setTop(createserverheader);
+        border.setCenter(grid);
+        border.setStyle("-fx-background-color: #000000");
+
+        Screen screen = Screen.getPrimary();
+        Rectangle2D bounds = screen.getVisualBounds();
+
+        Scene scene = new Scene(border, bounds.getWidth(), bounds.getHeight());
+        return scene;
+    }
 
     public Scene getSettingsScene(){
         GridPane settingsHeader = getheader("SETTINGS");
@@ -302,6 +414,11 @@ public class UI extends Application {
                     Scene sc = getLandingScene();
                     stage.setScene(sc);
                 }
+                if(gsc==gameScreen.CREATESERVER){
+                    Scene sc = getCreateServerScene();
+                    stage.setScene(sc);
+                }
+
 
 //                stage.sizeToScene();
 //                stage.setFullScreen(false);
