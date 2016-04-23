@@ -95,7 +95,7 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
                 SwingUtilities.invokeLater(new Runnable() {
                     @Override
                     public void run() {
-                        game.addBall();
+                        game.addBall(null);
                         game.ball.vx = 2;
                         game.ball.vy = 2;
                     }});
@@ -222,7 +222,7 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
         rackets[0].user=true;
         rackets[0].sentient=false;
         setupBase();
-        addBall();
+        addBall(null);
     }
 
     void setupBase()
@@ -287,7 +287,7 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
     }
 
 
-    void addBall()
+    void addBall(ping master2)
     {
         ball = new Ball(diff);
         ball.lol = lol;
@@ -327,10 +327,10 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
         ball.animator = new Animator.Builder().setDuration(duration, SECONDS).addTarget(circularMovement)
                 .setRepeatCount(Animator.INFINITE).setRepeatBehavior(Animator.RepeatBehavior.LOOP).setInterpolator(i).build();
         ball.animator.start();
-        ball.master=master;
 
-        if(master!=null)
-            master.broadcastToGroup((new JSONObject().accumulate("command",Misc.Command.BallReady)).toString());
+        ball.master=master2;
+        if(master2!=null)
+            master2.broadcastToGroup((new JSONObject().accumulate("command",Misc.Command.BallReady)).toString());
     }
 
 

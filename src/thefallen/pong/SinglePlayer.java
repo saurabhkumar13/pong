@@ -105,7 +105,6 @@ public class SinglePlayer {
                 game = new pong(N,0);
                 game.lol = quest;
                 game.onDiedListener = diedListener;
-                    game.addBall();
                     pause();
                     game.ball.vx = 1;
                     game.ball.vy = 2;
