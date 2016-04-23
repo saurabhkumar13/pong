@@ -87,8 +87,7 @@ public class SinglePlayer2 {
                 game = new pong(n,2);
                 game.ball.diedListener= diedListener;
                 pause();
-                game.ball.vx = 6;
-                game.ball.vy = 6;
+                game.ball.setVel();
                 constructing = false;
                 err.println("constructing done");
                 for (int i = 0; i < n; i++) {

@@ -103,6 +103,7 @@ public class SinglePlayer {
                     game.f_frame.setVisible(false);
                 game = new pong(N,2);
                 game.lol = quest;
+                game.ball.setVel();
                 game.onDiedListener = diedListener;
                     game.addBall();
                     pause();

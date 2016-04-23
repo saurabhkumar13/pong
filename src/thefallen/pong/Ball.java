@@ -24,9 +24,14 @@ public class Ball {
     onDiedListener diedListener;
     SinglePlayer lol;
 
-    public Ball(int dif)
+    Ball(int dif)
     {
         diff = dif;
+
+    }
+
+    void setVel()
+    {
         vx = 3+diff;
         vy = -(3+diff);
     }

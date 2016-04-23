@@ -238,7 +238,8 @@ public class ping extends Thread {
                 game.rackets[0].master=master;
                 for(Racket r : game.rackets) {
                     r.sentient = false;
-                }game.f_renderer.invokeLater(new Runnable() {
+                }
+                game.f_renderer.invokeLater(new Runnable() {
                     @Override
                     public void run() {
                         game.addBall();

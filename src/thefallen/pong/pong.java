@@ -215,6 +215,7 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
         }
 
         rackets[0].user=true;
+        rackets[0].sentient=false;
         setupBase();
         addBall();
     }
@@ -399,13 +400,11 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
 
             if(s.contains(ball.getX(),ball.getY()))
             {
-                out.println(i+" "+rackets[i].safe);
                 ball.padCollision(rackets[i].state,i);
                 rackets[i].safe = true;
             }
             else
             {
-                out.println(i+" "+rackets[i].safe);
                 rackets[i].safe = false;
             }
 

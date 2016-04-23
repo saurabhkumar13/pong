@@ -28,7 +28,7 @@ public class Racket {
 
     int initx,inity,frame;
 
-    int width = 100, height = 10, state = 0, hp = 100, n, N;
+    int width = 100, height = 10, state = 0, hp = 80, n, N;
 
     double bvx, bvy;
 
