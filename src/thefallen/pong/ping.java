@@ -131,7 +131,7 @@ public class ping extends Thread {
                 }
             }
         }
-        else if (command.equals(Misc.Command.SyncBall.toString()))
+        else if (command.equals(Misc.Command.SyncBall.toString())&&State== Misc.state.GAMING)
         {
             double vn,vt;
             vn = message.getDouble("vx");
@@ -157,11 +157,12 @@ public class ping extends Thread {
             initset.add(sender);
             if(initset.size()==IPset.size()) {
                 err.println(System.currentTimeMillis());
+                State = Misc.state.GAMING;
                 game.ball.vx = Misc.INITballvx;
                 game.ball.vy = Misc.INITballvy;
             }
         }
-        else if(command.equals(Misc.Command.ACTION.toString()))
+        else if(command.equals(Misc.Command.ACTION.toString())&&State== Misc.state.GAMING)
         {
             int index = (IPset.headSet(sender).size() - IPset.headSet(myIP).size());
             if(index<0) index+=IPset.size();
@@ -174,7 +175,7 @@ public class ping extends Thread {
             else if(action.equals(Misc.Command.ReleaseKeyT.toString())) game.rackets[index].released(KeyMap.tiltRight);
             else if(action.equals(Misc.Command.ReleaseKeyV.toString())) game.rackets[index].released(KeyMap.right);
         }
-        else if(command.equals(Misc.Command.SyncHP.toString()))
+        else if(command.equals(Misc.Command.SyncHP.toString())&&State== Misc.state.GAMING)
         {
             int index = (IPset.headSet(sender).size() - IPset.headSet(myIP).size());
             if(index<0) index+=IPset.size();

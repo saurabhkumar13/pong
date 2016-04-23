@@ -17,7 +17,7 @@ public class Misc {
         DEATHMATCH
     }
     public enum state {
-        INIT,WAITmaster,WAITslave
+        INIT,WAITmaster,WAITslave,GAMING
     }
     static double INITballvx = 7,INITballvy = 5;
 }
