@@ -35,8 +35,8 @@ public class Ball {
 
     void setVel()
     {
-        vx = 3+diff;
-        vy = -(3+diff);
+        vx = 8+2*diff;
+        vy = -(8+2*diff);
     }
 
     public double getX() {
@@ -90,13 +90,13 @@ public class Ball {
         ax = gravity*.1*cos(theta);
         ay = -1*gravity*.1*sin(theta);
         double modv = vx*vx+vy*vy;
-        // - mininum(vt-omega*r,2*mu*vn);
-//        out.println(gravity);
+
         if(modv>100) {vx*=f;vy*=f;}
-//
+
         if(!base.contains(x+vx*dt,y+vy*dt))
         {
             int n=getSideofPolygon();
+
             if(twoP)
             {
                 if((n==1 && vx > 0) || (n==3 && vx <0))
@@ -108,18 +108,33 @@ public class Ball {
                 n/=2;
             }
 
+            out.println("Condition of the Racket "+n+" "+rackets[n].safe);
+
             if (!rackets[n].safe&&(rackets[n].sentient||rackets[n].user))
             {
                 out.println(n+" "+rackets[n].hp);
-                if (rackets[n].hp > 0){
-                    err.println(n+" "+(master==null));
-                    if (n == 0 && master != null) {
+
+                if (rackets[n].hp >= 0)
+                {
+//                    err.println(n+" "+(master==null));
+                    if (n == 0 && master != null)
+                    {
                         master.broadcastToGroup((new JSONObject().accumulate("command",Misc.Command.SyncHP).accumulate("HP",rackets[n].hp-20)).toString());
                     }
                     rackets[n].hp -= 20;
                 }
-                else if(diedListener!=null) diedListener.onDied(n,lol);
-                rackets[n].diedOnce = true;
+
+                else if(diedListener!=null)
+                {
+
+                    diedListener.onDied(n, lol);
+                    rackets[n].diedOnce = true;
+                }
+                else
+                {
+                    err.println("dead "+n);
+                }
+
             }
 //            else
 //                rackets[n].safe=false;
@@ -129,11 +144,9 @@ public class Ball {
             if(twoP) normal = 2*PI*2/N-PI/2;
             double toRotate = 2*(angleInRadians-normal)+PI;
             double vn,vt,vn_,vt_;
+
             if(angleInRadians-normal<PI/2)
             {
-//                for(int k=0;k<rackets.length;k++)out.print(rackets[k].hp+" ");
-//                out.println();
-//                out.println(angleInRadians*180/PI+" "+normal*180/PI+" "+toRotate*180/PI+" "+vx+" "+vy);
                 vn = vx*cos(normal)-vy*sin(normal);
                 vt = vx*sin(normal)+vy*cos(normal);
                 vn_=-vn;
@@ -141,12 +154,9 @@ public class Ball {
                   omega = omega + mininum(vt-omega*r,2*mu*vn)/r;
                 vx = (vt_*sin(normal) + vn_*cos(normal));
                 vy = (vt_*cos(normal) - vn_*sin(normal));
-
-//                out.println(angleInRadians*180/PI+" "+vx+" "+vy);
             }
         }
-//        if(x+vx*dt>frameW||x+vx<0) vx=-vx;
-//        if(y+vy*dt>frameH||y+vy<0) vy=-vy;
+
         x += vx * dt;
         y += vy * dt;
 
@@ -154,7 +164,7 @@ public class Ball {
 
     void padCollision(int state,int i) {
         double vy_ = vy, vx_ = vx;
-        double theta = (2 * PI * i) / N - (PI * state) / 8;
+        double theta = (2 * PI * i) / N - (PI * state) / 5;
         double temp = (vx_ * sin(theta) + vy_ * cos(theta));
         double alpha = atan2(-vy_, vx_);
         double delta = 2 * (theta - alpha);

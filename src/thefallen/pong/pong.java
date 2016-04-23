@@ -91,12 +91,13 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                game = new pong(7,diff);
+                game = new pong(4,diff);
                 SwingUtilities.invokeLater(new Runnable() {
                     @Override
                     public void run() {
                         game.addBall();
-                        game.ball.vx = 3 + diff;
+                        game.ball.vx = 2;
+                        game.ball.vy = 2;
                     }});
             }
         });
@@ -185,7 +186,7 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
         }
         else if (n == 2)
         {
-            scale = 1;
+            scale = 1.5;
         }
 
         r=(floor(min(f_frame.getHeight(),f_frame.getWidth())/200)*100-50)*scale;
@@ -286,18 +287,24 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
     }
 
 
-    void addBall() {
+    void addBall()
+    {
         ball = new Ball(diff);
         ball.lol = lol;
+
         for(int i=0;i<N_;i++)
             rackets[i].ball=ball;
+
         out.println("ball added "+(onDiedListener==null));
+
         ball.rackets=rackets;
         ball.imageIndex = f_die.nextInt(5);
         ball.base=base;
         ball.center=center;
         ball.N=N;
+
         if(N_==2) ball.twoP=true;
+
         ball.omega=0.1;
         ball.setX(center.getX());
         ball.setY(center.getY());
@@ -310,14 +317,18 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
                 ball.update();
             }
         };
-    /*
-     * Sometimes go at a constant rate, sometimes accelerate and decelerate.
-     */
+
+        /*
+         * Sometimes go at a constant rate, sometimes accelerate and decelerate.
+         */
+
         final Interpolator i = f_die.nextBoolean() ? ACCEL_4_4 : null;
+
         ball.animator = new Animator.Builder().setDuration(duration, SECONDS).addTarget(circularMovement)
                 .setRepeatCount(Animator.INFINITE).setRepeatBehavior(Animator.RepeatBehavior.LOOP).setInterpolator(i).build();
         ball.animator.start();
         ball.master=master;
+
         if(master!=null)
             master.broadcastToGroup((new JSONObject().accumulate("command",Misc.Command.BallReady)).toString());
     }
@@ -425,8 +436,9 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
             AffineTransform.getRotateInstance(
                     2*PI*i/(N), center.getX(), center.getY())
                     .transform(ballpos,ballpos);
+
             g2d.fillOval((int)ballpos.getX(),(int)ballpos.getY(),5,5);
-//            out.println("ping"+i+" "+(2*PI*i/(N))+" "+ballpos.getX()+" "+ballpos.getY());
+
             th-=2*PI*N/(N_*N);
 
         }
