@@ -264,7 +264,7 @@ public class UI extends Application {
     }
 
     public Scene getcreatingserver(String server_name, String element,String password,String maxplayers){
-        GridPane createserverheader = getheader("CREATE SERVER",false);
+        GridPane createserverheader = getheader("Waiting",true);
         Platform.setImplicitExit(false);
 
         GridPane grid = new GridPane();
@@ -299,8 +299,9 @@ public class UI extends Application {
                 pee.joinListener = new ping.onJoinListener() {
                     @Override
                     public void onjoin(String name, String element, String ip) {
-                        Platform.runLater(() -> grid.add(getplayerview(name,element), 0, grid1I++));
-                        if (grid1I > 1) Platform.runLater(() -> btn.setVisible(true));
+                        grid1I++;
+                        Platform.runLater(() -> grid.add(getplayerview(name,element), 0, grid1I));
+                        if (grid1I > 0) Platform.runLater(() -> btn.setVisible(true));
                     }
 
                     @Override
