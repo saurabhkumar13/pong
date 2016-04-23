@@ -14,7 +14,7 @@ public class Misc {
         START,ACTION,L,R,LT,RT,ReleaseKeyT,ReleaseKeyV,SyncHP,SyncBall,FIND,FINDreply,JOIN,JOINedslave,INITBall,JOINack,BallReady
     }
     public enum Modes{
-        DEATHMATCH
+        DEATHMATCH,NORMAL
     }
     public enum state {
         INIT,WAITmaster,WAITslave,GAMING

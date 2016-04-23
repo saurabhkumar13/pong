@@ -336,15 +336,6 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
 
     @Override
     public void renderSetup(GraphicsConfiguration gc) {
-        f_ballImages = new BufferedImage[thefallen.pong.Resources.SPHERES.length];
-        int index = 0;
-        for (String resourceName : thefallen.pong.Resources.SPHERES) {
-            try {
-                f_ballImages[index++] = ImageIO.read(thefallen.pong.Resources.getResource(thefallen.pong.Resources.PONG_SPHERE));
-            } catch (IOException e) {
-                throw new IllegalStateException("Unable to load image: " + resourceName, e);
-            }
-        }
     }
 
     @Override
