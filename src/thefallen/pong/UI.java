@@ -20,6 +20,8 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
@@ -28,6 +30,7 @@ import javafx.stage.Stage;
 import org.json.JSONObject;
 import sun.rmi.runtime.Log;
 
+import java.io.File;
 import java.util.prefs.Preferences;
 
 import static com.surelogic.Part.Static;
@@ -37,10 +40,11 @@ import static java.lang.System.out;
 public class UI extends Application {
 
     private static final String PLAYER_NAME = "player_name";
+    private static final String ELEMENT = "element";
     private static final String MUSIC_VOLUME = "music_volume";
     private static final String SFX_VOLUME = "sfx_volume";
     private static final String FULLSCREEN = "fullscreen";
-
+    MediaPlayer mediaPlayer;
     private ping pee=null;
     public Stage stage;
     public enum gameScreen{
@@ -56,7 +60,15 @@ public class UI extends Application {
     public void start(Stage primaryStage) {
 
         this.stage=primaryStage;
+        String musicFile = "src/res/bg.mp3";     // For example
 
+        Media sound = new Media(new File(musicFile).toURI().toString());
+        mediaPlayer = new MediaPlayer(sound);
+        mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
+        mediaPlayer.play();
+        Preferences prefs = Preferences.userRoot().node(packagePath);
+
+        mediaPlayer.setVolume(((double)Integer.valueOf(prefs.get(MUSIC_VOLUME,"10")))/10);
 //        primaryStage.setFullScreen(true);
         primaryStage.setTitle("Ping Pong!");
         primaryStage.setScene(getLandingScene());
@@ -65,7 +77,7 @@ public class UI extends Application {
     }
 
     public Scene getLandingScene(){
-        GridPane landingHeader = getheader("PING PONG");
+        GridPane landingHeader = getheader("PING PONG",false);
 
         GridPane grid = new GridPane();
         grid.setAlignment(Pos.CENTER);
@@ -98,7 +110,7 @@ public class UI extends Application {
     }
 
     public Scene getCreateServerScene(){
-        GridPane createserverheader = getheader("CREATE SERVER");
+        GridPane createserverheader = getheader("CREATE SERVER",false);
 
         GridPane grid = new GridPane();
         grid.setAlignment(Pos.CENTER);
@@ -252,7 +264,7 @@ public class UI extends Application {
     }
 
     public Scene getcreatingserver(String server_name, String element,String password,String maxplayers){
-        GridPane createserverheader = getheader("CREATE SERVER");
+        GridPane createserverheader = getheader("CREATE SERVER",false);
         Platform.setImplicitExit(false);
 
         GridPane grid = new GridPane();
@@ -260,9 +272,11 @@ public class UI extends Application {
         grid.setHgap(10);
         grid.setVgap(10);
         grid.setPadding(new Insets(25, 25, 25, 25));
+        Button btn = getButton("START GAME",gameScreen.LANDING);
 
         Preferences prefs = Preferences.userRoot().node(packagePath);
         String player_name= prefs.get(PLAYER_NAME,"");
+        grid.add(getplayerview(player_name,element), 0, grid1I++);
         Misc.Modes gamemode;
         if(mode==0)
             gamemode= Misc.Modes.NORMAL;
@@ -275,12 +289,18 @@ public class UI extends Application {
             }
             else {
                 pee = new ping(ip, Misc.Port);
-                pee.createserver(server_name,password,Integer.valueOf(maxplayers),gamemode,player_name,element);
+                int MaxPlayers = -1;
+                try {
+                    if(!maxplayers.equals("")) MaxPlayers = Integer.parseInt(maxplayers);
+                } catch (NumberFormatException e) {
+                    e.printStackTrace();
+                }
+                pee.createserver(server_name,password,MaxPlayers,gamemode,player_name,element);
                 pee.joinListener = new ping.onJoinListener() {
                     @Override
                     public void onjoin(String name, String element, String ip) {
-                        Platform.runLater(() -> grid.add(getplayerview(name,element), 0, 1));
-                        System.err.print("\n"+"shit\n"+name+"\n");
+                        Platform.runLater(() -> grid.add(getplayerview(name,element), 0, grid1I++));
+                        if (grid1I > 1) Platform.runLater(() -> btn.setVisible(true));
                     }
 
                     @Override
@@ -307,14 +327,15 @@ public class UI extends Application {
                 Scene sc = getLandingScene();
                 stage.setScene(sc);
                 if(pee!=null) pee.Stop();
+                grid1I=0;
             }
         });
 
 
-        Button btn = getButton("START GAME",gameScreen.LANDING);
         btn.setTranslateX(-60);
         btn.setTranslateY(30);
         btn.setMinWidth(100);
+        btn.setVisible(false);
         btn.setOnAction(new EventHandler<ActionEvent>() {
 
             @Override
@@ -337,9 +358,9 @@ public class UI extends Application {
         return scene;
     }
     GridPane grid2;
-    int grid2I=0;
+    int grid1I=0,grid2I=0,grid3I=0;
     public Scene getwaitingserver(){
-        GridPane createserverheader = getheader("CREATE SERVER");
+        GridPane createserverheader = getheader("Waiting",true);
         Platform.setImplicitExit(false);
 
         grid2 = new GridPane();
@@ -382,7 +403,7 @@ public class UI extends Application {
         return scene;
     }
     public Scene getFindServerScene(){
-        GridPane createserverheader = getheader("Finding Servers");
+        GridPane createserverheader = getheader("Finding Servers",true);
         Platform.setImplicitExit(false);
 
         GridPane grid = new GridPane();
@@ -415,7 +436,7 @@ public class UI extends Application {
 
                     @Override
                     public void onfind(String name, String password, int maxPlayers, String mode,String IP) {
-                        Platform.runLater(() -> grid.add(getServerView(name,mode,password,maxPlayers,IP), 0, 1));
+                        Platform.runLater(() -> grid.add(getServerView(name,mode,password,maxPlayers,IP), 0, grid3I++));
                         System.err.print("\n"+"shit\n"+name+"\n");
                     }
                 };
@@ -438,6 +459,7 @@ public class UI extends Application {
                 Scene sc = getLandingScene();
                 stage.setScene(sc);
                 if(pee!=null) pee.Stop();
+                grid3I=0;
             }
         });
 
@@ -500,25 +522,31 @@ public class UI extends Application {
         Button btn = getButton("CONNECT",gameScreen.LANDING);
 //        btn.setTranslateX(-60);
 //        btn.setTranslateY(30);
+        Preferences prefs = Preferences.userRoot().node(packagePath);
+        String player_name= prefs.get(PLAYER_NAME,"");
+        String element = prefs.get(ELEMENT,"");
+
         btn.setMinWidth(100);
         btn.setOnAction(new EventHandler<ActionEvent>() {
 
             @Override
             public void handle(ActionEvent e) {
                 if(passField.getText().equals(pass))
-                    pee.joinserver("name","elemen",IP);
+                    pee.joinserver(player_name,element,IP);
             }
         });
-
         HBox hBox = new HBox();
-        if(pass.equals(""))
-            hBox.getChildren().addAll(Name,Mode,Players,btn);
-        else
-            hBox.getChildren().addAll(Name,Mode,passField,Players,btn);
+        hBox.getChildren().addAll(Name,Mode);
+        if(!pass.equals(""))
+            hBox.getChildren().add(passField);
+        if(maxPlayers!=-1)
+            hBox.getChildren().add(Players);
+        hBox.getChildren().add(btn);
         return hBox;
     }
+
     public Scene getSettingsScene(){
-        GridPane settingsHeader = getheader("SETTINGS");
+        GridPane settingsHeader = getheader("SETTINGS",false);
 
         GridPane grid = new GridPane();
         grid.setAlignment(Pos.CENTER);
@@ -661,6 +689,7 @@ public class UI extends Application {
                     if(vol_type==0){
                         Preferences prefs = Preferences.userRoot().node(packagePath);
                         prefs.put(MUSIC_VOLUME,t+"");
+                        mediaPlayer.setVolume(((double)t)/10);
                     }
                     if(vol_type==1){
                         Preferences prefs = Preferences.userRoot().node(packagePath);
@@ -728,7 +757,7 @@ public class UI extends Application {
         return btn;
     }
 
-    public GridPane getheader(String title){
+    public GridPane getheader(String title,boolean loading){
 
         GridPane header = new GridPane();
         header.setPadding(new Insets(5));
@@ -736,7 +765,9 @@ public class UI extends Application {
         header.setVgap(10);
 
         final ImageView LogoView = new ImageView();
-        final Image logoPNG = new Image(UI.class.getResourceAsStream("../../res/logo_small.png"));
+        String res = "logo_small.png";
+        if(loading) res = "477.gif";
+        final Image logoPNG = new Image(UI.class.getResourceAsStream("../../res/"+res));
         LogoView.setImage(logoPNG);
 
         final Text titleField = new Text(title);

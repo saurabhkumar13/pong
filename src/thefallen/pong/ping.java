@@ -83,7 +83,7 @@ public class ping extends Thread {
         }
         else if(command.equals(Misc.Command.JOIN.toString())&&State== Misc.state.WAITmaster)
         {
-            if(IPset.size()<serverDetails.getInt("maxPlayers")) {
+            if(IPset.size()<serverDetails.getInt("maxPlayers")||serverDetails.getInt("maxPlayers")==-1) {
                 IPset.add(sender);
                 players.add(message.accumulate("IP",sender).toString());
                 JSONArray slaves = new JSONArray();
@@ -189,7 +189,7 @@ public class ping extends Thread {
     public void Stop() {
         if (ds != null) {
             ds.close();
-            broadcastToGroup(goodbye.toString());
+//            broadcastToGroup(goodbye.toString());
             ds = null;
         }
     }
