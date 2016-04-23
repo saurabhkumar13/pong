@@ -40,7 +40,7 @@ public class UI extends Application {
         LANDING,NEWGAME,CREATESERVER,FINDSERVER,SETTINGS
     }
     public static String packagePath = "/thefallen/pong";
-
+    public int mode=0;
     public static void main(String[] args) {
         Application.launch(args);
     }
@@ -176,6 +176,7 @@ public class UI extends Application {
             public void handle(ActionEvent e) {
                 normalmode.setTextFill(Color.valueOf("#B4B0AB"));
                 deathmatchmode.setTextFill(Color.valueOf("#333333"));
+                mode=0;
             }
         });
 
@@ -185,6 +186,7 @@ public class UI extends Application {
             public void handle(ActionEvent e) {
                 deathmatchmode.setTextFill(Color.valueOf("#B4B0AB"));
                 normalmode.setTextFill(Color.valueOf("#333333"));
+                mode=1;
             }
         });
 
@@ -201,12 +203,15 @@ public class UI extends Application {
 
             @Override
             public void handle(ActionEvent e) {
-                String player_name = userTextField.getText();
-                Preferences prefs = Preferences.userRoot().node(packagePath);
-                prefs.put(PLAYER_NAME,player_name);
+                String server_name = userTextField.getText();
+                String password = passwordField.getText();
+                String maxplayers = maxplayersField.getText();
+                Misc.Modes gamemode;
+                if(mode==0)
+                    gamemode= Misc.Modes.NORMAL;
+                else
+                    gamemode= Misc.Modes.DEATHMATCH;
 
-                Scene sc = getLandingScene();
-                stage.setScene(sc);
             }
         });
         grid.add(btn,1,4);
@@ -438,7 +443,7 @@ public class UI extends Application {
         header.setVgap(10);
 
         final ImageView LogoView = new ImageView();
-        final Image logoPNG = new Image(UI.class.getResourceAsStream("../../res/logo_small.png"));
+        final Image logoPNG = new Image(UI.class.getResourceAsStream("../../res/back.png"));
         LogoView.setImage(logoPNG);
 
         final Text titleField = new Text(title);
