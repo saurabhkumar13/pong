@@ -272,13 +272,6 @@ public class ping extends Thread {
                 for(Racket r : game.rackets) {
                     r.sentient = false;
                 }
-                game.f_renderer.invokeLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        game.addBall();
-                    }
-                });
-//                broadcast(initmsg.toString(), master.myIP, master.Port);
             }
         });
     }
