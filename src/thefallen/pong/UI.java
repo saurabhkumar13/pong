@@ -283,7 +283,7 @@ public class UI extends Application {
                     }
 
                     @Override
-                    public void onfind(String name, String password, int maxPlayers, String mode) {
+                    public void onfind(String name, String password, int maxPlayers, String mode,String IP) {
 
                     }
                 };
@@ -305,6 +305,7 @@ public class UI extends Application {
             public void handle(MouseEvent event) {
                 Scene sc = getLandingScene();
                 stage.setScene(sc);
+                if(pee!=null) pee.Stop();
             }
         });
 
@@ -334,6 +335,73 @@ public class UI extends Application {
         Scene scene = new Scene(border, bounds.getWidth(), bounds.getHeight());
         return scene;
     }
+    public Scene getFindServerScene(){
+        GridPane createserverheader = getheader("Finding Servers");
+        Platform.setImplicitExit(false);
+
+        GridPane grid = new GridPane();
+        grid.setAlignment(Pos.CENTER);
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(25, 25, 25, 25));
+
+        Preferences prefs = Preferences.userRoot().node(packagePath);
+        String player_name= prefs.get(PLAYER_NAME,"");
+        String ip = ping.getmyIP();
+        try {
+            if(ip.equals("")) {
+                out.println("Could not get host .. Are You connected to a network?");
+            }
+            else {
+                pee = new ping(ip, Misc.Port);
+                pee.findserver();
+                pee.joinListener = new ping.onJoinListener() {
+                    @Override
+                    public void onjoin(String name, String element, String ip) {
+                    }
+
+                    @Override
+                    public void onfind(String name, String password, int maxPlayers, String mode,String IP) {
+                        Platform.runLater(() -> grid.add(getServerView(name,mode,password,maxPlayers,IP), 0, 1));
+                        System.err.print("\n"+"shit\n"+name+"\n");
+                    }
+                };
+            }
+        } catch (Exception e1) {
+            e1.printStackTrace();
+        }
+
+        final ImageView LogoView = new ImageView();
+        final Image logoPNG = new Image(UI.class.getResourceAsStream("../../res/back.png"));
+        LogoView.setImage(logoPNG);
+        LogoView.setFitWidth(50);
+        LogoView.setFitHeight(50);
+        LogoView.setTranslateX(-30);
+        LogoView.setTranslateY(-50);
+        LogoView.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+
+            @Override
+            public void handle(MouseEvent event) {
+                Scene sc = getLandingScene();
+                stage.setScene(sc);
+                if(pee!=null) pee.Stop();
+            }
+        });
+
+
+        BorderPane border = new BorderPane();
+        border.setTop(createserverheader);
+        border.setCenter(grid);
+        border.setRight(LogoView);
+        border.setStyle("-fx-background-color: #000000");
+
+        Screen screen = Screen.getPrimary();
+        Rectangle2D bounds = screen.getVisualBounds();
+
+        Scene scene = new Scene(border, bounds.getWidth(), bounds.getHeight());
+        return scene;
+    }
+
     public HBox getplayerview(String name, String element){
 
         Label userName = new Label(name.toUpperCase());
@@ -347,6 +415,44 @@ public class UI extends Application {
 
         HBox hBox = new HBox();
         hBox.getChildren().addAll(userName,userName2);
+        return hBox;
+    }
+    public HBox getServerView(String name, String mode,String pass,int maxPlayers,String IP){
+
+        Label Name = new Label(name.toUpperCase());
+        Name.setFont(Font.loadFont(thefallen.pong.Resources.getResource(thefallen.pong.Resources.FONT1).toString(), 26));
+        Name.setPadding(new Insets(0,50,0,0));
+        Name.setTextFill(Color.valueOf("#B4B0AB"));
+
+        Label Mode = new Label(mode.toUpperCase());
+        Mode.setFont(Font.loadFont(thefallen.pong.Resources.getResource(thefallen.pong.Resources.FONT1).toString(), 26));
+        Mode.setPadding(new Insets(0,50,0,0));
+        Mode.setTextFill(Color.valueOf("#B4B0AB"));
+
+        Label Pass = new Label(pass.toUpperCase());
+        Pass.setFont(Font.loadFont(thefallen.pong.Resources.getResource(thefallen.pong.Resources.FONT1).toString(), 26));
+        Pass.setPadding(new Insets(0,50,0,0));
+        Pass.setTextFill(Color.valueOf("#B4B0AB"));
+
+        Label Players = new Label(maxPlayers+"");
+        Players.setFont(Font.loadFont(thefallen.pong.Resources.getResource(thefallen.pong.Resources.FONT1).toString(), 26));
+        Players.setPadding(new Insets(0,50,0,0));
+        Players.setTextFill(Color.valueOf("#B4B0AB"));
+
+        Button btn = getButton("START GAME",gameScreen.LANDING);
+        btn.setTranslateX(-60);
+        btn.setTranslateY(30);
+        btn.setMinWidth(100);
+        btn.setOnAction(new EventHandler<ActionEvent>() {
+
+            @Override
+            public void handle(ActionEvent e) {
+                pee.joinserver("name","elemen",IP);
+            }
+        });
+
+        HBox hBox = new HBox();
+        hBox.getChildren().addAll(Name,Mode,Pass,Players,btn);
         return hBox;
     }
     public Scene getSettingsScene(){
@@ -542,6 +648,10 @@ public class UI extends Application {
                 }
                 if(gsc==gameScreen.CREATESERVER){
                     Scene sc = getCreateServerScene();
+                    stage.setScene(sc);
+                }
+                if(gsc==gameScreen.FINDSERVER){
+                    Scene sc = getFindServerScene();
                     stage.setScene(sc);
                 }
 

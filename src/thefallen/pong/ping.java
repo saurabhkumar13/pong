@@ -79,7 +79,7 @@ public class ping extends Thread {
 //            sendMessage(serverDetails.toString(),m,Port);
 //            out.println("Found server "+sender+" "+message.getJSONObject("server_details"));
             JSONObject serverDetails = message.getJSONObject("server_details");
-            if(joinListener!=null) joinListener.onfind(serverDetails.getString("name"),serverDetails.getString("password"),serverDetails.getInt("maxPlayers"),serverDetails.getString("mode"));
+            if(joinListener!=null) joinListener.onfind(serverDetails.getString("name"),serverDetails.getString("password"),serverDetails.getInt("maxPlayers"),serverDetails.getString("mode"),sender);
         }
         else if(command.equals(Misc.Command.JOIN.toString())&&State== Misc.state.WAITmaster)
         {
@@ -293,7 +293,7 @@ public class ping extends Thread {
     onJoinListener joinListener;
     interface onJoinListener{
         void onjoin(String name, String element, String ip);
-        void onfind(String name, String password, int maxPlayers,String mode);
+        void onfind(String name, String password, int maxPlayers,String mode,String IP);
     }
 
     public void findserver(){
