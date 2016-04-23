@@ -3,6 +3,7 @@ package thefallen.pong;
 import com.sun.glass.ui.EventLoop;
 import com.sun.javafx.font.freetype.HBGlyphLayout;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -14,6 +15,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -23,10 +25,13 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+import org.json.JSONObject;
+import sun.rmi.runtime.Log;
 
 import java.util.prefs.Preferences;
 
 import static com.surelogic.Part.Static;
+import static java.lang.System.out;
 
 public class UI extends Application {
 
@@ -35,6 +40,7 @@ public class UI extends Application {
     private static final String SFX_VOLUME = "sfx_volume";
     private static final String FULLSCREEN = "fullscreen";
 
+    private ping pee=null;
     public Stage stage;
     public enum gameScreen{
         LANDING,NEWGAME,CREATESERVER,FINDSERVER,SETTINGS
@@ -203,22 +209,38 @@ public class UI extends Application {
 
             @Override
             public void handle(ActionEvent e) {
+                String element = "shiittt";
                 String server_name = userTextField.getText();
                 String password = passwordField.getText();
                 String maxplayers = maxplayersField.getText();
-                Misc.Modes gamemode;
-                if(mode==0)
-                    gamemode= Misc.Modes.NORMAL;
-                else
-                    gamemode= Misc.Modes.DEATHMATCH;
 
+                Scene sc = getcreatingserver(server_name,element,password,maxplayers);
+                stage.setScene(sc);
             }
         });
         grid.add(btn,1,4);
 
+
+        final ImageView LogoView = new ImageView();
+        final Image logoPNG = new Image(UI.class.getResourceAsStream("../../res/back.png"));
+        LogoView.setImage(logoPNG);
+        LogoView.setFitWidth(50);
+        LogoView.setFitHeight(50);
+        LogoView.setTranslateX(-30);
+        LogoView.setTranslateY(-50);
+        LogoView.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+
+            @Override
+            public void handle(MouseEvent event) {
+                Scene sc= getLandingScene();
+                stage.setScene(sc);
+            }
+        });
+
         BorderPane border = new BorderPane();
         border.setTop(createserverheader);
         border.setCenter(grid);
+        border.setRight(LogoView);
         border.setStyle("-fx-background-color: #000000");
 
         Screen screen = Screen.getPrimary();
@@ -228,6 +250,105 @@ public class UI extends Application {
         return scene;
     }
 
+    public Scene getcreatingserver(String server_name, String element,String password,String maxplayers){
+        GridPane createserverheader = getheader("CREATE SERVER");
+        Platform.setImplicitExit(false);
+
+        GridPane grid = new GridPane();
+        grid.setAlignment(Pos.CENTER);
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(25, 25, 25, 25));
+
+        Preferences prefs = Preferences.userRoot().node(packagePath);
+        String player_name= prefs.get(PLAYER_NAME,"");
+        Misc.Modes gamemode;
+        if(mode==0)
+            gamemode= Misc.Modes.NORMAL;
+        else
+            gamemode= Misc.Modes.DEATHMATCH;
+        String ip = ping.getmyIP();
+        try {
+            if(ip.equals("")) {
+                out.println("Could not get host .. Are You connected to a network?");
+            }
+            else {
+                pee = new ping(ip, Misc.Port);
+                pee.createserver(server_name,password,Integer.valueOf(maxplayers),gamemode,player_name,element);
+                pee.joinListener = new ping.onJoinListener() {
+                    @Override
+                    public void onjoin(String name, String element, String ip) {
+                        Platform.runLater(() -> grid.add(getplayerview(name,element), 0, 1));
+                        System.err.print("\n"+"shit\n"+name+"\n");
+                    }
+
+                    @Override
+                    public void onfind(String name, String password, int maxPlayers, String mode) {
+
+                    }
+                };
+            }
+        } catch (Exception e1) {
+            e1.printStackTrace();
+        }
+
+        final ImageView LogoView = new ImageView();
+        final Image logoPNG = new Image(UI.class.getResourceAsStream("../../res/back.png"));
+        LogoView.setImage(logoPNG);
+        LogoView.setFitWidth(50);
+        LogoView.setFitHeight(50);
+        LogoView.setTranslateX(-30);
+        LogoView.setTranslateY(-50);
+        LogoView.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+
+            @Override
+            public void handle(MouseEvent event) {
+                Scene sc = getLandingScene();
+                stage.setScene(sc);
+            }
+        });
+
+
+        Button btn = getButton("START GAME",gameScreen.LANDING);
+        btn.setTranslateX(-60);
+        btn.setTranslateY(30);
+        btn.setMinWidth(100);
+        btn.setOnAction(new EventHandler<ActionEvent>() {
+
+            @Override
+            public void handle(ActionEvent e) {
+                pee.broadcastToGroup((new JSONObject().accumulate("command",Misc.Command.START)).toString());
+            }
+        });
+        grid.add(btn,1,4);
+
+        BorderPane border = new BorderPane();
+        border.setTop(createserverheader);
+        border.setCenter(grid);
+        border.setRight(LogoView);
+        border.setStyle("-fx-background-color: #000000");
+
+        Screen screen = Screen.getPrimary();
+        Rectangle2D bounds = screen.getVisualBounds();
+
+        Scene scene = new Scene(border, bounds.getWidth(), bounds.getHeight());
+        return scene;
+    }
+    public HBox getplayerview(String name, String element){
+
+        Label userName = new Label(name.toUpperCase());
+        userName.setFont(Font.loadFont(thefallen.pong.Resources.getResource(thefallen.pong.Resources.FONT1).toString(), 26));
+        userName.setPadding(new Insets(0,50,0,0));
+        userName.setTextFill(Color.valueOf("#B4B0AB"));
+
+        Label userName2 = new Label(element.toUpperCase());
+        userName2.setFont(Font.loadFont(thefallen.pong.Resources.getResource(thefallen.pong.Resources.FONT1).toString(), 26));
+        userName2.setTextFill(Color.valueOf("#B4B0AB"));
+
+        HBox hBox = new HBox();
+        hBox.getChildren().addAll(userName,userName2);
+        return hBox;
+    }
     public Scene getSettingsScene(){
         GridPane settingsHeader = getheader("SETTINGS");
 
@@ -443,7 +564,7 @@ public class UI extends Application {
         header.setVgap(10);
 
         final ImageView LogoView = new ImageView();
-        final Image logoPNG = new Image(UI.class.getResourceAsStream("../../res/back.png"));
+        final Image logoPNG = new Image(UI.class.getResourceAsStream("../../res/logo_small.png"));
         LogoView.setImage(logoPNG);
 
         final Text titleField = new Text(title);
