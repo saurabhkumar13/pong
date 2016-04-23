@@ -108,11 +108,11 @@ public class Ball {
                 n/=2;
             }
 
-            out.println("Condition of the Racket "+n+" "+rackets[n].safe);
+//            out.println("Condition of the Racket "+n+" "+rackets[n].safe);
 
             if (!rackets[n].safe&&(rackets[n].sentient||rackets[n].user))
             {
-                out.println(n+" "+rackets[n].hp);
+//                out.println(n+" "+rackets[n].hp);
 
                 if (rackets[n].hp >= 0)
                 {
@@ -163,16 +163,24 @@ public class Ball {
     }
 
     void padCollision(int state,int i) {
+        int num;
+        if(twoP) num = 2;
+        else num = N;
+
         double vy_ = vy, vx_ = vx;
-        double theta = (2 * PI * i) / N - (PI * state) / 5;
+        double theta = (2 * PI * i) / num - (3 * PI * state) / 10;
         double temp = (vx_ * sin(theta) + vy_ * cos(theta));
         double alpha = atan2(-vy_, vx_);
         double delta = 2 * (theta - alpha);
 
         if (temp < 0) return;
+
         if(!rackets[i].sentient&&!rackets[i].user) return;
+
         vx = vx_ * cos(delta) + vy_ * sin(delta);
         vy = vy_ * cos(delta) - vx_ * sin(delta);
+//        err.println(i+" "+N+state+" "+(vx_-vx)+" "+(vy_-vy));
+
         if(i==0&&master!=null)
             master.broadcastToGroup((new JSONObject().accumulate("command",Misc.Command.SyncBall)
             .accumulate("vx",vx)
