@@ -146,7 +146,8 @@ public class ping extends Thread {
             else if(action.equals(Misc.Command.R.toString())) game.rackets[index].pressed(KeyMap.right);
             else if(action.equals(Misc.Command.LT.toString())) game.rackets[index].pressed(KeyMap.tiltLeft);
             else if(action.equals(Misc.Command.RT.toString())) game.rackets[index].pressed(KeyMap.tiltRight);
-            else if(action.equals(Misc.Command.ReleaseKey.toString())) game.rackets[index].released(KeyMap.tiltRight);
+            else if(action.equals(Misc.Command.ReleaseKeyT.toString())) game.rackets[index].released(KeyMap.tiltRight);
+            else if(action.equals(Misc.Command.ReleaseKeyV.toString())) game.rackets[index].released(KeyMap.right);
         }
     }
 

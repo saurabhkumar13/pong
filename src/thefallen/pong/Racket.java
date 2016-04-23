@@ -130,20 +130,23 @@ public class Racket {
                 master.broadcastToGroup((new JSONObject().accumulate("command",Misc.Command.ACTION).accumulate("action",Misc.Command.R)).toString());
             }
         }
-        if (e == KeyMap.tiltLeft){
+        if (e == KeyMap.tiltLeft && state!=1){
+            err.println("pressed LT");
+            state = 1;
             if (master != null) {
                 master.broadcastToGroup((new JSONObject().accumulate("command",Misc.Command.ACTION).accumulate("action",Misc.Command.LT)).toString());
             }
-            state = 1;
         }
-        else if(e==KeyMap.tiltRight){
+        else if(e==KeyMap.tiltRight && state!=-1){
+            err.println("pressed RT");
+            state=-1;
             if (master != null) {
                 master.broadcastToGroup((new JSONObject().accumulate("command",Misc.Command.ACTION).accumulate("action",Misc.Command.RT)).toString());
             }
-        state=-1;
     }
 
-        else state=0;
+//        else if(e!=KeyMap.tiltRight||e!=KeyMap.tiltLeft)
+//            state=0;
 
     }
 
@@ -152,11 +155,16 @@ public class Racket {
 
     public void released(int e)
     {
-        if(v!=0) {
-            v=0;
-            if (master!=null) {
-                master.broadcastToGroup((new JSONObject().accumulate("command",Misc.Command.ACTION).accumulate("action",Misc.Command.ReleaseKey)).toString());
-            }
+        if (master!=null&&(v!=0||state!=0)) {
+            if(e==KeyMap.tiltLeft||e==KeyMap.tiltRight)
+                master.broadcastToGroup((new JSONObject().accumulate("command", Misc.Command.ACTION).accumulate("action", Misc.Command.ReleaseKeyT)).toString());
+            else if(e==KeyMap.left||e==KeyMap.right)
+                master.broadcastToGroup((new JSONObject().accumulate("command", Misc.Command.ACTION).accumulate("action", Misc.Command.ReleaseKeyV)).toString());
+
         }
+        if(e==KeyMap.tiltLeft||e==KeyMap.tiltRight)
+            state=0;
+        else if(e==KeyMap.left||e==KeyMap.right)
+                v=0;
     }
 }
