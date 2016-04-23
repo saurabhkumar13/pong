@@ -322,7 +322,7 @@ public class ping extends Thread {
                     String a = scanner.nextLine();
                     if(a.equals("stop")) {messageSender.Stop();break;}
                     else if(a.equals("start")) {
-                        messageSender.createserver("server name","",4, Misc.Modes.DEATHMATCH);
+//                        messageSender.createserver("server name","",4, Misc.Modes.DEATHMATCH);
                     }
                     else if(a.equals("find")) {
                         messageSender.findserver();
