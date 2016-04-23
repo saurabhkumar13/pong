@@ -87,6 +87,7 @@ public class ping extends Thread {
                 IPset.add(sender);
                 players.add(message.accumulate("IP",sender).toString());
                 JSONArray slaves = new JSONArray();
+                joinListener.onjoin(message.getString("name"),message.getString("element"),sender);
                 slaves.put(players);
                 slaves = slaves.getJSONArray(0);
                 broadcastToGroup((new JSONObject().accumulate("command",Misc.Command.JOINedslave).accumulate("Slaves",slaves)).toString());
