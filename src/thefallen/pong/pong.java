@@ -24,6 +24,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
+import javax.tools.Tool;
 
 import org.jdesktop.core.animation.rendering.JRenderer;
 import org.jdesktop.core.animation.rendering.JRendererTarget;
@@ -151,6 +152,9 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
         f_frame.add(f_panel, BorderLayout.CENTER);
         f_panel.setPreferredSize(new Dimension(800,600));
 //        f_panel.setPreferredSize(new Dimension(1366 ,768));
+//        f_frame.setUndecorated(true);
+//        f_frame.setPreferredSize(Toolkit.getDefaultToolkit().getScreenSize());
+//        f_frame.setExtendedState( f_frame.getExtendedState()|JFrame.MAXIMIZED_HORIZ );
         f_renderer = JRendererFactory.getDefaultRenderer(f_panel, this, false);
 
         f_infoTimer.addTickListener(new TickListener() {

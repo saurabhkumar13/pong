@@ -14,6 +14,7 @@ import static java.lang.Math.PI;
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
 import static java.lang.System.err;
+import static java.lang.System.in;
 import static java.lang.System.out;
 
 public class ping extends Thread {
@@ -149,6 +150,12 @@ public class ping extends Thread {
             else if(action.equals(Misc.Command.ReleaseKeyT.toString())) game.rackets[index].released(KeyMap.tiltRight);
             else if(action.equals(Misc.Command.ReleaseKeyV.toString())) game.rackets[index].released(KeyMap.right);
         }
+        else if(command.equals(Misc.Command.SyncHP.toString()))
+        {
+            int index = (IPset.headSet(sender).size() - IPset.headSet(myIP).size());
+            if(index<0) index+=IPset.size();
+            game.rackets[index].hp = message.getInt("HP");
+        }
     }
 
     public void Stop() {
@@ -236,6 +243,8 @@ public class ping extends Thread {
             public void run() {
                 game = new pong(size,2);
                 game.rackets[0].master=master;
+                game.master=master;
+                game.ball.master=master;
                 for(Racket r : game.rackets) {
                     r.sentient = false;
                 }

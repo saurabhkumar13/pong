@@ -3,6 +3,7 @@ package thefallen.pong;
 
 import com.sun.javafx.geom.Vec2d;
 import org.jdesktop.core.animation.timing.Animator;
+import org.json.JSONObject;
 
 import java.awt.*;
 import java.awt.geom.Point2D;
@@ -23,6 +24,7 @@ public class Ball {
     float gravity=0;
     onDiedListener diedListener;
     SinglePlayer lol;
+    ping master;
 
     Ball(int dif)
     {
@@ -98,17 +100,22 @@ public class Ball {
             {
                 if((n==1 && vx > 0) || (n==3 && vx <0))
                     {
-                        vx=-vx;
+                        vx = -vx;
                         return;
                     }
 
                 n/=2;
             }
 
-            if (!rackets[n].safe)
+            if (!rackets[n].safe&&(rackets[n].sentient||rackets[n].user))
             {
                 out.println(n+" "+rackets[n].hp);
-                if (rackets[n].hp > 0) rackets[n].hp -= 20 ;
+                if (rackets[n].hp > 0){
+                    if (n == 0 && master != null) {
+                        master.broadcastToGroup((new JSONObject().accumulate("command",Misc.Command.SyncHP).accumulate("HP",rackets[n].hp-20)).toString());
+                    }
+                    rackets[n].hp -= 20;
+                }
                 else if(diedListener!=null) diedListener.onDied(n,lol);
                 rackets[n].diedOnce = true;
             }

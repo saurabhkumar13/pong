@@ -92,7 +92,7 @@ public class SinglePlayer {
         newLevel();
 
     }
-
+    pong temp;
     public void newLevel() {
         out.println("Number of players : " + N);
         time = "Press Space to start";
@@ -101,7 +101,7 @@ public class SinglePlayer {
             public void run() {
                 if(game!=null)
                     game.f_frame.setVisible(false);
-
+                temp=game;
                 game = new pong(N,2);
                 game.lol = quest;
                 game.ball.setVel();

@@ -103,7 +103,6 @@ public class Racket {
                     decided = false;
                     state = 0;
                 }
-
                 if (x + width > frame)
                     x = frame - width;
                 else if (x < 0)
@@ -158,7 +157,9 @@ public class Racket {
     }
 
     public void typed(int e)
-    {}
+    {
+
+    }
 
     public void released(int e)
     {
