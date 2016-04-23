@@ -22,7 +22,7 @@ public class ping extends Thread {
     private String myIP;
     private SortedSet<String> IPset;
     private SortedSet<String> initset;
-    private HashMap<String,Racket> players;
+    SortedSet<String> players;
     private static pong game;
     private DatagramSocket ds = null;
     private DatagramPacket dp = null;
@@ -40,7 +40,7 @@ public class ping extends Thread {
         IPset = new TreeSet<>();
         initset = new TreeSet<>();
         start();
-        players = new HashMap<>();
+        players = new TreeSet<>();
     }
 
     public void run() {
@@ -83,9 +83,9 @@ public class ping extends Thread {
         {
             if(IPset.size()<serverDetails.getInt("maxPlayers")) {
                 IPset.add(sender);
-                sendMessage((new JSONObject().accumulate("command",Misc.Command.JOINack)).toString(),sender,Port);
+                players.add(message.accumulate("IP",sender).toString());
                 JSONArray slaves = new JSONArray();
-                slaves.put(IPset);
+                slaves.put(players);
                 slaves = slaves.getJSONArray(0);
                 broadcastToGroup((new JSONObject().accumulate("command",Misc.Command.JOINedslave).accumulate("Slaves",slaves)).toString());
             }
@@ -95,9 +95,16 @@ public class ping extends Thread {
 //            out.println("Slave added "+sender+" "+message.getString("SlaveIP"));
             JSONArray slaves = message.getJSONArray("Slaves");
             slaves = slaves.getJSONArray(0);
-            for(int i=0;i<slaves.length();i++)
-            {
-                IPset.add(slaves.getString(i));
+            for(int i=0;i<slaves.length();i++) {
+                JSONObject slav = (new JSONObject(slaves.getString(i)));
+                IPset.add(slav.getString("IP"));
+                if (!players.contains(slaves.getString(i)))
+                {
+                    err.println(slav.getString("name")+"||"+  slav.getString("element")+"||"+ slav.getString("IP"));
+                    if (joinListener != null)
+                        joinListener.onjoin(slav.getString("name"), slav.getString("element"), slav.getString("IP"));
+                }
+            players.add(slaves.getString(i));
             }
         }
         else if(command.equals(Misc.Command.START.toString()))
@@ -105,11 +112,6 @@ public class ping extends Thread {
             startGame(this,IPset.size());
             if(myIP.equals(IPset.first()))
                 broadcastToGroup((new JSONObject().accumulate("command",Misc.Command.INITBall).accumulate("vx",1.5).accumulate("vy",2.1)).toString());
-        }
-        else if(command.equals(Misc.Command.JOINack.toString()))
-        {
-            IPset.add(sender);
-            IPset.add(myIP);
         }
         else if (command.equals(Misc.Command.INITBall.toString()))
         {
@@ -290,19 +292,19 @@ public class ping extends Thread {
                 .accumulate("maxPlayers",maxplayers)
                 .accumulate("password",password);
     }
-
+    onJoinListener joinListener;
     interface onJoinListener{
         void onjoin(String name, String element, String ip);
     }
 
-    public void findserver(String name,String element){
+    public void findserver(){
         State = Misc.state.WAITslave;
         broadcast((new JSONObject().accumulate("command", Misc.Command.FIND)).toString(),myIP,Port);
     }
 
     public void joinserver(String name,String element, String ip){
         State = Misc.state.WAITslave;
-        sendMessage((new JSONObject().accumulate("command", Misc.Command.FIND).accumulate("name",name).accumulate("element",element)).toString(),ip,Port);
+        sendMessage((new JSONObject().accumulate("command", Misc.Command.JOIN).accumulate("name",name).accumulate("element",element)).toString(),ip,Port);
     }
 
     public static void main(String[] args) {
@@ -321,30 +323,14 @@ public class ping extends Thread {
                     String a = scanner.nextLine();
                     if(a.equals("stop")) {messageSender.Stop();break;}
                     else if(a.equals("start")) {
-                        messageSender.State = Misc.state.WAITmaster;
-                        messageSender.IPset.add(ip);
-                        messageSender.serverDetails = new JSONObject()
-                                .accumulate("name","Saurabh's server")
-                                .accumulate("mode",Misc.Modes.DEATHMATCH)
-                                .accumulate("maxPlayers",3)
-                                .accumulate("password","lollipop");
+                        messageSender.createserver("server name","",4, Misc.Modes.DEATHMATCH);
                     }
                     else if(a.equals("find")) {
-//                        messageSender.IPset.add(ip);
-                        messageSender.State = Misc.state.WAITslave;
-                        broadcast(Misc.findServer.toString(),ip,Port);
+                        messageSender.findserver();
                     }
 
-                    else if(a.equals("findp")) {
-//                        messageSender.IPset.add(ip);
-                        messageSender.State = Misc.state.WAITslave;
-                        sendMessage(Misc.findServer.toString(),scanner.nextLine(),Port);
-                    }
-
-//                        sendMessage(Misc.findServer.toString(),ip,Port);
                     else if(a.equals("join")) {
-                        sendMessage((new JSONObject().accumulate("command",Misc.Command.JOIN)).toString(),scanner.nextLine(),Port);
-                        out.println("sending "+(new JSONObject().accumulate("command",Misc.Command.JOIN)).toString()+" " + a.split(" ")[1]);
+                        messageSender.joinserver("name","water",scanner.nextLine());
                     }
                     else if(a.equals("joined"))
                         out.println(messageSender.IPset.size());

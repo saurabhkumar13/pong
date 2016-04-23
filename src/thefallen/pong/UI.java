@@ -107,9 +107,9 @@ public class UI extends Application {
         return scene;
     }
 
-    public Scene getCreateServerScene(){
-
-    }
+//    public Scene getCreateServerScene(){
+//
+//    }
 
     public Scene getSettingsScene(){
         GridPane settingsHeader = getheader("SETTINGS");
