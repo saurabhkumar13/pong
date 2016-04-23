@@ -24,12 +24,23 @@ import javafx.scene.text.Text;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
+import java.util.prefs.Preferences;
+
+import static com.surelogic.Part.Static;
+
 public class UI extends Application {
+
+    private static final String PLAYER_NAME = "player_name";
+    private static final String MUSIC_VOLUME = "music_volume";
+    private static final String SFX_VOLUME = "sfx_volume";
+    private static final String FULLSCREEN = "fullscreen";
 
     public Stage stage;
     public enum gameScreen{
         LANDING,NEWGAME,CREATESERVER,FINDSERVER,SETTINGS
     }
+    public static String packagePath = "/thefallen/pong";
+
     public static void main(String[] args) {
         Application.launch(args);
     }
@@ -110,14 +121,16 @@ public class UI extends Application {
         userName.setTextFill(Color.valueOf("#B4B0AB"));
         grid.add(userName, 0, 0);
 
-
         Label back = new Label("");
         back.setStyle("-fx-background-color: #B4B0AB");
         back.setMinWidth(200);
         back.setMinHeight(40);
         grid.add(back, 1, 0);
 
+        Preferences prefs = Preferences.userRoot().node(packagePath);
+
         TextField userTextField = new TextField();
+        userTextField.setText(prefs.get(PLAYER_NAME,""));
         userTextField.setStyle("-fx-background-color: #7C7E7C; -fx-text-fill: #333333");
         userTextField.setPadding(new Insets(0,5,0,5));
         userTextField.setAlignment(Pos.CENTER);
@@ -132,7 +145,7 @@ public class UI extends Application {
         musicvol.setTextFill(Color.valueOf("#B4B0AB"));
         grid.add(musicvol, 0, 1);
 
-        HBox hBox = getVolumeHBox();
+        HBox hBox = getVolumeHBox(0,Integer.valueOf(prefs.get(MUSIC_VOLUME,"0")));
         hBox.setPadding(new Insets(5,5,5,20));
         grid.add(hBox,1,1);
 
@@ -141,7 +154,7 @@ public class UI extends Application {
         sfxvol.setTextFill(Color.valueOf("#B4B0AB"));
         grid.add(sfxvol, 0, 2);
 
-        HBox hBox2 = getVolumeHBox();
+        HBox hBox2 = getVolumeHBox(1,Integer.valueOf(prefs.get(SFX_VOLUME,"0")));
         hBox2.setPadding(new Insets(5,5,5,20));
         grid.add(hBox2,1,2);
 
@@ -150,20 +163,19 @@ public class UI extends Application {
         fullscreen.setTextFill(Color.valueOf("#B4B0AB"));
         grid.add(fullscreen, 0, 3);
 
-        Button onFullScreen = getsettingsButton("ON");
-        Button offFullScreen= getsettingsButton("/0FF");
-
-        HBox hbox3 = new HBox();
-        hbox3.setPadding(new Insets(5,5,5,20));
-        hbox3.getChildren().addAll(onFullScreen,offFullScreen);
-        grid.add(hbox3,1,3);
+        int on=Integer.valueOf(prefs.get(FULLSCREEN,"1"));
+        int off=0;
+        if(on==0)off=1;
+        Button onFullScreen = getsettingsButton("ON",on);
+        Button offFullScreen= getsettingsButton("/0FF",off);
 
         onFullScreen.setOnAction(new EventHandler<ActionEvent>() {
 
             @Override
             public void handle(ActionEvent e) {
-                    onFullScreen.setTextFill(Color.valueOf("#B4B0AB"));
-                    offFullScreen.setTextFill(Color.valueOf("#333333"));
+                onFullScreen.setTextFill(Color.valueOf("#B4B0AB"));
+                offFullScreen.setTextFill(Color.valueOf("#333333"));
+                prefs.put(FULLSCREEN,"0");
             }
         });
 
@@ -173,15 +185,33 @@ public class UI extends Application {
             public void handle(ActionEvent e) {
                 offFullScreen.setTextFill(Color.valueOf("#B4B0AB"));
                 onFullScreen.setTextFill(Color.valueOf("#333333"));
+                prefs.put(FULLSCREEN,"1");
             }
         });
 
+        HBox hbox3 = new HBox();
+        hbox3.setPadding(new Insets(5,5,5,20));
+        hbox3.getChildren().addAll(onFullScreen,offFullScreen);
+        grid.add(hbox3,1,3);
 
         Button btn = getButton("BACK",gameScreen.LANDING);
         btn.setTranslateX(-60);
         btn.setTranslateY(30);
         btn.setMinWidth(100);
+        btn.setOnAction(new EventHandler<ActionEvent>() {
+
+            @Override
+            public void handle(ActionEvent e) {
+                    String player_name = userTextField.getText();
+                    Preferences prefs = Preferences.userRoot().node(packagePath);
+                    prefs.put(PLAYER_NAME,player_name);
+
+                    Scene sc = getLandingScene();
+                    stage.setScene(sc);
+            }
+        });
         grid.add(btn,1,4);
+
 
         BorderPane border = new BorderPane();
         border.setTop(settingsHeader);
@@ -195,12 +225,17 @@ public class UI extends Application {
         return scene;
     }
 
-    public HBox getVolumeHBox(){
+    public HBox getVolumeHBox(int vol_type, int vol){
         Button[] buttons=new Button[10];
 
-        for (int i = 0; i < 10; i++) {
-            buttons[i] = getsettingsButton("I");
+        for (int i = 0; i <= vol; i++) {
+            buttons[i] = getsettingsButton("I",0);
         }
+
+        for (int i = vol+1; i < 10; i++) {
+            buttons[i] = getsettingsButton("I",1);
+        }
+
         for (int i = 0; i < 10; i++) {
             final int t=i;
             buttons[i].setOnAction(new EventHandler<ActionEvent>() {
@@ -213,6 +248,14 @@ public class UI extends Application {
                     for (int j = t+1; j <10 ; j++) {
                         buttons[j].setTextFill(Color.valueOf("#333333"));
                     }
+                    if(vol_type==0){
+                        Preferences prefs = Preferences.userRoot().node(packagePath);
+                        prefs.put(MUSIC_VOLUME,t+"");
+                    }
+                    if(vol_type==1){
+                        Preferences prefs = Preferences.userRoot().node(packagePath);
+                        prefs.put(SFX_VOLUME,t+"");
+                    }
                 }
             });
         }
@@ -221,13 +264,17 @@ public class UI extends Application {
         return hBox;
     }
 
-    public Button getsettingsButton(String str){
+    public Button getsettingsButton(String str,int color){
         Button btn = new Button(str);
         btn.setFont(Font.loadFont(thefallen.pong.Resources.getResource(thefallen.pong.Resources.FONT1).toString(), 26));
         btn.setStyle("-fx-background-color: transparent;");
         btn.setPadding(new Insets(0,3,0,0));
         btn.setMaxHeight(10);
-        btn.setTextFill(Color.valueOf("#333333"));
+        if (color==0)
+            btn.setTextFill(Color.valueOf("#B4B0AB"));
+        else
+            btn.setTextFill(Color.valueOf("#333333"));
+
         return btn;
     }
 
