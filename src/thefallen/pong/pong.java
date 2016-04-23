@@ -292,21 +292,8 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
         ball.N=N;
         if(N_==2) ball.twoP=true;
         ball.omega=0.1;
-//        if (initBALLproperties==null)
-//        {
-            ball.setX(center.getX());
-            ball.setY(center.getY());
-//            ball.vx=Misc.INITballvx;//f_die.nextInt(10);
-//            ball.vy=Misc.INITballvy;//-f_die.nextInt(10)+3;
-//        }
-//        else
-//        {
-//            ball.setX(initBALLproperties.getInt("x"));
-//            ball.setY(initBALLproperties.getInt("y"));
-//            ball.vx=initBALLproperties.getInt("vx");
-//            ball.vy=initBALLproperties.getInt("vy");
-//        }
-        err.println("init: "+initBALLproperties);
+        ball.setX(center.getX());
+        ball.setY(center.getY());
 
         final int duration = 4;
 

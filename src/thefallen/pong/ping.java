@@ -140,7 +140,7 @@ public class ping extends Thread {
         else if(command.equals(Misc.Command.ACTION.toString()))
         {
             int index = (IPset.headSet(sender).size() - IPset.headSet(myIP).size());
-            if(index<0) index+=IPset.headSet(myIP).size();
+            if(index<0) index+=IPset.size();
             String action = message.getString("action");
             if(action.equals(Misc.Command.L.toString())) game.rackets[index].pressed(KeyMap.left);
             else if(action.equals(Misc.Command.R.toString())) game.rackets[index].pressed(KeyMap.right);
@@ -234,9 +234,9 @@ public class ping extends Thread {
             @Override
             public void run() {
                 game = new pong(size);
+                game.rackets[0].master=master;
                 for(Racket r : game.rackets) {
                     r.sentient = false;
-                    r.master = master;
                 }game.f_renderer.invokeLater(new Runnable() {
                     @Override
                     public void run() {
