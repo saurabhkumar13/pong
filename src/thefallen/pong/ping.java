@@ -164,6 +164,7 @@ public class ping extends Thread {
             int index = (IPset.headSet(sender).size() - IPset.headSet(myIP).size());
             if(index<0) index+=IPset.size();
             String action = message.getString("action");
+            game.rackets[index].x = message.getInt("x");
             if(action.equals(Misc.Command.L.toString())) game.rackets[index].pressed(KeyMap.left);
             else if(action.equals(Misc.Command.R.toString())) game.rackets[index].pressed(KeyMap.right);
             else if(action.equals(Misc.Command.LT.toString())) game.rackets[index].pressed(KeyMap.tiltLeft);

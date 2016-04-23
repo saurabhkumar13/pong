@@ -128,26 +128,26 @@ public class Racket {
         if (e == KeyMap.left && v != -speed) {
             v = -speed;
             if (master != null) {
-                master.broadcastToGroup((new JSONObject().accumulate("command",Misc.Command.ACTION).accumulate("action",Misc.Command.L)).toString());
+                master.broadcastToGroup((new JSONObject().accumulate("command",Misc.Command.ACTION).accumulate("action",Misc.Command.L).accumulate("x",x)).toString());
             }
         } else if (e == KeyMap.right && v != speed) {
             v = speed;
             if (master != null) {
-                master.broadcastToGroup((new JSONObject().accumulate("command",Misc.Command.ACTION).accumulate("action",Misc.Command.R)).toString());
+                master.broadcastToGroup((new JSONObject().accumulate("command",Misc.Command.ACTION).accumulate("action",Misc.Command.R).accumulate("x",x)).toString());
             }
         }
         if (e == KeyMap.tiltLeft && state!=1){
             err.println("pressed LT");
             state = 1;
             if (master != null) {
-                master.broadcastToGroup((new JSONObject().accumulate("command",Misc.Command.ACTION).accumulate("action",Misc.Command.LT)).toString());
+                master.broadcastToGroup((new JSONObject().accumulate("command",Misc.Command.ACTION).accumulate("action",Misc.Command.LT).accumulate("x",x)).toString());
             }
         }
         else if(e==KeyMap.tiltRight && state!=-1){
             err.println("pressed RT");
             state=-1;
             if (master != null) {
-                master.broadcastToGroup((new JSONObject().accumulate("command",Misc.Command.ACTION).accumulate("action",Misc.Command.RT)).toString());
+                master.broadcastToGroup((new JSONObject().accumulate("command",Misc.Command.ACTION).accumulate("action",Misc.Command.RT).accumulate("x",x)).toString());
             }
     }
 
@@ -165,9 +165,9 @@ public class Racket {
     {
         if (master!=null&&(v!=0||state!=0)) {
             if(e==KeyMap.tiltLeft||e==KeyMap.tiltRight)
-                master.broadcastToGroup((new JSONObject().accumulate("command", Misc.Command.ACTION).accumulate("action", Misc.Command.ReleaseKeyT)).toString());
+                master.broadcastToGroup((new JSONObject().accumulate("command", Misc.Command.ACTION).accumulate("action", Misc.Command.ReleaseKeyT).accumulate("x",x)).toString());
             else if(e==KeyMap.left||e==KeyMap.right)
-                master.broadcastToGroup((new JSONObject().accumulate("command", Misc.Command.ACTION).accumulate("action", Misc.Command.ReleaseKeyV)).toString());
+                master.broadcastToGroup((new JSONObject().accumulate("command", Misc.Command.ACTION).accumulate("action", Misc.Command.ReleaseKeyV).accumulate("x",x)).toString());
 
         }
         if(e==KeyMap.tiltLeft||e==KeyMap.tiltRight)
