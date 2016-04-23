@@ -281,6 +281,30 @@ public class ping extends Thread {
         });
     }
 
+    public void createserver(String server_name, String password, int maxplayers, Misc.Modes mode){
+        State = Misc.state.WAITmaster;
+        IPset.add(myIP);
+        serverDetails = new JSONObject()
+                .accumulate("name",server_name)
+                .accumulate("mode",mode)
+                .accumulate("maxPlayers",maxplayers)
+                .accumulate("password",password);
+    }
+
+    interface onJoinListener{
+        void onjoin(String name, String element, String ip);
+    }
+
+    public void findserver(String name,String element){
+        State = Misc.state.WAITslave;
+        broadcast((new JSONObject().accumulate("command", Misc.Command.FIND)).toString(),myIP,Port);
+    }
+
+    public void joinserver(String name,String element, String ip){
+        State = Misc.state.WAITslave;
+        sendMessage((new JSONObject().accumulate("command", Misc.Command.FIND).accumulate("name",name).accumulate("element",element)).toString(),ip,Port);
+    }
+
     public static void main(String[] args) {
         try{
             int Port = 6969;

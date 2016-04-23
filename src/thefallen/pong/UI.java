@@ -107,6 +107,10 @@ public class UI extends Application {
         return scene;
     }
 
+    public Scene getCreateServerScene(){
+
+    }
+
     public Scene getSettingsScene(){
         GridPane settingsHeader = getheader("SETTINGS");
 
@@ -212,7 +216,6 @@ public class UI extends Application {
         });
         grid.add(btn,1,4);
 
-
         BorderPane border = new BorderPane();
         border.setTop(settingsHeader);
         border.setCenter(grid);
@@ -226,17 +229,18 @@ public class UI extends Application {
     }
 
     public HBox getVolumeHBox(int vol_type, int vol){
-        Button[] buttons=new Button[10];
+        Button[] buttons=new Button[11];
 
-        for (int i = 0; i <= vol; i++) {
+        buttons[0]= getsettingsButton(" ",0);
+        for (int i = 1; i <= vol; i++) {
             buttons[i] = getsettingsButton("I",0);
         }
 
-        for (int i = vol+1; i < 10; i++) {
+        for (int i = vol+1; i < 11; i++) {
             buttons[i] = getsettingsButton("I",1);
         }
 
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 11; i++) {
             final int t=i;
             buttons[i].setOnAction(new EventHandler<ActionEvent>() {
 
@@ -245,7 +249,7 @@ public class UI extends Application {
                     for (int j = 0; j <= t; j++) {
                         buttons[j].setTextFill(Color.valueOf("#B4B0AB"));
                     }
-                    for (int j = t+1; j <10 ; j++) {
+                    for (int j = t+1; j <11 ; j++) {
                         buttons[j].setTextFill(Color.valueOf("#333333"));
                     }
                     if(vol_type==0){
