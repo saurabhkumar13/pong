@@ -492,7 +492,7 @@ public class UI extends Application {
         Players.setPadding(new Insets(0,50,0,0));
         Players.setTextFill(Color.valueOf("#B4B0AB"));
 
-        Button btn = getButton("START GAME",gameScreen.LANDING);
+        Button btn = getButton("CONNECT",gameScreen.LANDING);
         btn.setTranslateX(-60);
         btn.setTranslateY(30);
         btn.setMinWidth(100);
