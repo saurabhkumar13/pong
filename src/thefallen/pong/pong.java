@@ -80,10 +80,10 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
     final int N,N_;
     Ball ball;
     Ball.onDiedListener onDiedListener;
-    double padding = 0.1;
+    double padding = 0.05;
     SinglePlayer lol;
     ping master;
-    static int diff = 3;
+    static int diff = 1;
 
     public static void main(String args[]){
         System.setProperty("swing.defaultlaf", "com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
@@ -96,7 +96,6 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
                     public void run() {
                         game.addBall();
                         game.ball.vx = 3 + diff;
-                        game.rackets[0].sentient = false;
                     }});
             }
         });
@@ -205,6 +204,7 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
                     racket.update(index);
                 }
             };
+            rackets[0].sentient = false;
 
             racket.animator = new Animator.Builder().setDuration(4, SECONDS).addTarget(circularMovement)
                     .setRepeatCount(Animator.INFINITE).setRepeatBehavior(Animator.RepeatBehavior.LOOP).build();
@@ -355,8 +355,8 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
             Rectangle pad2 = new Rectangle();
             Rectangle pad3 = new Rectangle();
             pad.setRect(rackets[i].x + base.xpoints[N/ 2], rackets[i].y + base.ypoints[N/ 2] - rackets[i].height, rackets[i].width, 2*rackets[i].height);
-            pad3.setRect(rackets[i].x+ base.xpoints[N/ 2] - (padding/2) * rackets[i].width, rackets[i].y + base.ypoints[N/ 2] - rackets[i].height, rackets[i].width*(1+padding), 2*rackets[i].height*(1+padding/2));
-            pad2.setRect(rackets[i].x + base.xpoints[N/ 2] + 5, rackets[i].y + base.ypoints[N/ 2] - rackets[i].height/2, rackets[i].width*rackets[i].hp*9/1000, rackets[i].height/2);
+//            pad3.setRect(rackets[i].x+ base.xpoints[N/ 2] - (padding/2) * rackets[i].width, rackets[i].y + base.ypoints[N/ 2] - rackets[i].height, rackets[i].width*(1+padding), 2*rackets[i].height*(1+padding/2));
+            pad2.setRect(rackets[i].x + base.xpoints[N/ 2] + 5, rackets[i].y + base.ypoints[N/ 2] - rackets[i].height/2, rackets[i].width*(rackets[i].hp+20)*9/1000, rackets[i].height/2);
             g2d.setPaint(Color.black);
 
             Shape s = (AffineTransform.getRotateInstance(
@@ -375,14 +375,14 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
             s2 = (AffineTransform.getRotateInstance(
                     th, center.getX(), center.getY())
                     .createTransformedShape(s2));
-
-            Shape s3 = (AffineTransform.getRotateInstance(
-                    PI/20*rackets[i].state, pad.getCenterX(), pad.getCenterY())
-                    .createTransformedShape(pad3));
-
-            s3 = (AffineTransform.getRotateInstance(
-                    th, center.getX(), center.getY())
-                    .createTransformedShape(s3));
+//
+//            Shape s3 = (AffineTransform.getRotateInstance(
+//                    PI/20*rackets[i].state, pad.getCenterX(), pad.getCenterY())
+//                    .createTransformedShape(pad3));
+//
+//            s3 = (AffineTransform.getRotateInstance(
+//                    th, center.getX(), center.getY())
+//                    .createTransformedShape(s3));
 
             if(lol != null) {
                 g2d.setColor(Color.white);
@@ -395,21 +395,16 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
 
             g2d.setPaint(Color.black);
 
-            if(s3.contains(ball.getX(),ball.getY()))
+            if(s.contains(ball.getX(),ball.getY()))
             {
-                if(rackets[i].sentient) {
-//                    if (i == 0)
-                        ball.padCollision(rackets[i].state,i);
-//                    else {
-//                        double normal = 2 * PI * i / N - PI / 2;
-//                        double vn = ball.vx * cos(normal) - ball.vy * sin(normal);
-//                        if(vn>0) rackets[i].safe = true;
-//                    }
-                }
-                else
-                {
-                    ball.padCollision(rackets[i].state,i);
-                }
+                out.println(i+" "+rackets[i].safe);
+                ball.padCollision(rackets[i].state,i);
+                rackets[i].safe = true;
+            }
+            else
+            {
+                out.println(i+" "+rackets[i].safe);
+                rackets[i].safe = false;
             }
 
             if(rackets[i].diedOnce) {

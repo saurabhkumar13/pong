@@ -19,11 +19,12 @@ public class SinglePlayer2 {
 
     pong game;
     int N;
-    int uHP = 100;
-    static int init_num = 2;
-    static int init_hp = 0;
+    int uHP = 80;
+    static int init_num = 5;
+    static int init_hp = 40;
     boolean pause_flag = false,constructing;
     SinglePlayer2 quest;
+
     Ball.onDiedListener diedListener = new Ball.onDiedListener() {
         @Override
         public void onDied(int index, SinglePlayer lol) {
@@ -61,13 +62,13 @@ public class SinglePlayer2 {
         if(pause_flag)
         {
             pause_flag = false;
-            game.pause();
+            if(game!=null)game.pause();
             out.println("paused");
         }
         else
         {
             pause_flag = true;
-            game.resume();
+            if(game!=null)game.resume();
             out.println("resuming");
         }
 

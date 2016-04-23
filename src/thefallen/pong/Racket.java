@@ -32,7 +32,7 @@ public class Racket {
 
     double bvx, bvy;
 
-    int difficulty = 5;
+    int difficulty = 1;
 
     Animator animator;
 
@@ -50,9 +50,11 @@ public class Racket {
             {
                 Point2D ballpos = new Point((int)ball.x,(int)ball.y);
                 ai_speed = 10 + 2*difficulty;
+
                 double vx_ = ball.vx;
                 double vy_ = ball.vy;
                 double theta = 2 * PI * index / N;
+
                 bvx = vx_ * cos(theta) - vy_ * sin(theta);
                 bvy = vx_ * sin(theta) + vy_ * cos(theta);
 

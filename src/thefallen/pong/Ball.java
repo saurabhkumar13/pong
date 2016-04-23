@@ -75,19 +75,30 @@ public class Ball {
 //        out.println(gravity);
         if(modv>100) {vx*=f;vy*=f;}
 //
-        if(!base.contains(x+vx*dt,y+vy*dt)) {
+        if(!base.contains(x+vx*dt,y+vy*dt))
+        {
             int n=getSideofPolygon();
-            if(twoP) {
-            if((n==1 && vx > 0) || (n==3 && vx <0)) {vx=-vx;return;}
-            n/=2;
+            if(twoP)
+            {
+                if((n==1 && vx > 0) || (n==3 && vx <0))
+                    {
+                        vx=-vx;
+                        return;
+                    }
+
+                n/=2;
             }
-            if (!rackets[n].safe) {
+
+            if (!rackets[n].safe)
+            {
+                out.println(n+" "+rackets[n].hp);
                 if (rackets[n].hp > 0) rackets[n].hp -= 20 ;
                 else if(diedListener!=null) diedListener.onDied(n,lol);
                 rackets[n].diedOnce = true;
-        }
-            else
-                rackets[n].safe=false;
+            }
+//            else
+//                rackets[n].safe=false;
+
             double angleInRadians = Math.atan2(-vy,vx);
             double normal = 2*PI*n/N-PI/2;
             if(twoP) normal = 2*PI*2/N-PI/2;
