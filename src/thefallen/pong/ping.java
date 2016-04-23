@@ -129,6 +129,23 @@ public class ping extends Thread {
                 }
             }
         }
+        else if (command.equals(Misc.Command.SyncBall.toString()))
+        {
+            double vn,vt;
+            vn = message.getDouble("vx");
+            vt = message.getDouble("vy");
+            double vx,vy,normal=2 * PI * (IPset.headSet(sender).size() - IPset.headSet(myIP).size()) / IPset.size();
+            vx = (vn*cos(normal) + vt*sin(normal));
+            vy = (-vn*sin(normal) + vt*cos(normal));
+//
+            if(game!=null) {
+                Ball ball = game.ball;
+                if (ball!=null) {
+                    ball.vx = vx;
+                    ball.vy = vy;
+                }
+            }
+        }
         else if (command.equals(Misc.Command.BallReady.toString()))
         {
             initset.add(sender);

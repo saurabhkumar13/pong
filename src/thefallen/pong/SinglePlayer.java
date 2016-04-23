@@ -102,14 +102,13 @@ public class SinglePlayer {
                 if(game!=null)
                     game.f_frame.setVisible(false);
                 temp=game;
-                game = new pong(N,2);
+                game = new pong(N,0);
                 game.lol = quest;
-                game.ball.setVel();
                 game.onDiedListener = diedListener;
                     game.addBall();
                     pause();
-                    game.ball.vx = 3;
-                    game.ball.vy = 5;
+                    game.ball.vx = 1;
+                    game.ball.vy = 2;
 
                     for (int i = 0; i < N; i++) {
                         if (i == 0) {

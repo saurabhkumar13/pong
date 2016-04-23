@@ -317,6 +317,7 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
         ball.animator = new Animator.Builder().setDuration(duration, SECONDS).addTarget(circularMovement)
                 .setRepeatCount(Animator.INFINITE).setRepeatBehavior(Animator.RepeatBehavior.LOOP).setInterpolator(i).build();
         ball.animator.start();
+        ball.master=master;
         if(master!=null)
             master.broadcastToGroup((new JSONObject().accumulate("command",Misc.Command.BallReady)).toString());
     }

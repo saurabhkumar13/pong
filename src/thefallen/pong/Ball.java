@@ -9,6 +9,7 @@ import java.awt.*;
 import java.awt.geom.Point2D;
 
 import static java.lang.Math.*;
+import static java.lang.System.err;
 import static java.lang.System.out;
 
 public class Ball {
@@ -111,6 +112,7 @@ public class Ball {
             {
                 out.println(n+" "+rackets[n].hp);
                 if (rackets[n].hp > 0){
+                    err.println(n+" "+(master==null));
                     if (n == 0 && master != null) {
                         master.broadcastToGroup((new JSONObject().accumulate("command",Misc.Command.SyncHP).accumulate("HP",rackets[n].hp-20)).toString());
                     }
@@ -160,7 +162,13 @@ public class Ball {
 
         vx = vx_ * cos(delta) + vy_ * sin(delta);
         vy = vy_ * cos(delta) - vx_ * sin(delta);
-
+        if(i==0&&master!=null)
+            master.broadcastToGroup((new JSONObject().accumulate("command",Misc.Command.SyncBall)
+            .accumulate("vx",vx)
+            .accumulate("vy",vy)
+            .accumulate("x",x)
+            .accumulate("y",y)
+            ).toString());
     }
 
     double pos(double a)
