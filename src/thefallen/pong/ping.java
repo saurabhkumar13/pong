@@ -87,13 +87,8 @@ public class ping extends Thread {
                 JSONArray slaves = new JSONArray();
                 slaves.put(players);
                 slaves = slaves.getJSONArray(0);
-                sendMessage((new JSONObject().accumulate("command",Misc.Command.JOINack)).toString(),sender,Port);
                 broadcastToGroup((new JSONObject().accumulate("command",Misc.Command.JOINedslave).accumulate("Slaves",slaves)).toString());
             }
-        }
-        else if(command.equals(Misc.Command.JOINack.toString())&&State== Misc.state.WAITslave)
-        {
-            IPset.add(sender);
         }
         else if(command.equals(Misc.Command.JOINedslave.toString())&&State== Misc.state.WAITslave)
         {
@@ -285,6 +280,7 @@ public class ping extends Thread {
     public void createserver(String server_name, String password, int maxplayers, Misc.Modes mode){
         State = Misc.state.WAITmaster;
         IPset.add(myIP);
+        players.add((new JSONObject().accumulate("name","nam").accumulate("element","ele")).toString());
         serverDetails = new JSONObject()
                 .accumulate("name",server_name)
                 .accumulate("mode",mode)
