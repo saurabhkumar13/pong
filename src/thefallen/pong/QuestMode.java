@@ -17,10 +17,14 @@ public class QuestMode {
     //Declaring and initialising variables
 
     pong game;
-    static final int num_ai = 1, init_hp = 80;
-    int userHp = 80, score = 0, aiLevel = 1;
-    boolean uDied = false, aiDied = false, pause_flag = false, constructing = false;
+    static final int num_ai = 4, init_hp = 80, max_ai = 3;
+    int userHp = 80, score = 0, aiLevel = 2;
+    boolean uDied = false, aiDied = false, pause_flag = false, constructing = false, gOver = false;
     QuestMode quest;
+
+    interface onGameOverListener{
+        void onGameOver();
+    }
 
     public QuestMode() {
         quest = this;
@@ -39,14 +43,15 @@ public class QuestMode {
                 endQuest();
             } else {
                 aiDied = true;
-                out.println("AI DIED");
+                out.println("AI DIED"+constructing+" "+aiLevel);
 
-                if (!constructing && aiLevel < 5) {
+                if (!constructing && aiLevel < max_ai) {
                     out.println("Constructing new AI");
                     userHp = game.rackets[0].hp;
-                    startLevel(aiLevel + 1);
+                    aiLevel+=1;
+                    startLevel(aiLevel);
                     constructing = true;
-                } else if (aiLevel == 5) {
+                } else if (aiLevel == max_ai) {
                     successQuest();
                 }
 
@@ -71,7 +76,7 @@ public class QuestMode {
                 pause();
 
                 constructing = false;
-                err.println("constructing done");
+                err.println("constructing done " + level);
 
                 //Give initial hp bvalues to all paddles
                 for (int i = 0; i < num_ai + 1; i++) {
@@ -113,18 +118,20 @@ public class QuestMode {
 
     //Handle the pause functionality
     void pause() {
-        if (pause_flag)
+        if(!gOver)
         {
-            pause_flag = false;
-            if (game != null) game.pause();
-            out.println("paused");
-        }
-
-        else
-        {
-            pause_flag = true;
-            if (game != null) game.resume();
-            out.println("resuming");
+            if (pause_flag)
+            {
+                pause_flag = false;
+                if (game != null) game.pause();
+                out.println("paused");
+            }
+            else
+            {
+                pause_flag = true;
+                if (game != null) game.resume();
+                out.println("resuming");
+            }
         }
 
     }
@@ -138,13 +145,15 @@ public class QuestMode {
     public void successQuest() {
         out.println("Questcompleted");
         pause_flag = false;
-        pause();
+        game.pause();
+        gOver = true;
     }
 
     public void endQuest() {
         out.println("Questfailed");
         pause_flag = false;
-        pause();
+        game.pause();
+        gOver = true;
     }
 
     public static void main(String[] args)
