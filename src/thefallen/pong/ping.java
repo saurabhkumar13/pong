@@ -32,11 +32,6 @@ public class ping extends Thread {
     static JSONObject serverDetails;
     static JSONObject initmsgreply;
 
-    public static enum Command {
-        START, STOP, REPLY, GAMING, UpKey, DownKey, ReleaseKey, RequestBall, GotBall
-    }
-
-
     Misc.state State=Misc.state.INIT;
     public ping(String IP, int port) throws Exception {
         Port = port;
@@ -74,15 +69,7 @@ public class ping extends Thread {
         JSONObject message = new JSONObject(m);
         String command = message.getString("command");
         out.println("got msg: \""+m+"\" sender: "+sender+" "+System.currentTimeMillis());
-        if(command.equals(Command.START))
-        {
-            if(!sender.equals(myIP))
-            {
-                if (!IPset.contains(sender))
-                    addGamer(sender);
-            }
-        }
-        else if(command.equals(Misc.Command.FIND.toString())&&State== Misc.state.WAITmaster)
+        if(command.equals(Misc.Command.FIND.toString())&&State== Misc.state.WAITmaster)
         {
             sendMessage((new JSONObject().accumulate("server_details",serverDetails).accumulate("command",Misc.Command.FINDreply)).toString(),sender,Port);
         }
@@ -161,51 +148,6 @@ public class ping extends Thread {
             else if(action.equals(Misc.Command.RT.toString())) game.rackets[index].pressed(KeyMap.tiltRight);
             else if(action.equals(Misc.Command.ReleaseKey.toString())) game.rackets[index].released(KeyMap.tiltRight);
         }
-        else if (command.equals(Command.STOP))
-            IPset.remove(sender);
-        else if (command.equals(Command.GAMING))
-            {
-                Racket r = players.get(sender);
-                int key = message.getInt("key");
-                if(key==Command.UpKey.ordinal())
-                    r.pressed(KeyEvent.VK_LEFT);
-                else if(key==Command.DownKey.ordinal())
-                    r.pressed(KeyEvent.VK_RIGHT);
-                if(key==Command.ReleaseKey.ordinal())
-                    r.released(0);
-
-            }
-        else if (command.equals(Command.RequestBall))
-        {
-            Ball ball = game.ball;
-            broadcastToGroup(new JSONObject().put("command",Command.GotBall).put("sync",new JSONObject().accumulate("ax",ball.ax).accumulate("ay",ball.ay).accumulate("vx",ball.vx).accumulate("vy",ball.vy).accumulate("x",ball.x).accumulate("y",ball.y)).toString());
-        }
-        else if (command.equals(Command.GotBall))
-        {
-            game.initBALLproperties = message.getJSONObject("sync");
-        }
-
-    }
-
-    void addGamer(String sender)
-    {
-        IPset.add(sender);
-//        if(game.r2==null)
-//        {
-//            game.initRacket2();
-//            players.put(sender, game.r2);
-//        }
-
-//        if(Sync!=null)
-//        {
-//            Ball b = game.f_balls.get(0);
-//            b.x = Sync.getInt("x");
-//            b.y = Sync.getInt("y");
-//            b.ax = Sync.getInt("ax");
-//            b.ay = Sync.getInt("ay");
-//            b.vx = Sync.getInt("vx");
-//            b.vy = Sync.getInt("vy");
-//        }
     }
 
     public void Stop() {
@@ -292,10 +234,10 @@ public class ping extends Thread {
             @Override
             public void run() {
                 game = new pong(size);
-                for(Racket r : game.rackets)
-                r.sentient=false;
-                game.master=master;
-                game.f_renderer.invokeLater(new Runnable() {
+                for(Racket r : game.rackets) {
+                    r.sentient = false;
+                    r.master = master;
+                }game.f_renderer.invokeLater(new Runnable() {
                     @Override
                     public void run() {
                         game.addBall();

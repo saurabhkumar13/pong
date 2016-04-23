@@ -82,7 +82,6 @@ public class Ball {
             n/=2;
             }
             if (!rackets[n].safe) {
-                out.println(n+" "+rackets[n].hp);
                 if (rackets[n].hp > 0) rackets[n].hp -= 20 ;
                 else if(diedListener!=null) diedListener.onDied(n,lol);
                 rackets[n].diedOnce = true;
