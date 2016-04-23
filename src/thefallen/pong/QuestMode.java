@@ -136,9 +136,15 @@ public class QuestMode {
     }
 
     public void successQuest() {
+        out.println("Questcompleted");
+        pause_flag = false;
+        pause();
     }
 
     public void endQuest() {
+        out.println("Questfailed");
+        pause_flag = false;
+        pause();
     }
 
     public static void main(String[] args)

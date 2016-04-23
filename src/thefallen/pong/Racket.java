@@ -10,9 +10,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.util.Random;
 
-import static java.lang.Math.PI;
-import static java.lang.Math.cos;
-import static java.lang.Math.sin;
+import static java.lang.Math.*;
 import static java.lang.System.err;
 import static java.lang.System.out;
 
@@ -26,7 +24,7 @@ public class Racket {
 
     float v, a, dt=.5f, f=.2f, speed=20, ai_speed=10;
 
-    int initx,inity,frame;
+    int initx,inity,frame,num;
 
     int width = 100, height = 10, state = 0, hp = 80, n, N;
 
@@ -56,15 +54,20 @@ public class Racket {
                 Point2D ballpos = new Point((int)ball.x,(int)ball.y);
                 ai_speed = 10 + 2*difficulty;
 
+                if(ball.twoP)
+                    num = 2;
+                else
+                    num = N;
+
                 double vx_ = ball.vx;
                 double vy_ = ball.vy;
-                double theta = 2 * PI * index / N;
+                double theta = 2 * PI * index / num;
 
                 bvx = vx_ * cos(theta) - vy_ * sin(theta);
                 bvy = vx_ * sin(theta) + vy_ * cos(theta);
 
                 AffineTransform.getRotateInstance(
-                        2 * PI * n / (N), center.getX(), center.getY())
+                        2 * PI * n / (num), center.getX(), center.getY())
                         .transform(ballpos, ballpos);
 
                 int dir_x = (int) ballpos.getX() - initx - width / 2;//-200-40*(N-3);
@@ -103,6 +106,7 @@ public class Racket {
                     decided = false;
                     state = 0;
                 }
+
                 if (x + width > frame)
                     x = frame - width;
                 else if (x < 0)
