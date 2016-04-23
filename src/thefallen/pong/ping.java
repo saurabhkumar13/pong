@@ -280,7 +280,7 @@ public class ping extends Thread {
     public void createserver(String server_name, String password, int maxplayers, Misc.Modes mode){
         State = Misc.state.WAITmaster;
         IPset.add(myIP);
-        players.add((new JSONObject().accumulate("name","nam").accumulate("element","ele")).toString());
+        players.add((new JSONObject().accumulate("name","nam").accumulate("element","ele").accumulate("IP",myIP)).toString());
         serverDetails = new JSONObject()
                 .accumulate("name",server_name)
                 .accumulate("mode",mode)
