@@ -482,30 +482,39 @@ public class UI extends Application {
         Mode.setPadding(new Insets(0,50,0,0));
         Mode.setTextFill(Color.valueOf("#B4B0AB"));
 
-        Label Pass = new Label(pass.toUpperCase());
-        Pass.setFont(Font.loadFont(thefallen.pong.Resources.getResource(thefallen.pong.Resources.FONT1).toString(), 26));
-        Pass.setPadding(new Insets(0,50,0,0));
-        Pass.setTextFill(Color.valueOf("#B4B0AB"));
+
+        TextField passField = new TextField();
+        passField.setStyle("-fx-background-color: #7C7E7C; -fx-text-fill: #333333");
+        passField.setPadding(new Insets(0,5,0,5));
+        passField.setAlignment(Pos.CENTER);
+        passField.setMaxHeight(30);
+        passField.setTranslateX(20);
+        passField.setMaxWidth(160);
+        passField.setFont(Font.loadFont(thefallen.pong.Resources.getResource(thefallen.pong.Resources.FONT1).toString(), 26));
 
         Label Players = new Label(maxPlayers+"");
         Players.setFont(Font.loadFont(thefallen.pong.Resources.getResource(thefallen.pong.Resources.FONT1).toString(), 26));
-        Players.setPadding(new Insets(0,50,0,0));
+        Players.setPadding(new Insets(0,50,0,50));
         Players.setTextFill(Color.valueOf("#B4B0AB"));
 
         Button btn = getButton("CONNECT",gameScreen.LANDING);
-        btn.setTranslateX(-60);
-        btn.setTranslateY(30);
+//        btn.setTranslateX(-60);
+//        btn.setTranslateY(30);
         btn.setMinWidth(100);
         btn.setOnAction(new EventHandler<ActionEvent>() {
 
             @Override
             public void handle(ActionEvent e) {
-                pee.joinserver("name","elemen",IP);
+                if(passField.getText().equals(pass))
+                    pee.joinserver("name","elemen",IP);
             }
         });
 
         HBox hBox = new HBox();
-        hBox.getChildren().addAll(Name,Mode,Pass,Players,btn);
+        if(pass.equals(""))
+            hBox.getChildren().addAll(Name,Mode,Players,btn);
+        else
+            hBox.getChildren().addAll(Name,Mode,passField,Players,btn);
         return hBox;
     }
     public Scene getSettingsScene(){
