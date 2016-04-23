@@ -24,7 +24,7 @@ public class Racket {
 
     boolean sentient = true, safe = false, user = false, diedOnce, decided = true;
 
-    float v, a, dt=.5f, f=.2f, speed=20, ai_speed=10;
+    float v, a, dt=.5f, f=.2f, speed=10, ai_speed=10;
 
     int initx,inity,frame;
 

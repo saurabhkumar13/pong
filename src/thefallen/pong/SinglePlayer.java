@@ -69,7 +69,7 @@ public class SinglePlayer {
         {
             pause_flag = false;
             game.ball.dt = 1;
-            game.rackets[0].dt = 0.5f;
+            game.rackets[0].dt = 0.1f;
             countdownTimer.start();
         }
         else

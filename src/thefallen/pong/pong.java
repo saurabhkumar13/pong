@@ -19,11 +19,7 @@ import java.util.List;
 import java.util.Random;
 
 import javax.imageio.ImageIO;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
-import javax.swing.WindowConstants;
+import javax.swing.*;
 import javax.tools.Tool;
 
 import org.jdesktop.core.animation.rendering.JRenderer;
@@ -204,17 +200,19 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
             final Racket racket = rackets[i];
             final int index = i;
 
-            final TimingTarget circularMovement = new TimingTargetAdapter() {
-                @Override
-                public void timingEvent(Animator source, double fraction) {
-                    racket.update(index);
-                }
-            };
+//            final TimingTarget circularMovement = new TimingTargetAdapter() {
+//                @Override
+//                public void timingEvent(Animator source, double fraction) {
+//                    racket.update(index);
+//                }
+//            };
             rackets[0].sentient = false;
+            Timer countdownTimer = new Timer(10, new CountdownTimerListener());
+            countdownTimer.start();
 
-            racket.animator = new Animator.Builder().setDuration(4, SECONDS).addTarget(circularMovement)
-                    .setRepeatCount(Animator.INFINITE).setRepeatBehavior(Animator.RepeatBehavior.LOOP).build();
-            racket.animator.start();
+//            racket.animator = new Animator.Builder().setDuration(4, SECONDS).addTarget(circularMovement)
+//                    .setRepeatCount(Animator.INFINITE).setRepeatBehavior(Animator.RepeatBehavior.LOOP).build();
+//            racket.animator.start();
 
         }
 
@@ -222,6 +220,13 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
         rackets[0].sentient=false;
         setupBase();
         addBall();
+    }
+    class CountdownTimerListener implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            for (int i = 0; i < rackets.length; i++) {
+                rackets[i].update(i);
+            }
+        }
     }
 
     void setupBase()
