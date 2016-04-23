@@ -234,7 +234,7 @@ public class ping extends Thread {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                game = new pong(size);
+                game = new pong(size,2);
                 game.rackets[0].master=master;
                 for(Racket r : game.rackets) {
                     r.sentient = false;

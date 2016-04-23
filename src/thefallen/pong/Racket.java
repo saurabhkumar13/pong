@@ -40,6 +40,11 @@ public class Racket {
 
     Point2D center;
 
+    public Racket(int dif)
+    {
+        difficulty = dif;
+    }
+
     public void update(int index){
 
         v += a * dt;

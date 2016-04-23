@@ -90,7 +90,7 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                game = new pong(7);
+                game = new pong(7,diff);
                 SwingUtilities.invokeLater(new Runnable() {
                     @Override
                     public void run() {
@@ -103,7 +103,7 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
     final double r;
     final Point2D center;
 
-    public pong(int n) {
+    public pong(int n,int dif) {
 
         final String rendererType = JRendererFactory.useActiveRenderer() ? "Active" : "Passive";
         f_frame = new JFrame("ping pong " + rendererType + " Rendering");
@@ -120,6 +120,8 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
                 f_renderer.shutdown();
             }
         });
+
+        diff = dif;
 
         f_frame.setLayout(new BorderLayout());
         JPanel topPanel = new JPanel();
@@ -189,7 +191,7 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
 
         for(int i=0;i<N_;i++) {
 
-            rackets[i] = new Racket();
+            rackets[i] = new Racket(diff);
             rackets[i].n = i;
             rackets[i].N = N;
             rackets[i].center = center;
@@ -280,7 +282,7 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
 
 
     void addBall() {
-        ball = new Ball();
+        ball = new Ball(diff);
         ball.lol = lol;
         for(int i=0;i<N_;i++)
             rackets[i].ball=ball;

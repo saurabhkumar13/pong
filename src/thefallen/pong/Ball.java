@@ -18,11 +18,18 @@ public class Ball {
     Polygon base;
     Point2D center;
     Racket[] rackets;
-    int N;
+    int N,diff;
     boolean isGdecreasing=true,twoP;
     float gravity=0;
     onDiedListener diedListener;
     SinglePlayer lol;
+
+    public Ball(int dif)
+    {
+        diff = dif;
+        vx = 3+diff;
+        vy = -(3+diff);
+    }
 
     public double getX() {
         return x;
@@ -60,9 +67,13 @@ public class Ball {
 
     boolean mew;
     public void update(){
+
+
         vx+=ax*dt;
         vy+=ay*dt;
+
         theta+=omega*dt*0.05;
+
         double theta =- Math.atan2(y - center.getY(), x - center.getX()),f=0.9;
         if(gravity+dt>1) isGdecreasing=true;
         else if(gravity-dt<-1) isGdecreasing=false;
