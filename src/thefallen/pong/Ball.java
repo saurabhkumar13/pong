@@ -102,7 +102,6 @@ public class Ball {
                 if((n==1 && vx > 0) || (n==3 && vx <0))
                     {
                         vx = -vx;
-                        syncBall();
                         return;
                     }
 
@@ -142,7 +141,7 @@ public class Ball {
                   omega = omega + mininum(vt-omega*r,2*mu*vn)/r;
                 vx = (vt_*sin(normal) + vn_*cos(normal));
                 vy = (vt_*cos(normal) - vn_*sin(normal));
-                syncBall();
+
 //                out.println(angleInRadians*180/PI+" "+vx+" "+vy);
             }
         }
@@ -150,18 +149,6 @@ public class Ball {
 //        if(y+vy*dt>frameH||y+vy<0) vy=-vy;
         x += vx * dt;
         y += vy * dt;
-
-    }
-
-    void syncBall()
-    {
-        if(master!=null)
-            master.broadcastToGroup((new JSONObject().accumulate("command",Misc.Command.SyncBall)
-                    .accumulate("vx",vx)
-                    .accumulate("vy",vy)
-                    .accumulate("x",x)
-                    .accumulate("y",y)
-            ).toString());
 
     }
 
@@ -176,8 +163,14 @@ public class Ball {
 
         vx = vx_ * cos(delta) + vy_ * sin(delta);
         vy = vy_ * cos(delta) - vx_ * sin(delta);
-        if(i==0) syncBall();
-     }
+        if(i==0&&master!=null)
+            master.broadcastToGroup((new JSONObject().accumulate("command",Misc.Command.SyncBall)
+            .accumulate("vx",vx)
+            .accumulate("vy",vy)
+            .accumulate("x",x)
+            .accumulate("y",y)
+            ).toString());
+    }
 
     double pos(double a)
     {
