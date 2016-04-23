@@ -31,6 +31,7 @@ import sun.rmi.runtime.Log;
 import java.util.prefs.Preferences;
 
 import static com.surelogic.Part.Static;
+import static java.lang.System.err;
 import static java.lang.System.out;
 
 public class UI extends Application {
@@ -335,6 +336,51 @@ public class UI extends Application {
         Scene scene = new Scene(border, bounds.getWidth(), bounds.getHeight());
         return scene;
     }
+    GridPane grid2;
+    int grid2I=0;
+    public Scene getwaitingserver(){
+        GridPane createserverheader = getheader("CREATE SERVER");
+        Platform.setImplicitExit(false);
+
+        grid2 = new GridPane();
+        grid2.setAlignment(Pos.CENTER);
+        grid2.setHgap(10);
+        grid2.setVgap(10);
+        grid2.setPadding(new Insets(25, 25, 25, 25));
+
+        Preferences prefs = Preferences.userRoot().node(packagePath);
+        String player_name= prefs.get(PLAYER_NAME,"");
+        Misc.Modes gamemode;
+        final ImageView LogoView = new ImageView();
+        final Image logoPNG = new Image(UI.class.getResourceAsStream("../../res/back.png"));
+        LogoView.setImage(logoPNG);
+        LogoView.setFitWidth(50);
+        LogoView.setFitHeight(50);
+        LogoView.setTranslateX(-30);
+        LogoView.setTranslateY(-50);
+        LogoView.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+
+            @Override
+            public void handle(MouseEvent event) {
+                Scene sc = getLandingScene();
+                stage.setScene(sc);
+                if(pee!=null) pee.Stop();
+                grid2=null;
+            }
+        });
+
+        BorderPane border = new BorderPane();
+        border.setTop(createserverheader);
+        border.setCenter(grid2);
+        border.setRight(LogoView);
+        border.setStyle("-fx-background-color: #000000");
+
+        Screen screen = Screen.getPrimary();
+        Rectangle2D bounds = screen.getVisualBounds();
+
+        Scene scene = new Scene(border, bounds.getWidth(), bounds.getHeight());
+        return scene;
+    }
     public Scene getFindServerScene(){
         GridPane createserverheader = getheader("Finding Servers");
         Platform.setImplicitExit(false);
@@ -358,6 +404,13 @@ public class UI extends Application {
                 pee.joinListener = new ping.onJoinListener() {
                     @Override
                     public void onjoin(String name, String element, String ip) {
+                        if(grid2==null)
+                        {
+                            grid2I=0;
+                            Platform.runLater(() -> stage.setScene(getwaitingserver()));
+                        }
+                        Platform.runLater(() -> Platform.runLater(() -> grid2.add(getplayerview(name, element), 0, grid2I++)));
+
                     }
 
                     @Override
