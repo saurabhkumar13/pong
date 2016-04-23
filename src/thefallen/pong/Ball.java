@@ -160,7 +160,7 @@ public class Ball {
         double delta = 2 * (theta - alpha);
 
         if (temp < 0) return;
-
+        if(!rackets[i].sentient||!rackets[i].user) return;
         vx = vx_ * cos(delta) + vy_ * sin(delta);
         vy = vy_ * cos(delta) - vx_ * sin(delta);
         if(i==0&&master!=null)
