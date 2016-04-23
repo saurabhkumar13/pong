@@ -87,8 +87,13 @@ public class ping extends Thread {
                 JSONArray slaves = new JSONArray();
                 slaves.put(players);
                 slaves = slaves.getJSONArray(0);
+                sendMessage((new JSONObject().accumulate("command",Misc.Command.JOINack)).toString(),sender,Port);
                 broadcastToGroup((new JSONObject().accumulate("command",Misc.Command.JOINedslave).accumulate("Slaves",slaves)).toString());
             }
+        }
+        else if(command.equals(Misc.Command.JOINack.toString())&&State== Misc.state.WAITslave)
+        {
+            IPset.add(sender);
         }
         else if(command.equals(Misc.Command.JOINedslave.toString())&&State== Misc.state.WAITslave)
         {
