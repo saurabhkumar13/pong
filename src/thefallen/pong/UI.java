@@ -628,24 +628,13 @@ public class UI extends Application {
     };
 
     public BorderPane getGameOverScene(boolean success){
-        final ImageView LogoView = new ImageView();
-        final Image logoPNG = new Image(UI.class.getResourceAsStream("../../res/back.png"));
-        LogoView.setImage(logoPNG);
-        LogoView.setFitWidth(50);
-        LogoView.setFitHeight(50);
-        LogoView.setTranslateX(-30);
-        LogoView.setTranslateY(-50);
-        String res="";
+        String res="logo_small.png";
         if(!success)
             res = "youdied.png";
         final Image logoPNG2 = new Image(UI.class.getResourceAsStream("../../res/"+res));
         final ImageView LogoView2 = new ImageView();
         LogoView2.setImage(logoPNG2);
-//        LogoView2.setFitWidth(50);
-//        LogoView2.setFitHeight(50);
-//        LogoView2.setTranslateX(-30);
-//        LogoView2.setTranslateY(-50);
-        LogoView.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+        LogoView2.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
 
             @Override
             public void handle(MouseEvent event) {
@@ -656,7 +645,6 @@ public class UI extends Application {
         });
 
         BorderPane border = new BorderPane();
-        border.setRight(LogoView);
         border.setCenter(LogoView2);
         border.setStyle("-fx-background-color: #000000");
 
