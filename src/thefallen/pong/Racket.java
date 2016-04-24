@@ -26,7 +26,7 @@ public class Racket {
 
     int initx,inity,frame,num,hp_dec = 20,hp_max = 80;
 
-    int width = 100, height = 5, state = 0, hp = 80, n, N;
+    int width = 100, height = 10, state = 0, hp = 80, n, N;
 
     double bvx, bvy;
 
@@ -56,10 +56,12 @@ public class Racket {
                         hp_max += 20;
                         break;
             case WIND : speed = 30;
+                        width = 80;
                         break;
-            case FIRE : e = 2;
+            case FIRE : e = 3;
                         break;
             case WATER : width = 150;
+                        speed = 16;
                         break;
             default: break;
         }

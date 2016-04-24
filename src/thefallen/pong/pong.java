@@ -101,7 +101,7 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
                         game.addBall(null);
                         game.ball.vx = 2;
                         game.ball.vy = 2;
-                        game.rackets[0].setPowerup(Misc.Avatar.WIND);
+                        game.rackets[0].setPowerup(Misc.Avatar.FIRE);
                     }});
             }
         });
