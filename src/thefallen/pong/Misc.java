@@ -28,7 +28,6 @@ public class Misc {
         MediaPlayer mp=new MediaPlayer(popSound);
         mp.play();
         mp.setVolume(((double)Integer.valueOf(sfxvol))/10);
-
     }
 
     static Media popSound2 = new Media(new File("src/res/pop2.wav").toURI().toString());
@@ -59,7 +58,7 @@ public class Misc {
     }
 
     public enum Command{
-        START,ACTION,L,R,LT,RT,ReleaseKeyT,ReleaseKeyV,SyncHP,SyncBall,FIND,FINDreply,JOIN,JOINedslave,INITBall,BallReady,Died
+        START,ACTION,L,R,LT,RT,ReleaseKeyT,ReleaseKeyV,SyncHP,SyncBall,FIND,FINDreply,JOIN,JOINedslave,INITBall,BallReady,Died,Disconnect
     }
 
     public enum Modes{

@@ -196,22 +196,22 @@ public class ping extends Thread {
             if(index==0) return;
             game.rackets[index].hp = message.getInt("HP");
         }
-//        else if(command.equals(Misc.Command.Died.toString()))
-//        {
-//            if(IPset.size()>2&&!sender.equals(myIP)) {
-//                IPset.remove(sender);
-//                if(myIP.equals(IPset.first()))
-//                broadcastToGroup((new JSONObject().accumulate("command",Misc.Command.START)).toString());
-//            }
-//            else
-//            {
-//                if(listener!=null)
-//                    listener.onGameOver(!sender.equals(myIP),0);
-//            }
-//            game.pause();
-//            game.f_frame.setVisible(false);
-//            initset = new TreeSet<>();
-//        }
+        else if(command.equals(Misc.Command.Died.toString())||command.equals(Misc.Command.Disconnect.toString()))
+        {
+            if(IPset.size()>2&&!sender.equals(myIP)) {
+                IPset.remove(sender);
+                if(myIP.equals(IPset.first()))
+                broadcastToGroup((new JSONObject().accumulate("command",Misc.Command.START)).toString());
+            }
+            else
+            {
+                if(listener!=null)
+                    listener.onGameOver(!sender.equals(myIP),0);
+            }
+            game.pause();
+            game.f_frame.setVisible(false);
+            initset = new TreeSet<>();
+        }
     }
 
     QuestMode.onGameOverListener listener;
@@ -219,7 +219,7 @@ public class ping extends Thread {
     public void Stop() {
         if (ds != null) {
             ds.close();
-//            broadcastToGroup(goodbye.toString());
+            broadcastToGroup((new JSONObject().accumulate("command", Misc.Command.Disconnect)).toString());
             ds = null;
         }
     }

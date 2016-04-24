@@ -95,7 +95,7 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
 
         final String rendererType = JRendererFactory.useActiveRenderer() ? "Active" : "Passive";
         f_frame = new JFrame("ping pong " + rendererType + " Rendering");
-        f_frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        f_frame.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
 
         f_frame.setResizable(false);
 
@@ -106,6 +106,13 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
                 f_infoTimer.dispose();
                 f_renderer.getTimingSource().dispose();
                 f_renderer.shutdown();
+            }
+
+            @Override
+            public void windowClosing(WindowEvent e) {
+                if (master != null)
+                    master.Stop();
+
             }
         });
 
