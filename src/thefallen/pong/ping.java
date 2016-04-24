@@ -168,6 +168,7 @@ public class ping extends Thread {
         {
             int index = (IPset.headSet(sender).size() - IPset.headSet(myIP).size());
             if(index<0) index+=IPset.size();
+            if(index==0) return;
             String action = message.getString("action");
             game.rackets[index].x = message.getInt("x");
             if(action.equals(Misc.Command.L.toString())) game.rackets[index].pressed(KeyMap.left);
@@ -181,7 +182,15 @@ public class ping extends Thread {
         {
             int index = (IPset.headSet(sender).size() - IPset.headSet(myIP).size());
             if(index<0) index+=IPset.size();
+            if(index==0) return;
             game.rackets[index].hp = message.getInt("HP");
+        }
+        else if(command.equals(Misc.Command.Died.toString()))
+        {
+            if(IPset.size()>2)
+                IPset.remove(sender);
+            broadcastToGroup((new JSONObject().accumulate("command",Misc.Command.START)).toString());
+
         }
     }
 
@@ -268,6 +277,7 @@ public class ping extends Thread {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
+                if(game!=null) game.pause();
                 game = new pong(size,0);
                 game.addBall(master);
                 game.rackets[0].master=master;
