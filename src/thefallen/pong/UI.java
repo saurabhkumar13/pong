@@ -48,7 +48,7 @@ public class UI extends Application {
     private Stage primaryStage;
     private int full=1;
     public enum gameScreen{
-        LANDING,NEWGAME,CREATESERVER,FINDSERVER,SETTINGS
+        LANDING,NEWGAME,CREATESERVER,FINDSERVER,SETTINGS,EXIT
     }
     public static String packagePath = "/thefallen/pong";
     public int mode=0;
@@ -101,6 +101,9 @@ public class UI extends Application {
 
         Button btn4 = getButton("SETTINGS",gameScreen.SETTINGS);
         grid.add(btn4, 0, 3);
+
+        Button btn5 = getButton("EXIT",gameScreen.EXIT);
+        grid.add(btn5, 0, 4);
 
         BorderPane border = new BorderPane();
         border.setTop(landingHeader);
@@ -1152,6 +1155,10 @@ public class UI extends Application {
                     Misc.pop();
                 }
 
+                if(gsc == gameScreen.EXIT){
+                    Misc.pop();
+                    Platform.exit();
+                }
             }
         });
         return btn;
