@@ -23,8 +23,13 @@ public class Misc {
     static Media popSound2 = new Media(new File("src/res/pop2.wav").toURI().toString());
     static void pop2 ()
     {
-        (new MediaPlayer(popSound2)).play();
+//        (new MediaPlayer(popSound2)).play();
     }
+
+    public enum Avatar{
+        EARTH,WIND,FIRE,WATER
+    }
+
     public enum Command{
         START,ACTION,L,R,LT,RT,ReleaseKeyT,ReleaseKeyV,SyncHP,SyncBall,FIND,FINDreply,JOIN,JOINedslave,INITBall,JOINack,BallReady
     }

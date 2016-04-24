@@ -22,11 +22,11 @@ public class Racket {
 
     boolean sentient = true, safe = false, user = false, diedOnce, decided = true;
 
-    float v, a, dt=.5f, f=.2f, speed=20, ai_speed=10;
+    float v, a, dt=.5f, f=.2f, speed=20, ai_speed=10, e = 1;
 
-    int initx,inity,frame,num;
+    int initx,inity,frame,num,hp_dec = 20,hp_max = 80;
 
-    int width = 100, height = 10, state = 0, hp = 80, n, N;
+    int width = 100, height = 5, state = 0, hp = 80, n, N;
 
     double bvx, bvy;
 
@@ -38,9 +38,32 @@ public class Racket {
 
     Point2D center;
 
+    Misc.Avatar form;
+
     public Racket(int dif)
     {
         difficulty = dif;
+    }
+
+    // SEts values of parameters according to the powerup assigned
+    public void setPowerup(Misc.Avatar id) {
+
+        form = id;
+
+        switch (id)
+        {
+            case EARTH : hp += 20;
+                        hp_max += 20;
+                        break;
+            case WIND : speed = 30;
+                        break;
+            case FIRE : e = 2;
+                        break;
+            case WATER : width = 150;
+                        break;
+            default: break;
+        }
+
     }
 
     public void update(int index){
@@ -84,9 +107,9 @@ public class Racket {
 
                 else dir_x = 0;
 
-                if(dir_y - inity + 2 * bvy > - difficulty * 40)
+                if(dir_y - inity + 2 * bvy > - (20 + difficulty * 30))
                 {
-                    x += ai_speed * dir_x * dt;
+                    x += ai_speed * (1+(float)(difficulty/15)) * dir_x * dt;
                 }
 
                 int t2 = rand.nextInt(30);
@@ -111,10 +134,6 @@ public class Racket {
                     x = frame - width;
                 else if (x < 0)
                     x = 0;
-
-//                y =(int)ballpos.getY();//-200-40*(N-3);
-//                out.println("racket"+n+" "+(2*PI*n/(N))+" "+ballpos.getX()+" "+ballpos.getY());
-//                out.println("RACKET"+frame+" "+width);
             }
 
             else
@@ -141,22 +160,17 @@ public class Racket {
             }
         }
         if (e == KeyMap.tiltLeft && state!=1){
-            err.println("pressed LT");
             state = 1;
             if (master != null) {
                 master.broadcastToGroup((new JSONObject().accumulate("command",Misc.Command.ACTION).accumulate("action",Misc.Command.LT).accumulate("x",x)).toString());
             }
         }
         else if(e==KeyMap.tiltRight && state!=-1){
-            err.println("pressed RT");
             state=-1;
             if (master != null) {
                 master.broadcastToGroup((new JSONObject().accumulate("command",Misc.Command.ACTION).accumulate("action",Misc.Command.RT).accumulate("x",x)).toString());
             }
-    }
-
-//        else if(e!=KeyMap.tiltRight||e!=KeyMap.tiltLeft)
-//            state=0;
+        }
 
     }
 

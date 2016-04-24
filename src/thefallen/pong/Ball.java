@@ -7,6 +7,7 @@ import org.json.JSONObject;
 
 import java.awt.*;
 import java.awt.geom.Point2D;
+import java.util.Random;
 
 import static java.lang.Math.*;
 import static java.lang.System.err;
@@ -35,8 +36,14 @@ public class Ball {
 
     void setVel()
     {
-        vx = 8+2*diff;
-        vy = -(8+2*diff);
+        Random r = new Random();
+        int lel = r.nextInt(19)+1;
+        if(lel == 10) lel = 9;
+        double v = 10 + diff;
+        double theta = 2 * PI * lel / 20;
+        vx = v * cos(theta);
+        vy = v * sin(theta);
+
     }
 
     public double getX() {
@@ -121,7 +128,7 @@ public class Ball {
                     {
                         master.broadcastToGroup((new JSONObject().accumulate("command",Misc.Command.SyncHP).accumulate("HP",rackets[n].hp-20)).toString());
                     }
-                    rackets[n].hp -= 20;
+                    rackets[n].hp -= rackets[n].hp_dec;
                 }
 
                 else if(diedListener!=null)
@@ -178,9 +185,16 @@ public class Ball {
         if (temp < 0) return;
 
         if(!rackets[i].sentient&&!rackets[i].user) return;
-
-        vx = vx_ * cos(delta) + vy_ * sin(delta);
-        vy = vy_ * cos(delta) - vx_ * sin(delta);
+        if(num == 2 || i%2 == 0)
+        {
+            vx = vx_ * cos(delta) + vy_ * sin(delta);
+            vy = rackets[i].e * (vy_ * cos(delta) - vx_ * sin(delta));
+        }
+        else
+        {
+            vx = rackets[i].e * (vx_ * cos(delta) + vy_ * sin(delta));
+            vy = vy_ * cos(delta) - vx_ * sin(delta);
+        }
 //        err.println(i+" "+N+state+" "+(vx_-vx)+" "+(vy_-vy));
 
         if(i==0&&master!=null)

@@ -17,8 +17,8 @@ public class QuestMode {
     //Declaring and initialising variables
 
     pong game;
-    static final int num_ai = 4, init_hp = 80, max_ai = 3;
-    int userHp = 80, score = 0, aiLevel = 2;
+    static final int num_ai = 1, init_hp = 80, max_ai = 5;
+    int userHp = 80, score = 0, aiLevel = 1;
     boolean uDied = false, aiDied = false, pause_flag = false, constructing = false, gOver = false;
     QuestMode quest;
 
@@ -43,15 +43,17 @@ public class QuestMode {
                 endQuest();
             } else {
                 aiDied = true;
-                out.println("AI DIED"+constructing+" "+aiLevel);
+                out.println("AI DIED "+constructing+" "+aiLevel);
 
-                if (!constructing && aiLevel < max_ai) {
+                if (!constructing && aiLevel < max_ai)
+                {
                     out.println("Constructing new AI");
                     userHp = game.rackets[0].hp;
                     aiLevel+=1;
                     startLevel(aiLevel);
                     constructing = true;
-                } else if (aiLevel == max_ai) {
+                }
+                else if (aiLevel == max_ai) {
                     successQuest();
                 }
 
@@ -78,10 +80,22 @@ public class QuestMode {
                 constructing = false;
                 err.println("constructing done " + level);
 
-                //Give initial hp bvalues to all paddles
+                //Give initial hp values to all paddles
+
                 for (int i = 0; i < num_ai + 1; i++) {
                     if (i == 0) {
                         game.rackets[0].hp = userHp;
+                        switch (level) {
+                            case 2 : game.rackets[0].setPowerup(Misc.Avatar.WIND);
+                                    break;
+                            case 3 : game.rackets[0].setPowerup(Misc.Avatar.WATER);
+                                    break;
+                            case 4 : game.rackets[0].setPowerup(Misc.Avatar.EARTH);
+                                    break;
+                            case 5 : game.rackets[0].setPowerup(Misc.Avatar.FIRE);
+                                    break;
+                            default: break;
+                        }
                     } else {
                         game.rackets[i].hp = init_hp;
                     }
@@ -108,6 +122,7 @@ public class QuestMode {
     }
 
     //Call the functions as per the key that is currently pressed
+
     public void pressed(int e) {
         if (e == KeyMap.exit)
             pause();
@@ -117,6 +132,7 @@ public class QuestMode {
     }
 
     //Handle the pause functionality
+
     void pause() {
         if(!gOver)
         {
@@ -138,7 +154,7 @@ public class QuestMode {
 
     public void startQuest()
     {
-        startLevel(1);
+        startLevel(aiLevel);
         pause();
     }
 

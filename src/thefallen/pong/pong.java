@@ -87,20 +87,21 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
     double padding = 0.05;
     SinglePlayer lol;
     ping master;
-    static int diff = 1;
+    static int diff = 5;
 
     public static void main(String args[]){
         System.setProperty("swing.defaultlaf", "com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                game = new pong(4,diff);
+                game = new pong(2,diff);
                 SwingUtilities.invokeLater(new Runnable() {
                     @Override
                     public void run() {
                         game.addBall(null);
                         game.ball.vx = 2;
                         game.ball.vy = 2;
+                        game.rackets[0].setPowerup(Misc.Avatar.WIND);
                     }});
             }
         });
@@ -154,7 +155,8 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
 
         f_panel = new JRendererPanel();
         f_frame.add(f_panel, BorderLayout.CENTER);
-        f_panel.setPreferredSize(new Dimension(800,600));
+//        f_panel.setPreferredSize(new Dimension(800,600));
+        f_panel.setPreferredSize(new Dimension(1200,900));
 //        f_panel.setPreferredSize(new Dimension(1366 ,768));
 //        f_frame.setUndecorated(true);
 //        f_frame.setPreferredSize(Toolkit.getDefaultToolkit().getScreenSize());
@@ -189,7 +191,7 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
         }
         else if (n == 2)
         {
-            scale = 1.5;
+            scale = 1;
         }
 
         r=(floor(min(f_frame.getHeight(),f_frame.getWidth())/200)*100-50)*scale;
@@ -362,15 +364,53 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
         g2d.setPaint(Color.black);
         double th = 0;
 
+        g2d.setColor(Color.white);
+        g2d.setFont(new Font("SansSerif", Font.BOLD, 12));
+        switch(diff) {
+
+            case 1 : g2d.drawString("DIFFICULTY : EASY", width/2 - 50, height/10);
+                break;
+            case 2 : g2d.drawString("DIFFICULTY : MEDIUM", width/2 - 50, height/10);
+                break;
+            case 3 : g2d.drawString("DIFFICULTY : HARD", width/2 - 50, height/10);
+                break;
+            case 4 : g2d.drawString("DIFFICULTY : HARDER", width/2 - 50, height/10);
+                break;
+            case 5 : g2d.drawString("DIFFICULTY : HARDEST", width/2 - 50, height/10);
+                break;
+            default: break;
+        }
+
         for(int i=0;i<rackets.length;i++)
         {
             Rectangle pad = new Rectangle();
             Rectangle pad2 = new Rectangle();
-            Rectangle pad3 = new Rectangle();
-            pad.setRect(rackets[i].x + base.xpoints[N/ 2], rackets[i].y + base.ypoints[N/ 2] - rackets[i].height, rackets[i].width, 2*rackets[i].height);
+//            Rectangle pad3 = new Rectangle();
+            pad.setRect(rackets[i].x + base.xpoints[N/ 2], rackets[i].y + base.ypoints[N/ 2] - 2*rackets[i].height, rackets[i].width, 2*rackets[i].height);
 //            pad3.setRect(rackets[i].x+ base.xpoints[N/ 2] - (padding/2) * rackets[i].width, rackets[i].y + base.ypoints[N/ 2] - rackets[i].height, rackets[i].width*(1+padding), 2*rackets[i].height*(1+padding/2));
-            pad2.setRect(rackets[i].x + base.xpoints[N/ 2] + 5, rackets[i].y + base.ypoints[N/ 2] - rackets[i].height/2, rackets[i].width*(rackets[i].hp+20)*9/1000, rackets[i].height/2);
-            g2d.setPaint(Color.black);
+            pad2.setRect(rackets[i].x + base.xpoints[N/ 2] + 5, rackets[i].y + base.ypoints[N/ 2] - rackets[i].height, rackets[i].width*(rackets[i].hp+20)*9/(10*(rackets[i].hp_max+20)), rackets[i].height/2);
+
+            // Decide Color of the paddle based on the powerup
+
+            if(rackets[i].form != null)
+            {
+                switch(rackets[i].form)
+                {
+                    case EARTH : g2d.setPaint(Color.decode("0x006400"));
+                                break;
+                    case WIND : g2d.setPaint(Color.decode("0xadd8e6"));
+                                break;
+                    case FIRE : g2d.setPaint(Color.decode("0xce2029"));
+                                break;
+                    case WATER : g2d.setPaint(Color.decode("0x000080"));
+                                break;
+                    default: break;
+                }
+            }
+            else
+            {
+                g2d.setPaint(Color.black);
+            }
 
             Shape s = (AffineTransform.getRotateInstance(
                     PI/20*rackets[i].state, pad.getCenterX(), pad.getCenterY())
@@ -406,8 +446,6 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
                 }
             }
 
-            g2d.setPaint(Color.black);
-
             if(s.contains(ball.getX(),ball.getY()))
             {
                 ball.padCollision(rackets[i].state,i);
@@ -424,14 +462,33 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
             }
 
             g2d.fill(s);
-            g2d.setPaint(Color.lightGray);
+            if(rackets[i].form != null)
+            {
+                switch(rackets[i].form)
+                {
+                    case EARTH : g2d.setPaint(Color.black);
+                        break;
+                    case WIND : g2d.setPaint(Color.black);
+                        break;
+                    case FIRE : g2d.setPaint(Color.lightGray);
+                        break;
+                    case WATER : g2d.setPaint(Color.lightGray);
+                        break;
+                    default: break;
+                }
+            }
+            else
+            {
+                g2d.setPaint(Color.lightGray);
+            }
+
             g2d.fill(s2);
             Point2D ballpos = new Point((int)ball.x,(int)ball.y);
             AffineTransform.getRotateInstance(
                     2*PI*i/(N), center.getX(), center.getY())
                     .transform(ballpos,ballpos);
 
-            g2d.fillOval((int)ballpos.getX(),(int)ballpos.getY(),5,5);
+//            g2d.fillOval((int)ballpos.getX(),(int)ballpos.getY(),5,5);
 
             th-=2*PI*N/(N_*N);
 
@@ -440,12 +497,12 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
         g2d.setPaint(Color.darkGray);
 
 
-            g2d.drawOval((int)ball.getX()-25, (int)ball.getY()-25,50,50);
+//            g2d.drawOval((int)ball.getX()-25, (int)ball.getY()-25,50,50);
             g2d.fillOval((int)ball.getX()-5, (int)ball.getY()-5,10,10);
 //            g2d.setPaint(Color.white);
 //            g2d.fillOval((int)ball.getX()+(int)(25*cos(ball.theta))-5, (int)ball.getY()+(int)(25*sin(ball.theta))-5,10,10);
 //            g2d.setPaint(new Color(ball.gravity/2+0.5f,ball.gravity/2+0.5f,ball.gravity/2+0.5f));
-            g2d.fillOval((int)center.getX()-5, (int)center.getY()-5,10,10);
+//            g2d.fillOval((int)center.getX()-5, (int)center.getY()-5,10,10);
 
         }
 
