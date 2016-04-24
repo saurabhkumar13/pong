@@ -120,8 +120,8 @@ public class ping extends Thread {
         else if (command.equals(Misc.Command.INITBall.toString()))
         {
             Misc.INITballvx = message.getDouble("vx");
-            Misc.INITballvy = -message.getDouble("vy");
-            double vx,vy,normal= 2 * PI * (IPset.headSet(sender).size() - IPset.headSet(myIP).size()) / IPset.size();
+            Misc.INITballvy = message.getDouble("vy");
+            double vx,vy,normal= - 2 * PI * (IPset.headSet(sender).size() - IPset.headSet(myIP).size()) / IPset.size();
             vx = (Misc.INITballvx*cos(normal) + Misc.INITballvy*sin(normal));
             vy = (-Misc.INITballvx*sin(normal) + Misc.INITballvy*cos(normal));
             Misc.INITballvx = vx;
@@ -137,22 +137,20 @@ public class ping extends Thread {
         }
         else if (command.equals(Misc.Command.SyncBall.toString()))
         {
-            double vn,vt;
-            vn = message.getDouble("vx");
-            vt = -message.getDouble("vy");
             double vx,vy,normal= - 2 * PI * (IPset.headSet(sender).size() - IPset.headSet(myIP).size()) / IPset.size(),x,y;
             x = message.getDouble("x");
             y = message.getDouble("y");
-            vx = (vn*cos(normal) + vt*sin(normal));
-            vy = (-vn*sin(normal) + vt*cos(normal));
-
+            Misc.INITballvx = message.getDouble("vx");
+            Misc.INITballvy = message.getDouble("vy");
+            vx = (Misc.INITballvx*cos(normal) + Misc.INITballvy*sin(normal));
+            vy = (-Misc.INITballvx*sin(normal) + Misc.INITballvy*cos(normal));
             if(game!=null) {
                 Ball ball = game.ball;
                 if (ball!=null) {
                     ball.vx = vx;
                     ball.vy = vy;
-//                    ball.x = game.center.getX() + (x - game.center.getX())*cos(normal) - (y - game.center.getY())*sin(normal);
-//                    ball.y = game.center.getY() + (x - game.center.getX())*sin(normal) + (y - game.center.getY())*cos(normal);
+                    ball.x = game.center.getX() + (x - game.center.getX())*cos(normal) - (y - game.center.getY())*sin(normal);
+                    ball.y = game.center.getY() + (x - game.center.getX())*sin(normal) + (y - game.center.getY())*cos(normal);
                 }
             }
         }
@@ -270,7 +268,7 @@ public class ping extends Thread {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                game = new pong(size,2);
+                game = new pong(size,0);
                 game.addBall(master);
                 game.rackets[0].master=master;
                 game.master=master;

@@ -437,15 +437,6 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
 //                    th, center.getX(), center.getY())
 //                    .createTransformedShape(s3));
 
-            if(lol != null) {
-                g2d.setColor(Color.white);
-                g2d.setFont(new Font("SansSerif", Font.BOLD, 12));
-                g2d.drawString("TIMER BITCH!!", 600, 100);
-                if (lol.time != null) {
-                    g2d.drawString(lol.time, 600, 120);
-                }
-            }
-
             if(s.contains(ball.getX(),ball.getY()))
             {
                 ball.padCollision(rackets[i].state,i);
@@ -483,15 +474,7 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
             }
 
             g2d.fill(s2);
-            Point2D ballpos = new Point((int)ball.x,(int)ball.y);
-            AffineTransform.getRotateInstance(
-                    2*PI*i/(N), center.getX(), center.getY())
-                    .transform(ballpos,ballpos);
-
-//            g2d.fillOval((int)ballpos.getX(),(int)ballpos.getY(),5,5);
-
             th-=2*PI*N/(N_*N);
-
         }
 
         g2d.setPaint(Color.darkGray);

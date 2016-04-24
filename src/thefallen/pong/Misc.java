@@ -23,7 +23,12 @@ public class Misc {
     static Media popSound2 = new Media(new File("src/res/pop2.wav").toURI().toString());
     static void pop2 ()
     {
-//        (new MediaPlayer(popSound2)).play();
+
+        try {
+            (new MediaPlayer(popSound2)).play();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public enum Avatar{

@@ -180,7 +180,6 @@ public class Ball {
         double alpha = atan2(-vy_, vx_);
         double delta = 2 * (theta - alpha);
 
-//        Misc.pop2();
 
         if (temp < 0) return;
 
@@ -195,15 +194,20 @@ public class Ball {
             vx = rackets[i].e * (vx_ * cos(delta) + vy_ * sin(delta));
             vy = vy_ * cos(delta) - vx_ * sin(delta);
         }
-//        err.println(i+" "+N+state+" "+(vx_-vx)+" "+(vy_-vy));
+
 
         if(i==0&&master!=null)
+        {
+            Misc.pop2();
             master.broadcastToGroup((new JSONObject().accumulate("command",Misc.Command.SyncBall)
             .accumulate("vx",vx)
             .accumulate("vy",vy)
             .accumulate("x",x)
             .accumulate("y",y)
             ).toString());
+        }
+        else if(master==null)
+            Misc.pop2();
     }
 
     double pos(double a)

@@ -104,7 +104,7 @@ public class QuestMode {
                 //Setup the pause functionality
                 game.f_frame.addKeyListener(new KeyListener() {
                     @Override
-                    public void keyTyped(KeyEvent e) {
+                    public void keyTyped(KeyEvent  e) {
                     }
 
                     @Override
