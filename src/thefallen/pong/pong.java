@@ -1,4 +1,9 @@
 package thefallen.pong;
+
+/**
+ * Handles the creation and rendering of a game board
+ */
+
 import static java.lang.Integer.min;
 import static java.lang.Math.*;
 import static java.lang.System.err;
@@ -45,35 +50,11 @@ import org.jdesktop.swing.animation.timing.sources.SwingTimerTimingSource;
 import org.json.JSONObject;
 import sun.rmi.runtime.Log;
 
-/**
- * This demonstration is a variant of the demonstration by Chet Haase at JavaOne
- * 2008. Chet discussed the problem in the original Timing Framework where, by
- * default, each animation used its own {@code javax.swing.Timer}. This did not
- * scale and, as balls were added to the demonstration, the multiple timers
- * caused noticeable performance problems.
- * <p>
- * This version of the Timing Framework allows setting a default timer on the
- * {@link , thus making it easy for client code to avoid this
- * problem. This design was inspired by the JavaOne 2008 talk.
- * <p>
- * By default this program uses passive rendering. To use active rendering set
- * the <tt>org.jdesktop.renderer.active</tt> system property to any value. For
- * example place <tt>-Dorg.jdesktop.renderer.active=true</tt> on the java
- * command line.
- *
- * @author Tim Halloran
- */
 public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> {
 
-    /**
-     * Used to update the FPS display once a second.
-     */
+    // Basic variable declarations and initialisations
+
     static final TimingSource f_infoTimer = new SwingTimerTimingSource(1, SECONDS);
-
-  /*
-   * EDT methods and state
-   */
-
     final JFrame f_frame;
     final JRendererPanel f_panel;
     final JRenderer f_renderer;
@@ -84,7 +65,6 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
     final int N,N_;
     Ball ball;
     Ball.onDiedListener onDiedListener;
-    double padding = 0.05;
     SinglePlayer lol;
     ping master;
     static int diff = 5;
@@ -388,10 +368,10 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
         {
             Rectangle pad = new Rectangle();
             Rectangle pad2 = new Rectangle();
-//            Rectangle pad3 = new Rectangle();
-            pad.setRect(rackets[i].x + base.xpoints[N/ 2], rackets[i].y + base.ypoints[N/ 2] - 2*rackets[i].height, rackets[i].width, 2*rackets[i].height);
-//            pad3.setRect(rackets[i].x+ base.xpoints[N/ 2] - (padding/2) * rackets[i].width, rackets[i].y + base.ypoints[N/ 2] - rackets[i].height, rackets[i].width*(1+padding), 2*rackets[i].height*(1+padding/2));
+            Rectangle pad3 = new Rectangle();
+            pad.setRect(rackets[i].x + base.xpoints[N/ 2], rackets[i].y + base.ypoints[N/ 2] - 2 * rackets[i].height, rackets[i].width, 2*rackets[i].height);
             pad2.setRect(rackets[i].x + base.xpoints[N/ 2] + 5, rackets[i].y + base.ypoints[N/ 2] - rackets[i].height, rackets[i].width*(rackets[i].hp+20)*9/(10*(rackets[i].hp_max+20)), rackets[i].height/2);
+            pad3.setRect(rackets[i].x+ base.xpoints[N/ 2], rackets[i].y + base.ypoints[N/ 2] - 2 * rackets[i].height, rackets[i].width, 3*rackets[i].height);
 
             // Decide Color of the paddle based on the powerup
 
@@ -431,16 +411,16 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
             s2 = (AffineTransform.getRotateInstance(
                     th, center.getX(), center.getY())
                     .createTransformedShape(s2));
-//
-//            Shape s3 = (AffineTransform.getRotateInstance(
-//                    PI/20*rackets[i].state, pad.getCenterX(), pad.getCenterY())
-//                    .createTransformedShape(pad3));
-//
-//            s3 = (AffineTransform.getRotateInstance(
-//                    th, center.getX(), center.getY())
-//                    .createTransformedShape(s3));
 
-            if(s.contains(ball.getX(),ball.getY()))
+            Shape s3 = (AffineTransform.getRotateInstance(
+                    PI/20*rackets[i].state, pad.getCenterX(), pad.getCenterY())
+                    .createTransformedShape(pad3));
+
+            s3 = (AffineTransform.getRotateInstance(
+                    th, center.getX(), center.getY())
+                    .createTransformedShape(s3));
+
+            if(s3.contains(ball.getX(),ball.getY()))
             {
                 ball.padCollision(rackets[i].state,i);
                 rackets[i].safe = true;
@@ -477,7 +457,7 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
             }
 
             g2d.fill(s2);
-            th-=2*PI*N/(N_*N);
+            th -= 2 * PI  / N_;
         }
 
         g2d.setPaint(Color.darkGray);

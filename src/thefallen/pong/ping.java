@@ -138,19 +138,23 @@ public class ping extends Thread {
         else if (command.equals(Misc.Command.SyncBall.toString()))
         {
             double vx,vy,normal= - 2 * PI * (IPset.headSet(sender).size() - IPset.headSet(myIP).size()) / IPset.size(),x,y;
+
             x = message.getDouble("x");
             y = message.getDouble("y");
+
             Misc.INITballvx = message.getDouble("vx");
             Misc.INITballvy = message.getDouble("vy");
+
             vx = (Misc.INITballvx*cos(normal) + Misc.INITballvy*sin(normal));
             vy = (-Misc.INITballvx*sin(normal) + Misc.INITballvy*cos(normal));
+
             if(game!=null) {
                 Ball ball = game.ball;
                 if (ball!=null) {
                     ball.vx = vx;
                     ball.vy = vy;
-                    ball.x = game.center.getX() + (x - game.center.getX())*cos(normal) - (y - game.center.getY())*sin(normal);
-                    ball.y = game.center.getY() + (x - game.center.getX())*sin(normal) + (y - game.center.getY())*cos(normal);
+                    ball.x = game.center.getX() + (x - game.center.getX())*cos(normal) + (y - game.center.getY())*sin(normal);
+                    ball.y = game.center.getY() - (x - game.center.getX())*sin(normal) + (y - game.center.getY())*cos(normal);
                 }
             }
         }
@@ -280,12 +284,10 @@ public class ping extends Thread {
                 if (game != null) game.pause();
                 game = new pong(size, 0, true);
                 for (String slaves : master.players){
-                    err.println(slaves);
                     JSONObject slav = (new JSONObject(slaves));
                     int index = (master.IPset.headSet(slav.getString("IP")).size() - master.IPset.headSet(master.myIP).size());
                     if(index<0) index+=master.IPset.size();
                     String element = slav.getString("element");
-                    err.println(element+" "+index);
                     if(element.equals(Misc.Avatar.EARTH.toString()))
                         game.rackets[index].setPowerup(Misc.Avatar.EARTH);
                     else if(element.equals(Misc.Avatar.FIRE.toString()))

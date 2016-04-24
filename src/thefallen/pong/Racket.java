@@ -48,6 +48,7 @@ public class Racket {
     // SEts values of parameters according to the powerup assigned
     public void setPowerup(Misc.Avatar id) {
 
+
         form = id;
 
         switch (id)
@@ -55,8 +56,8 @@ public class Racket {
             case EARTH : hp += 20;
                         hp_max += 20;
                         break;
-            case WIND : speed = 30;
-                        width = 80;
+            case WIND : speed = 35;
+                        width = 90;
                         break;
             case FIRE : e = 3;
                         break;
