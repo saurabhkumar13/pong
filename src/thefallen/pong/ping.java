@@ -278,7 +278,7 @@ public class ping extends Thread {
             @Override
             public void run() {
                 if(game!=null) game.pause();
-                game = new pong(size,0);
+                game = new pong(size,0,false);
                 game.addBall(master);
                 game.rackets[0].master=master;
                 game.master=master;

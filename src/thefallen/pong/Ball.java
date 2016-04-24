@@ -222,7 +222,7 @@ public class Ball {
 
     public void padCollision(int state,int i) {
         int num;
-        if(twoP) num = 2;
+        if (twoP) num = 2;
         else num = N;
 
         double vy_ = vy, vx_ = vx;
@@ -231,29 +231,29 @@ public class Ball {
         double alpha = atan2(-vy_, vx_);
         double delta = 2 * (theta - alpha);
 
-//        Misc.pop2();
-
         if (temp < 0) return;
 
-        if(!rackets[i].sentient&&!rackets[i].user) return;
-        if(num == 2 || i%2 == 0)
-        {
+        if (!rackets[i].sentient && !rackets[i].user) return;
+        if (num == 2 || i % 2 == 0) {
             vx = vx_ * cos(delta) + vy_ * sin(delta);
             vy = rackets[i].e * (vy_ * cos(delta) - vx_ * sin(delta));
-        }
-        else
-        {
+        } else {
             vx = rackets[i].e * (vx_ * cos(delta) + vy_ * sin(delta));
             vy = vy_ * cos(delta) - vx_ * sin(delta);
         }
 
-        if(i==0&&master!=null)
-            master.broadcastToGroup((new JSONObject().accumulate("command",Misc.Command.SyncBall)
-            .accumulate("vx",vx)
-            .accumulate("vy",vy)
-            .accumulate("x",x)
-            .accumulate("y",y)
+        if (i == 0 && master != null){
+            Misc.pop2();
+            master.broadcastToGroup((new JSONObject().accumulate("command", Misc.Command.SyncBall)
+                    .accumulate("vx", vx)
+                    .accumulate("vy", vy)
+                    .accumulate("x", x)
+                    .accumulate("y", y)
             ).toString());
+    }
+        else if(master==null)
+            Misc.pop2();
+
     }
 
     double pos(double a)
