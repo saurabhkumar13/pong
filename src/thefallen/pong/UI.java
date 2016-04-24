@@ -610,19 +610,58 @@ public class UI extends Application {
     }
     QuestMode.onGameOverListener gameOverListener = new QuestMode.onGameOverListener() {
         @Override
-        public void onGameOver(boolean success, int score) {
+        public void onGameOver(boolean success, int score)
+        {
             if(quest1!=null)
             {
                 quest1.game.pause();
                 quest1.game.f_frame.setVisible(false);
+                scene.setRoot(getGameOverScene(success));
             }
             else
             {
                 quest2.game.pause();
                 quest2.game.f_frame.setVisible(false);
+                scene.setRoot(getGameOverScene(success));
             }
         }
     };
+
+    public BorderPane getGameOverScene(boolean success){
+        final ImageView LogoView = new ImageView();
+        final Image logoPNG = new Image(UI.class.getResourceAsStream("../../res/back.png"));
+        LogoView.setImage(logoPNG);
+        LogoView.setFitWidth(50);
+        LogoView.setFitHeight(50);
+        LogoView.setTranslateX(-30);
+        LogoView.setTranslateY(-50);
+        String res="";
+        if(!success)
+            res = "youdied.png";
+        final Image logoPNG2 = new Image(UI.class.getResourceAsStream("../../res/"+res));
+        final ImageView LogoView2 = new ImageView();
+        LogoView2.setImage(logoPNG2);
+//        LogoView2.setFitWidth(50);
+//        LogoView2.setFitHeight(50);
+//        LogoView2.setTranslateX(-30);
+//        LogoView2.setTranslateY(-50);
+        LogoView.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+
+            @Override
+            public void handle(MouseEvent event) {
+                BorderPane bp = getLandingScene();
+                scene.setRoot(bp);
+                Misc.pop();
+            }
+        });
+
+        BorderPane border = new BorderPane();
+        border.setRight(LogoView);
+        border.setCenter(LogoView2);
+        border.setStyle("-fx-background-color: #000000");
+
+        return border;
+    }
     public BorderPane getwaitingserver(){
         GridPane createserverheader = getheader("Waiting",true);
         Platform.setImplicitExit(false);
@@ -750,6 +789,7 @@ public class UI extends Application {
         hBox.getChildren().addAll(userName,userName2);
         return hBox;
     }
+
     public HBox getServerView(String name, String mode,String pass,int maxPlayers,String IP){
 
         Label Name = new Label(name.toUpperCase());
