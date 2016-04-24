@@ -29,6 +29,7 @@ import org.json.JSONObject;
 import sun.rmi.runtime.Log;
 
 import java.io.File;
+import thefallen.pong.Resources;
 import java.util.prefs.Preferences;
 
 import static com.surelogic.Part.Static;
@@ -60,9 +61,8 @@ public class UI extends Application {
     public void start(Stage primaryStage) {
 
         this.primaryStage=primaryStage;
-        String musicFile = "src/res/bg.mp3";     // For example
 
-        Media sound = new Media(new File(musicFile).toURI().toString());
+        Media sound = new Media(Resources.getResource(Resources.music).toExternalForm());
         mediaPlayer = new MediaPlayer(sound);
         mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
         mediaPlayer.play();
@@ -241,7 +241,7 @@ public class UI extends Application {
         grid.add(btn,1,4);
 
         final ImageView LogoView = new ImageView();
-        final Image logoPNG = new Image(UI.class.getResourceAsStream("../../res/back.png"));
+        final Image logoPNG = new Image(thefallen.pong.Resources.getResource("back.png").toExternalForm());
         LogoView.setImage(logoPNG);
         LogoView.setFitWidth(50);
         LogoView.setFitHeight(50);
@@ -320,7 +320,7 @@ public class UI extends Application {
         }
 
         final ImageView LogoView = new ImageView();
-        final Image logoPNG = new Image(UI.class.getResourceAsStream("../../res/back.png"));
+        final Image logoPNG = new Image(thefallen.pong.Resources.getResource("back.png").toExternalForm());
         LogoView.setImage(logoPNG);
         LogoView.setFitWidth(50);
         LogoView.setFitHeight(50);
@@ -611,7 +611,7 @@ public class UI extends Application {
         grid.add(btn,1,5);
 
         final ImageView LogoView = new ImageView();
-        final Image logoPNG = new Image(UI.class.getResourceAsStream("../../res/back.png"));
+        final Image logoPNG = new Image(thefallen.pong.Resources.getResource("back.png").toExternalForm());
         LogoView.setImage(logoPNG);
         LogoView.setFitWidth(50);
         LogoView.setFitHeight(50);
@@ -664,7 +664,7 @@ public class UI extends Application {
         userName.setTextFill(Color.valueOf("#B4B0AB"));
         grid.add(userName, 0, 0);
 
-        final Image logoPNG2 = new Image(UI.class.getResourceAsStream("../../res/"+res));
+        final Image logoPNG2 = new Image(thefallen.pong.Resources.getResource(res).toExternalForm());
         final ImageView LogoView2 = new ImageView();
         LogoView2.setImage(logoPNG2);
         LogoView2.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
@@ -699,7 +699,7 @@ public class UI extends Application {
         String player_name= prefs.get(PLAYER_NAME,"");
         Misc.Modes gamemode;
         final ImageView LogoView = new ImageView();
-        final Image logoPNG = new Image(UI.class.getResourceAsStream("../../res/back.png"));
+        final Image logoPNG = new Image(thefallen.pong.Resources.getResource("back.png").toExternalForm());
         LogoView.setImage(logoPNG);
         LogoView.setFitWidth(50);
         LogoView.setFitHeight(50);
@@ -770,7 +770,7 @@ public class UI extends Application {
         }
 
         final ImageView LogoView = new ImageView();
-        final Image logoPNG = new Image(UI.class.getResourceAsStream("../../res/back.png"));
+        final Image logoPNG = new Image(thefallen.pong.Resources.getResource("back.png").toExternalForm());
         LogoView.setImage(logoPNG);
         LogoView.setFitWidth(50);
         LogoView.setFitHeight(50);
@@ -1193,7 +1193,7 @@ public class UI extends Application {
         final ImageView LogoView = new ImageView();
         String res = "logo_small.png";
         if(loading) res = "477.gif";
-        final Image logoPNG = new Image(UI.class.getResourceAsStream("../../res/"+res));
+        final Image logoPNG = new Image(thefallen.pong.Resources.getResource(res).toExternalForm());
         LogoView.setImage(logoPNG);
 
         final Text titleField = new Text(title);

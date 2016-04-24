@@ -326,7 +326,7 @@ public class ping extends Thread {
                     r.sentient = false;
                     err.println(master.GameMode);
                     if(master.GameMode==2)
-                        r.hp = 0;
+                        r.hp = -10;
                 }
             }
         });

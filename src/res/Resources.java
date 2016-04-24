@@ -23,6 +23,7 @@ public final class Resources {
     public static final String FONT2 = "fonts/GoodDogPlain.ttf";
     public static final String LOGO = "logo_small.png";
     public static final String BACK = "back.png";
+    public static final String music = "bg.mp3";
 
     public static final String[] SPHERES = { BLUE_SPHERE, GRAY_SPHERE, GREEN_SPHERE, RED_SPHERE, YELLOW_SPHERE};
 

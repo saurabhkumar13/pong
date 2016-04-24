@@ -22,7 +22,7 @@ public class Misc {
     static String Void = "The all encompassing power of space might just do the trick for you.Without any special powers or handicaps experience the power of simplicity ";
 
     static int sfxvol=3;
-    static Media popSound = new Media(new File("src/res/pop.wav").toURI().toString());
+    static Media popSound = new Media(thefallen.pong.Resources.getResource("pop.wav").toExternalForm());
     static void pop ()
     {
         MediaPlayer mp=new MediaPlayer(popSound);
@@ -30,7 +30,7 @@ public class Misc {
         mp.setVolume(((double)Integer.valueOf(sfxvol))/10);
     }
 
-    static Media popSound2 = new Media(new File("src/res/pop2.wav").toURI().toString());
+    static Media popSound2 = new Media(thefallen.pong.Resources.getResource("pop2.wav").toExternalForm());
     static void pop2 ()
     {
         try {
@@ -41,7 +41,7 @@ public class Misc {
             e.printStackTrace();
         }
     }
-    static Media youDiedSound = new Media(new File("src/res/youdied.mp3").toURI().toString());
+    static Media youDiedSound = new Media(thefallen.pong.Resources.getResource("youdied.mp3").toExternalForm());
     static void youDied ()
     {
         try {
