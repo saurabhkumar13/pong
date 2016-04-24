@@ -674,7 +674,8 @@ public class UI extends Application {
         grid.add(LogoView2,0,1);
 
         BorderPane border = new BorderPane();
-        border.setCenter(grid);
+        if(success)border.setCenter(grid);
+        else border.setCenter(LogoView2);
         border.setStyle("-fx-background-color: #000000");
 
         return border;
