@@ -155,7 +155,7 @@ public class ping extends Thread {
                     ball.vy = vy;
                     ball.x = game.center.getX() + (x - game.center.getX())*cos(normal) + (y - game.center.getY())*sin(normal);
                     ball.y = game.center.getY() - (x - game.center.getX())*sin(normal) + (y - game.center.getY())*cos(normal);
-                }
+                 }
             }
         }
         else if (command.equals(Misc.Command.BallReady.toString()))
@@ -191,10 +191,12 @@ public class ping extends Thread {
         }
         else if(command.equals(Misc.Command.Died.toString()))
         {
-            if(IPset.size()>2) {
+            if(IPset.size()>2&&!sender.equals(myIP)) {
                 IPset.remove(sender);
+                if(myIP.equals(IPset.first()))
                 broadcastToGroup((new JSONObject().accumulate("command",Misc.Command.START)).toString());
-            }else
+            }
+            else
             {
                 game.pause();
                 game.f_frame.setVisible(false);
