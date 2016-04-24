@@ -27,7 +27,7 @@ public class SinglePlayer2 {
 
     Ball.onDiedListener diedListener = new Ball.onDiedListener() {
         @Override
-        public void onDied(int index, SinglePlayer lol) {
+        public void onDied(int index) {
             out.println(index+":  YOU DIED");
             if(N>2&&!constructing&&index!=0)
             {

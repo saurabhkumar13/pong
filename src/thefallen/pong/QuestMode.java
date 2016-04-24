@@ -19,11 +19,12 @@ public class QuestMode {
     pong game;
     static final int num_ai = 1, init_hp = 80, max_ai = 5;
     int userHp = 80, score = 0, aiLevel = 1;
-    boolean uDied = false, aiDied = false, pause_flag = false, constructing = false, gOver = false;
+    boolean uDied = false, aiDied = false, pause_flag = false, constructing = false, gOver = false,success = false;
     QuestMode quest;
+    onGameOverListener gameOverListener;
 
     interface onGameOverListener{
-        void onGameOver();
+        void onGameOver(boolean success, int score);
     }
 
     public QuestMode() {
@@ -36,11 +37,11 @@ public class QuestMode {
     Ball.onDiedListener diedListener = new Ball.onDiedListener() {
 
         @Override
-        public void onDied(int index, SinglePlayer lol) {
+        public void onDied(int index) {
             if (index == 0) {
                 uDied = true;
                 out.println("USER DIED");
-                endQuest();
+                failedQuest();
             } else {
                 aiDied = true;
                 out.println("AI DIED "+constructing+" "+aiLevel);
@@ -163,13 +164,24 @@ public class QuestMode {
         pause_flag = false;
         game.pause();
         gOver = true;
+        success = true;
+        endQuest();
     }
 
-    public void endQuest() {
+    public void failedQuest() {
         out.println("Questfailed");
         pause_flag = false;
         game.pause();
         gOver = true;
+        endQuest();
+    }
+
+    public void endQuest()
+    {
+        if(gameOverListener != null)
+        {
+            gameOverListener.onGameOver(success,score);
+        }
     }
 
     public static void main(String[] args)

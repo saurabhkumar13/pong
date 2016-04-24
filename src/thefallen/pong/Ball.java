@@ -1,7 +1,6 @@
 package thefallen.pong;
 
 
-import com.sun.javafx.geom.Vec2d;
 import org.jdesktop.core.animation.timing.Animator;
 import org.json.JSONObject;
 
@@ -11,30 +10,48 @@ import java.util.Random;
 
 import static java.lang.Math.*;
 import static java.lang.System.err;
-import static java.lang.System.out;
 
 public class Ball {
-    double x, y,vx,vy,ax,ay,omega,theta,mu=0.3,r=1;
-    int imageIndex,frameH,frameW;
-    float dt=1,ddt=0.001f;
+
+    // Basic Global variable Declarations
+
+    double x, y, vx, vy, ax, ay, omega, theta, mu = 0.3, r = 1;
+    int imageIndex;
+    float dt = 1, ddt = 0.001f;
     Animator animator;
     Polygon base;
     Point2D center;
     Racket[] rackets;
-    int N,diff;
-    boolean isGdecreasing=true,twoP;
-    float gravity=0;
+    int N, diff;
+    private boolean isGDecreasing = true;
+    boolean twoP;
+    float gravity = 0;
     onDiedListener diedListener;
     SinglePlayer lol;
     ping master;
 
+
+    /*
+        name : Ball
+        input : dif - int
+        output : void
+        function : Constructor
+     */
+
     Ball(int dif)
     {
         diff = dif;
-
     }
 
-    void setVel()
+
+    /*
+        name : setVel
+        input : void
+        output : void
+        function : randomly initialises the direction of the velocity of the ball
+     */
+
+    public void setVel()
     {
         Random r = new Random();
         int lel = r.nextInt(19)+1;
@@ -62,22 +79,41 @@ public class Ball {
         this.y = y;
     }
 
-    public int getSideofPolygon()
+    /*
+        name : getSideOfPolygon
+        input : void
+        output : int
+        function : returns the sector of the polygon in which the ball currently is
+     */
+
+    public int getSideOfPolygon()
     {
         double angleInRadians = Math.atan2(center.getY() - y, x - center.getX());
         int n;
-        angleInRadians-=PI/2;
-        if(N%2==0)
-            angleInRadians+=PI/N;
+
+        angleInRadians -= PI/2;
+
+        if (N % 2 == 0) angleInRadians += PI / N;
+
         if(angleInRadians<0) angleInRadians+=2*PI;
-        n=(int)(N*angleInRadians/(2*PI));
-        n+=(N+1)/2;
-        n%=N;
+
+        n = (int) (N * angleInRadians / (2 * PI));
+
+        n += (N + 1) / 2;
+        n %= N;
+
         return n;
     }
 
+    /*
+        name : onDiedListener
+        input : index - int
+        output : void
+        function : Listener that can be called once a racket has died
+     */
+
     interface onDiedListener{
-        void onDied(int index,SinglePlayer lol);
+        void onDied(int index);
     }
 
     boolean mew;
@@ -90,9 +126,9 @@ public class Ball {
         theta+=omega*dt*0.05;
 
         double theta =- Math.atan2(y - center.getY(), x - center.getX()),f=0.9;
-        if(gravity+dt>1) isGdecreasing=true;
-        else if(gravity-dt<-1) isGdecreasing=false;
-        if(isGdecreasing) gravity-=ddt;
+        if(gravity+dt>1) isGDecreasing=true;
+        else if(gravity-dt<-1) isGDecreasing=false;
+        if(isGDecreasing) gravity-=ddt;
         else gravity+=ddt;
         ax = gravity*.1*cos(theta);
         ay = -1*gravity*.1*sin(theta);
@@ -102,7 +138,7 @@ public class Ball {
 
         if(!base.contains(x+vx*dt,y+vy*dt))
         {
-            int n=getSideofPolygon();
+            int n=getSideOfPolygon();
 
             if(twoP)
             {
@@ -134,7 +170,7 @@ public class Ball {
                 else if(diedListener!=null)
                 {
 
-                    diedListener.onDied(n, lol);
+                    diedListener.onDied(n);
                     rackets[n].diedOnce = true;
                 }
                 else
@@ -143,8 +179,6 @@ public class Ball {
                 }
 
             }
-//            else
-//                rackets[n].safe=false;
 
             double angleInRadians = Math.atan2(-vy,vx);
             double normal = 2*PI*n/N-PI/2;
@@ -180,6 +214,7 @@ public class Ball {
         double alpha = atan2(-vy_, vx_);
         double delta = 2 * (theta - alpha);
 
+//        Misc.pop2();
 
         if (temp < 0) return;
 
@@ -194,7 +229,6 @@ public class Ball {
             vx = rackets[i].e * (vx_ * cos(delta) + vy_ * sin(delta));
             vy = vy_ * cos(delta) - vx_ * sin(delta);
         }
-
 
         if(i==0&&master!=null)
         {
