@@ -142,8 +142,8 @@ public class ping extends Thread {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            double vx,vy,normal=  2 * PI * (IPset.headSet(sender).size() - IPset.headSet(myIP).size()) / IPset.size(),x,y;
-
+            double vx,vy,normal =  2 * PI * (IPset.headSet(sender).size() - IPset.headSet(myIP).size()) / IPset.size(),x,y;
+            err.println("rotating by "+normal*180/PI);
             x = message.getDouble("x");
             y = message.getDouble("y");
 
