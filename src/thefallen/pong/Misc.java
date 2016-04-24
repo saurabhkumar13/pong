@@ -36,6 +36,17 @@ public class Misc {
             e.printStackTrace();
         }
     }
+    static Media youDiedSound = new Media(new File("src/res/youdied.mp3").toURI().toString());
+    static void youDied ()
+    {
+        try {
+            MediaPlayer mp=new MediaPlayer(youDiedSound);
+            mp.play();
+            mp.setVolume(((double)Integer.valueOf(sfxvol))/10);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     public enum Avatar{
         VOID,EARTH,WIND,FIRE,WATER

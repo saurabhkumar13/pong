@@ -647,7 +647,8 @@ public class UI extends Application {
         String res="polebunny.gif";
         if(!success)
             res = "youdied.png";
-
+        if(!success)
+            Misc.youDied();
         GridPane grid = new GridPane();
         grid.setAlignment(Pos.CENTER);
         grid.setHgap(10);
