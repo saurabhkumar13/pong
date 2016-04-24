@@ -280,10 +280,12 @@ public class ping extends Thread {
                 if (game != null) game.pause();
                 game = new pong(size, 0, true);
                 for (String slaves : master.players){
+                    err.println(slaves);
                     JSONObject slav = (new JSONObject(slaves));
                     int index = (master.IPset.headSet(slav.getString("IP")).size() - master.IPset.headSet(master.myIP).size());
                     if(index<0) index+=master.IPset.size();
                     String element = slav.getString("element");
+                    err.println(element+" "+index);
                     if(element.equals(Misc.Avatar.EARTH.toString()))
                         game.rackets[index].setPowerup(Misc.Avatar.EARTH);
                     else if(element.equals(Misc.Avatar.FIRE.toString()))
