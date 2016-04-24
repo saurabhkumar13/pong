@@ -1,5 +1,8 @@
 package thefallen.pong;
 
+/**
+ * Handles everything related to changes in the ball from the rendering at position to the motion and collisions
+ */
 
 import org.jdesktop.core.animation.timing.Animator;
 import org.json.JSONObject;
