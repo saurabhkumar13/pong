@@ -193,10 +193,19 @@ public class ping extends Thread {
         {
             if(IPset.size()>2)
                 IPset.remove(sender);
+            else
+            {
+                game.pause();
+                game.f_frame.setVisible(false);
+                if(listener!=null)
+                    listener.onGameOver(!sender.equals(myIP),0);
+            }
             broadcastToGroup((new JSONObject().accumulate("command",Misc.Command.START)).toString());
 
         }
     }
+
+    QuestMode.onGameOverListener listener;
 
     public void Stop() {
         if (ds != null) {
