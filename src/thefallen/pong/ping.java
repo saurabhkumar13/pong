@@ -115,7 +115,7 @@ public class ping extends Thread {
         {
             startGame(this,IPset.size());
             if(myIP.equals(IPset.first()))
-                broadcastToGroup((new JSONObject().accumulate("command",Misc.Command.INITBall).accumulate("vx",1.5).accumulate("vy",2.1)).toString());
+                broadcastToGroup((new JSONObject().accumulate("command",Misc.Command.INITBall).accumulate("vx",1.0).accumulate("vy",1.0)).toString());
         }
         else if (command.equals(Misc.Command.INITBall.toString()))
         {
@@ -142,7 +142,7 @@ public class ping extends Thread {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            double vx,vy,normal= - 2 * PI * (IPset.headSet(sender).size() - IPset.headSet(myIP).size()) / IPset.size(),x,y;
+            double vx,vy,normal=  2 * PI * (IPset.headSet(sender).size() - IPset.headSet(myIP).size()) / IPset.size(),x,y;
 
             x = message.getDouble("x");
             y = message.getDouble("y");
@@ -158,6 +158,7 @@ public class ping extends Thread {
                 if (ball!=null) {
                     ball.vx = vx;
                     ball.vy = vy;
+                    normal = -normal;
                     ball.x = game.center.getX() + (x - game.center.getX())*cos(normal) + (y - game.center.getY())*sin(normal);
                     ball.y = game.center.getY() - (x - game.center.getX())*sin(normal) + (y - game.center.getY())*cos(normal);
                  }
