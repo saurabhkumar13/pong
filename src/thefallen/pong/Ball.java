@@ -171,6 +171,8 @@ public class Ball {
                 {
 
                     diedListener.onDied(n);
+                    if(n==0&&master!=null)
+                        master.broadcastToGroup((new JSONObject().accumulate("command",Misc.Command.Died)).toString());
                     rackets[n].diedOnce = true;
                 }
                 else

@@ -183,6 +183,13 @@ public class ping extends Thread {
             if(index<0) index+=IPset.size();
             game.rackets[index].hp = message.getInt("HP");
         }
+        else if(command.equals(Misc.Command.Died.toString()))
+        {
+            if(IPset.size()>2)
+                IPset.remove(sender);
+            broadcastToGroup((new JSONObject().accumulate("command",Misc.Command.START)).toString());
+
+        }
     }
 
     public void Stop() {
@@ -268,6 +275,7 @@ public class ping extends Thread {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
+                if(game!=null) game.pause();
                 game = new pong(size,0);
                 game.addBall(master);
                 game.rackets[0].master=master;

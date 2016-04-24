@@ -36,7 +36,7 @@ public class Misc {
     }
 
     public enum Command{
-        START,ACTION,L,R,LT,RT,ReleaseKeyT,ReleaseKeyV,SyncHP,SyncBall,FIND,FINDreply,JOIN,JOINedslave,INITBall,JOINack,BallReady
+        START,ACTION,L,R,LT,RT,ReleaseKeyT,ReleaseKeyV,SyncHP,SyncBall,FIND,FINDreply,JOIN,JOINedslave,INITBall,JOINack,BallReady,Died
     }
     public enum Modes{
         DEATHMATCH,NORMAL
