@@ -160,7 +160,6 @@ public class ping extends Thread {
                 if (ball!=null) {
                     ball.vx = vx;
                     ball.vy = vy;
-                    normal = -normal;
                     ball.x = game.center.getX() + (x - game.center.getX())*cos(normal) + (y - game.center.getY())*sin(normal);
                     ball.y = game.center.getY() - (x - game.center.getX())*sin(normal) + (y - game.center.getY())*cos(normal);
                  }
