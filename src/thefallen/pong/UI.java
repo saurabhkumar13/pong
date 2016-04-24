@@ -102,10 +102,10 @@ public class UI extends Application {
         border.setCenter(grid);
         border.setStyle("-fx-background-color: #000000");
 
-        Screen screen = Screen.getPrimary();
-        Rectangle2D bounds = screen.getVisualBounds();
+//        Screen screen = Screen.getPrimary();
+//        Rectangle2D bounds = screen.getVisualBounds();
 
-        Scene scene = new Scene(border, bounds.getWidth(), bounds.getHeight());
+        Scene scene = new Scene(border, 800,600);
         return scene;
     }
 
@@ -222,12 +222,11 @@ public class UI extends Application {
 
             @Override
             public void handle(ActionEvent e) {
-                String element = "shiittt";
                 String server_name = userTextField.getText();
                 String password = passwordField.getText();
                 String maxplayers = maxplayersField.getText();
 
-                Scene sc = getcreatingserver(server_name,element,password,maxplayers);
+                Scene sc = getcreatingserver(server_name,password,maxplayers);
                 stage.setScene(sc);
                 Misc.pop();
 
@@ -260,14 +259,14 @@ public class UI extends Application {
         border.setRight(LogoView);
         border.setStyle("-fx-background-color: #000000");
 
-        Screen screen = Screen.getPrimary();
-        Rectangle2D bounds = screen.getVisualBounds();
+//        Screen screen = Screen.getPrimary();
+//        Rectangle2D bounds = screen.getVisualBounds();
 
-        Scene scene = new Scene(border, bounds.getWidth(), bounds.getHeight());
+        Scene scene = new Scene(border, 800,600);
         return scene;
     }
 
-    public Scene getcreatingserver(String server_name, String element,String password,String maxplayers){
+    public Scene getcreatingserver(String server_name,String password,String maxplayers){
         GridPane createserverheader = getheader("Waiting",true);
         Platform.setImplicitExit(false);
 
@@ -280,6 +279,7 @@ public class UI extends Application {
 
         Preferences prefs = Preferences.userRoot().node(packagePath);
         String player_name= prefs.get(PLAYER_NAME,"");
+        String element= prefs.get(ELEMENT,"");
         grid.add(getplayerview(player_name,element), 0, grid1I++);
         Misc.Modes gamemode;
         if(mode==0)
@@ -356,10 +356,10 @@ public class UI extends Application {
         border.setRight(LogoView);
         border.setStyle("-fx-background-color: #000000");
 
-        Screen screen = Screen.getPrimary();
-        Rectangle2D bounds = screen.getVisualBounds();
+//        Screen screen = Screen.getPrimary();
+//        Rectangle2D bounds = screen.getVisualBounds();
 
-        Scene scene = new Scene(border, bounds.getWidth(), bounds.getHeight());
+        Scene scene = new Scene(border, 800, 600);
         return scene;
     }
 
@@ -480,10 +480,10 @@ public class UI extends Application {
         border.setRight(LogoView);
         border.setStyle("-fx-background-color: #000000");
 
-        Screen screen = Screen.getPrimary();
-        Rectangle2D bounds = screen.getVisualBounds();
+//        Screen screen = Screen.getPrimary();
+//        Rectangle2D bounds = screen.getVisualBounds();
 
-        Scene scene = new Scene(border, bounds.getWidth(), bounds.getHeight());
+        Scene scene = new Scene(border, 800,600);
         return scene;
     }
 
@@ -533,7 +533,7 @@ public class UI extends Application {
 //        btn.setTranslateX(-60);
 //        btn.setTranslateY(30);
         Preferences prefs = Preferences.userRoot().node(packagePath);
-        String player_name= prefs.get(PLAYER_NAME,"");
+        String player_name= prefs.get(PLAYER_NAME,"Player1");
         String element = prefs.get(ELEMENT,"");
 
         btn.setMinWidth(100);
@@ -588,30 +588,125 @@ public class UI extends Application {
         userTextField.setFont(Font.loadFont(thefallen.pong.Resources.getResource(thefallen.pong.Resources.FONT1).toString(), 26));
         grid.add(userTextField, 1, 0);
 
+        //test
+
+        Label characterlabel= new Label("CHARACTER     :");
+        characterlabel.setFont(Font.loadFont(thefallen.pong.Resources.getResource(thefallen.pong.Resources.FONT1).toString(), 26));
+        characterlabel.setTextFill(Color.valueOf("#B4B0AB"));
+        grid.add(characterlabel, 0, 1);
+
+        String ch=prefs.get(ELEMENT,"void");
+        int[] charcols= {1,1,1,1,1};
+        if(ch.equals("void"))charcols[0]=0;
+        else if(ch.equals("earth"))charcols[1]=0;
+        else if(ch.equals("wind"))charcols[2]=0;
+        else if(ch.equals("water"))charcols[3]=0;
+        else if(ch.equals("fire"))charcols[4]=0;
+
+        Button voidbutton  = getsettingsButton("VOID",charcols[0]);
+        Button earthbutton= getsettingsButton("/EARTH",charcols[1]);
+        Button windbutton= getsettingsButton("/WIND",charcols[2]);
+        Button waterbutton= getsettingsButton("/WATER",charcols[3]);
+        Button firebutton= getsettingsButton("/FIRE",charcols[4]);
+
+        voidbutton.setOnAction(new EventHandler<ActionEvent>() {
+
+            @Override
+            public void handle(ActionEvent e) {
+                voidbutton.setTextFill(Color.valueOf("#B4B0AB"));
+                earthbutton.setTextFill(Color.valueOf("#333333"));
+                windbutton.setTextFill(Color.valueOf("#333333"));
+                waterbutton.setTextFill(Color.valueOf("#333333"));
+                firebutton.setTextFill(Color.valueOf("#333333"));
+                prefs.put(ELEMENT,"void");
+            }
+        });
+
+        earthbutton.setOnAction(new EventHandler<ActionEvent>() {
+
+            @Override
+            public void handle(ActionEvent e) {
+                earthbutton.setTextFill(Color.valueOf("#B4B0AB"));
+                voidbutton.setTextFill(Color.valueOf("#333333"));
+                waterbutton.setTextFill(Color.valueOf("#333333"));
+                windbutton.setTextFill(Color.valueOf("#333333"));
+                firebutton.setTextFill(Color.valueOf("#333333"));
+                prefs.put(ELEMENT,"earth");
+            }
+        });
+
+        waterbutton.setOnAction(new EventHandler<ActionEvent>() {
+
+            @Override
+            public void handle(ActionEvent e) {
+                waterbutton.setTextFill(Color.valueOf("#B4B0AB"));
+                voidbutton.setTextFill(Color.valueOf("#333333"));
+                earthbutton.setTextFill(Color.valueOf("#333333"));
+                windbutton.setTextFill(Color.valueOf("#333333"));
+                firebutton.setTextFill(Color.valueOf("#333333"));
+                prefs.put(ELEMENT,"water");
+            }
+        });
+
+        windbutton.setOnAction(new EventHandler<ActionEvent>() {
+
+            @Override
+            public void handle(ActionEvent e) {
+                windbutton.setTextFill(Color.valueOf("#B4B0AB"));
+                voidbutton.setTextFill(Color.valueOf("#333333"));
+                waterbutton.setTextFill(Color.valueOf("#333333"));
+                earthbutton.setTextFill(Color.valueOf("#333333"));
+                firebutton.setTextFill(Color.valueOf("#333333"));
+                prefs.put(ELEMENT,"wind");
+            }
+        });
+
+        firebutton.setOnAction(new EventHandler<ActionEvent>() {
+
+            @Override
+            public void handle(ActionEvent e) {
+                firebutton.setTextFill(Color.valueOf("#B4B0AB"));
+                voidbutton.setTextFill(Color.valueOf("#333333"));
+                waterbutton.setTextFill(Color.valueOf("#333333"));
+                windbutton.setTextFill(Color.valueOf("#333333"));
+                earthbutton.setTextFill(Color.valueOf("#333333"));
+                prefs.put(ELEMENT,"fire");
+            }
+        });
+
+        HBox hBox4 = new HBox();
+        hBox4.setPadding(new Insets(5,5,5,20));
+        hBox4.getChildren().addAll(voidbutton,waterbutton,earthbutton,windbutton,firebutton);
+        grid.add(hBox4,1,1);
+
+        //end
+
         Label musicvol = new Label("MUSIC VOLUME  :");
         musicvol.setFont(Font.loadFont(thefallen.pong.Resources.getResource(thefallen.pong.Resources.FONT1).toString(), 26));
         musicvol.setTextFill(Color.valueOf("#B4B0AB"));
-        grid.add(musicvol, 0, 1);
+        grid.add(musicvol, 0, 2);
 
         HBox hBox = getVolumeHBox(0,Integer.valueOf(prefs.get(MUSIC_VOLUME,"0")));
         hBox.setPadding(new Insets(5,5,5,20));
-        grid.add(hBox,1,1);
+        grid.add(hBox,1,2);
 
         Label sfxvol= new Label("SFX VOLUME    :");
         sfxvol.setFont(Font.loadFont(thefallen.pong.Resources.getResource(thefallen.pong.Resources.FONT1).toString(), 26));
         sfxvol.setTextFill(Color.valueOf("#B4B0AB"));
-        grid.add(sfxvol, 0, 2);
+        grid.add(sfxvol, 0, 3);
 
         HBox hBox2 = getVolumeHBox(1,Integer.valueOf(prefs.get(SFX_VOLUME,"0")));
         hBox2.setPadding(new Insets(5,5,5,20));
-        grid.add(hBox2,1,2);
+        grid.add(hBox2,1,3);
 
         Label fullscreen= new Label("FULLSCREEN     :");
         fullscreen.setFont(Font.loadFont(thefallen.pong.Resources.getResource(thefallen.pong.Resources.FONT1).toString(), 26));
         fullscreen.setTextFill(Color.valueOf("#B4B0AB"));
-        grid.add(fullscreen, 0, 3);
+        grid.add(fullscreen, 0, 4);
 
         int on=Integer.valueOf(prefs.get(FULLSCREEN,"1"));
+//        if(prefs.get(FULLSCREEN,"1").equals("fire"));
+//        int on=1;
         int off=0;
         if(on==0)off=1;
         Button onFullScreen = getsettingsButton("ON",on);
@@ -624,6 +719,11 @@ public class UI extends Application {
                 onFullScreen.setTextFill(Color.valueOf("#B4B0AB"));
                 offFullScreen.setTextFill(Color.valueOf("#333333"));
                 prefs.put(FULLSCREEN,"0");
+//                stage.sizeToScene();
+//                stage.setFullScreen(false);
+//                stage.setFullScreen(true);
+                stage.setMaximized(true);
+//                stage.setFullScreen(true);
             }
         });
 
@@ -634,13 +734,14 @@ public class UI extends Application {
                 offFullScreen.setTextFill(Color.valueOf("#B4B0AB"));
                 onFullScreen.setTextFill(Color.valueOf("#333333"));
                 prefs.put(FULLSCREEN,"1");
+                stage.setMaximized(false);
             }
         });
 
         HBox hbox3 = new HBox();
         hbox3.setPadding(new Insets(5,5,5,20));
         hbox3.getChildren().addAll(onFullScreen,offFullScreen);
-        grid.add(hbox3,1,3);
+        grid.add(hbox3,1,4);
 
         Button btn = getButton("BACK",gameScreen.LANDING);
         btn.setTranslateX(-60);
@@ -660,17 +761,17 @@ public class UI extends Application {
 
             }
         });
-        grid.add(btn,1,4);
+        grid.add(btn,1,5);
 
         BorderPane border = new BorderPane();
         border.setTop(settingsHeader);
         border.setCenter(grid);
         border.setStyle("-fx-background-color: #000000");
 
-        Screen screen = Screen.getPrimary();
-        Rectangle2D bounds = screen.getVisualBounds();
+//        Screen screen = Screen.getPrimary();
+//        Rectangle2D bounds = screen.getVisualBounds();
 
-        Scene scene = new Scene(border, bounds.getWidth(), bounds.getHeight());
+        Scene scene = new Scene(border, 800, 600);
         return scene;
     }
 
@@ -762,13 +863,6 @@ public class UI extends Application {
                     stage.setScene(sc);
                     Misc.pop();
                 }
-
-
-//                stage.sizeToScene();
-//                stage.setFullScreen(false);
-//                stage.setFullScreen(true);
-//                stage.setMaximized(true);
-//                stage.setFullScreen(true);
             }
         });
         return btn;
