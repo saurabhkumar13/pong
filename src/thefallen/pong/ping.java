@@ -278,7 +278,7 @@ public class ping extends Thread {
             @Override
             public void run() {
                 if (game != null) game.pause();
-                game = new pong(size, 0, false);
+                game = new pong(size, 0, true);
                 for (String slaves : master.players){
                     JSONObject slav = (new JSONObject(slaves));
                     int index = (master.IPset.headSet(slav.getString("IP")).size() - master.IPset.headSet(master.myIP).size());
