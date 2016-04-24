@@ -180,7 +180,7 @@ public class Ball {
         double alpha = atan2(-vy_, vx_);
         double delta = 2 * (theta - alpha);
 
-        Misc.pop2();
+//        Misc.pop2();
 
         if (temp < 0) return;
 
