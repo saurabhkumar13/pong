@@ -359,7 +359,7 @@ public class UI extends Application {
     QuestMode quest1;
     SinglePlayer2 quest2;
     public BorderPane getNewGameScene(){
-        GridPane settingsHeader = getheader("New Game",false);
+        GridPane settingsHeader = getheader("NEW GAME",false);
 
         GridPane grid = new GridPane();
         grid.setAlignment(Pos.CENTER);
@@ -585,6 +585,7 @@ public class UI extends Application {
                 {
                     quest2 = new SinglePlayer2();
                     quest2.Diff = diff;
+                    quest2.full=prefs.get(FULLSCREEN,"1").equals("0");
                     quest2.startQuest(G, bots + 1, ele);
                     quest2.listener = gameOverListener;
                 }
@@ -594,6 +595,7 @@ public class UI extends Application {
                     quest1.max_ai = diff+1;
                     quest1.num_ai = bots;
                     quest1.G = G;
+                    quest1.full=prefs.get(FULLSCREEN,"1").equals("0");
                     quest1.startQuest();
                     quest1.gameOverListener = gameOverListener;
                 }
@@ -601,13 +603,33 @@ public class UI extends Application {
         });
         grid.add(btn,1,5);
 
+        final ImageView LogoView = new ImageView();
+        final Image logoPNG = new Image(UI.class.getResourceAsStream("../../res/back.png"));
+        LogoView.setImage(logoPNG);
+        LogoView.setFitWidth(50);
+        LogoView.setFitHeight(50);
+        LogoView.setTranslateX(-30);
+        LogoView.setTranslateY(-50);
+        LogoView.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+
+            @Override
+            public void handle(MouseEvent event) {
+                BorderPane bp = getLandingScene();
+                scene.setRoot(bp);
+                Misc.pop();
+
+            }
+        });
+
         BorderPane border = new BorderPane();
         border.setTop(settingsHeader);
         border.setCenter(grid);
+        border.setRight(LogoView);
         border.setStyle("-fx-background-color: #000000");
 
         return border;
     }
+
     QuestMode.onGameOverListener gameOverListener = new QuestMode.onGameOverListener() {
         @Override
         public void onGameOver(boolean success, int score)
@@ -692,7 +714,7 @@ public class UI extends Application {
     }
 
     public BorderPane getFindServerScene(){
-        GridPane createserverheader = getheader("Finding Servers",true);
+        GridPane createserverheader = getheader("FIND SERVER",true);
         Platform.setImplicitExit(false);
 
         GridPane grid = new GridPane();

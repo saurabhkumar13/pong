@@ -19,7 +19,7 @@ public class QuestMode {
     pong game;
     int num_ai = 1, init_hp = 80, max_ai = 5;
     int userHp = 80, score = 0, aiLevel = 1;
-    boolean uDied = false, aiDied = false, pause_flag = false, constructing = false, gOver = false,success = false,G;
+    boolean uDied = false, aiDied = false, pause_flag = false, constructing = false, gOver = false,success = false,G,full=true;
     QuestMode quest;
     onGameOverListener gameOverListener;
 
@@ -72,7 +72,7 @@ public class QuestMode {
                     game.f_frame.setVisible(false);
                 }
 
-                game = new pong(num_ai + 1, level,G);
+                game = new pong(num_ai + 1, level,full);
 
                 game.ball.diedListener = diedListener;
                 game.ball.setVel();

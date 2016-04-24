@@ -84,6 +84,7 @@ public class SinglePlayer2 {
     boolean G;
     Misc.Avatar mode;
     int Diff;
+    boolean full=true;
     void startGame(int n)
     {
         System.setProperty("swing.defaultlaf", "com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
@@ -94,7 +95,7 @@ public class SinglePlayer2 {
                     game.pause();
                     game.f_frame.setVisible(false);
                 }
-                game = new pong(n,Diff,true);
+                game = new pong(n,Diff,full);
                 if(G)
                     game.ball.setGravity();
                 game.rackets[0].setPowerup(mode);
