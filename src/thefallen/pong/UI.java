@@ -642,6 +642,7 @@ public class UI extends Application {
         public void onGameOver(boolean success, int score)
         {
                 scene.setRoot(getGameOverScene(success));
+                if(pee!=null){pee.Stop();pee=null;}
         }
     };
 
