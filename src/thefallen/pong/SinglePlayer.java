@@ -102,7 +102,7 @@ public class SinglePlayer {
                 if(game!=null)
                     game.f_frame.setVisible(false);
                 temp=game;
-                game = new pong(N,0);
+                game = new pong(N,0,false);
                 game.lol = quest;
                 game.onDiedListener = diedListener;
                     pause();
