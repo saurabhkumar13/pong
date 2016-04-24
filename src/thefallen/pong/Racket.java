@@ -56,10 +56,9 @@ public class Racket {
             case EARTH : hp += 20;
                         hp_max += 20;
                         break;
-            case WIND : speed = 35;
-                        width = 90;
+            case WIND : speed = 30;
                         break;
-            case FIRE : e = 3;
+            case FIRE : e = 1.5f;
                         break;
             case WATER : width = 150;
                         speed = 16;
