@@ -217,10 +217,11 @@ public class Ball {
         name : padCollision
         input : state - int, i - int
         output : void
-        function :
+        function : determines the ball's velocity after collision with a paddle
      */
 
     public void padCollision(int state,int i) {
+
         int num;
         if (twoP) num = 2;
         else num = N;
@@ -234,15 +235,19 @@ public class Ball {
         if (temp < 0) return;
 
         if (!rackets[i].sentient && !rackets[i].user) return;
+
         if (num == 2 || i % 2 == 0) {
+
             vx = vx_ * cos(delta) + vy_ * sin(delta);
             vy = rackets[i].e * (vy_ * cos(delta) - vx_ * sin(delta));
         } else {
+
             vx = rackets[i].e * (vx_ * cos(delta) + vy_ * sin(delta));
             vy = vy_ * cos(delta) - vx_ * sin(delta);
         }
 
         if (i == 0 && master != null){
+
             Misc.pop2();
             master.broadcastToGroup((new JSONObject().accumulate("command", Misc.Command.SyncBall)
                     .accumulate("vx", vx)
@@ -250,18 +255,31 @@ public class Ball {
                     .accumulate("x", x)
                     .accumulate("y", y)
             ).toString());
-    }
-        else if(master==null)
-            Misc.pop2();
+        } else if(master==null) Misc.pop2();
 
     }
 
-    double pos(double a)
+    /*
+        name : pos
+        input : a - double
+        output : double
+        function : returns mode of double value
+     */
+
+    public double pos(double a)
     {
         if(a<0) return -a;
         return a;
     }
-    double mininum(double a, double b)
+
+    /*
+        name : minimum
+        input : a - double, b - double
+        output : double
+        function : returns the minimum absolute value of the two inputs
+     */
+
+    public double mininum(double a, double b)
     {
         if(a>0) return min(a,pos(b));
         else return -min(-a,pos(b));
