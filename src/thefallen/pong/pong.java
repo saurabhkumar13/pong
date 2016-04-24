@@ -166,15 +166,15 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
 
         if(n%2==1)
         {
-            scale = 1;//+ .5 * exp((-n + 3)*10);
+            scale = 1+ .5 * exp((-n + 3)*10);
         }
         else if (n>2)
         {
-            scale = 1;//+ exp((-n + 4)*20);
+            scale = 1+ exp((-n + 4)*20);
         }
         else if (n == 2)
         {
-            scale = 1;
+            scale = 1.5;
         }
 
         r=(floor(min(f_frame.getHeight(),f_frame.getWidth())/200)*100-50)*scale;
