@@ -86,6 +86,8 @@ public class ping extends Thread {
         {
             if(IPset.size()<serverDetails.getInt("maxPlayers")||serverDetails.getInt("maxPlayers")==-1) {
                 IPset.add(sender);
+                if(serverDetails.getString("mode").equals(Misc.Modes.DEATHMATCH))
+                    GameMode = 2;
                 players.add(message.accumulate("IP",sender).toString());
                 JSONArray slaves = new JSONArray();
                 joinListener.onjoin(message.getString("name"),message.getString("element"),sender);
@@ -223,7 +225,7 @@ public class ping extends Thread {
             ds = null;
         }
     }
-
+    int GameMode=1;
     public void broadcastToGroup(String message)
     {
         out.println("trying to broadcast: "+message+" "+IPset.size());
@@ -320,6 +322,8 @@ public class ping extends Thread {
                 game.master=master;
                 for(Racket r : game.rackets) {
                     r.sentient = false;
+                    if(master.GameMode==2)
+                        r.hp = 0;
                 }
             }
         });
@@ -327,6 +331,8 @@ public class ping extends Thread {
 
     public void createserver(String server_name, String password, int maxplayers, Misc.Modes mode,String masterName,String masterElement){
         State = Misc.state.WAITmaster;
+        if(mode== Misc.Modes.DEATHMATCH)
+            GameMode = 2;
         IPset.add(myIP);
         players.add((new JSONObject().accumulate("name",masterName).accumulate("element",masterElement).accumulate("IP",myIP)).toString());
         serverDetails = new JSONObject()
