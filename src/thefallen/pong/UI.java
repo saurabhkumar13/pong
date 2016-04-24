@@ -46,7 +46,8 @@ public class UI extends Application {
     private static final String FULLSCREEN = "fullscreen";
     MediaPlayer mediaPlayer;
     private ping pee=null;
-    public Stage stage;
+    private Stage primaryStage;
+    private int full=1;
     public enum gameScreen{
         LANDING,NEWGAME,CREATESERVER,FINDSERVER,SETTINGS
     }
@@ -59,7 +60,7 @@ public class UI extends Application {
     @Override
     public void start(Stage primaryStage) {
 
-        this.stage=primaryStage;
+        this.primaryStage=primaryStage;
         String musicFile = "src/res/bg.mp3";     // For example
 
         Media sound = new Media(new File(musicFile).toURI().toString());
@@ -69,10 +70,12 @@ public class UI extends Application {
         Preferences prefs = Preferences.userRoot().node(packagePath);
 
         mediaPlayer.setVolume(((double)Integer.valueOf(prefs.get(MUSIC_VOLUME,"10")))/10);
-//        primaryStage.setFullScreen(true);
         primaryStage.setTitle("Ping Pong!");
         primaryStage.setScene(getLandingScene());
-
+        if(prefs.get(FULLSCREEN,"1").equals("0")){
+            full=0;
+            this.primaryStage.setFullScreen(true);
+        }
         primaryStage.show();
     }
 
@@ -227,7 +230,8 @@ public class UI extends Application {
                 String maxplayers = maxplayersField.getText();
 
                 Scene sc = getcreatingserver(server_name,password,maxplayers);
-                stage.setScene(sc);
+                primaryStage.setScene(sc);
+                if(full==0)primaryStage.setFullScreen(true);
                 Misc.pop();
 
             }
@@ -247,7 +251,8 @@ public class UI extends Application {
             @Override
             public void handle(MouseEvent event) {
                 Scene sc= getLandingScene();
-                stage.setScene(sc);
+                primaryStage.setScene(sc);
+                if(full==0)primaryStage.setFullScreen(true);
                 Misc.pop();
 
             }
@@ -329,7 +334,8 @@ public class UI extends Application {
             @Override
             public void handle(MouseEvent event) {
                 Scene sc = getLandingScene();
-                stage.setScene(sc);
+                primaryStage.setScene(sc);
+                if(full==0)primaryStage.setFullScreen(true);
                 Misc.pop();
                 if(pee!=null) pee.Stop();
                 grid1I=0;
@@ -391,7 +397,8 @@ public class UI extends Application {
             @Override
             public void handle(MouseEvent event) {
                 Scene sc = getLandingScene();
-                stage.setScene(sc);
+                primaryStage.setScene(sc);
+                if(full==0)primaryStage.setFullScreen(true);
                 Misc.pop();
 
                 if(pee!=null) pee.Stop();
@@ -437,7 +444,7 @@ public class UI extends Application {
                         if(grid2==null)
                         {
                             grid2I=0;
-                            Platform.runLater(() -> stage.setScene(getwaitingserver()));
+                            Platform.runLater(() -> primaryStage.setScene(getwaitingserver()));
                             Misc.pop();
                         }
                         Platform.runLater(() -> Platform.runLater(() -> grid2.add(getplayerview(name, element), 0, grid2I++)));
@@ -465,7 +472,8 @@ public class UI extends Application {
             @Override
             public void handle(MouseEvent event) {
                 Scene sc = getLandingScene();
-                stage.setScene(sc);
+                primaryStage.setScene(sc);
+                if(full==0)primaryStage.setFullScreen(true);
                 Misc.pop();
 
                 if(pee!=null) pee.Stop();
@@ -618,7 +626,7 @@ public class UI extends Application {
                 windbutton.setTextFill(Color.valueOf("#333333"));
                 waterbutton.setTextFill(Color.valueOf("#333333"));
                 firebutton.setTextFill(Color.valueOf("#333333"));
-                prefs.put(ELEMENT,"void");
+                prefs.put(ELEMENT,Misc.Avatar.VOID.toString());
             }
         });
 
@@ -631,7 +639,7 @@ public class UI extends Application {
                 waterbutton.setTextFill(Color.valueOf("#333333"));
                 windbutton.setTextFill(Color.valueOf("#333333"));
                 firebutton.setTextFill(Color.valueOf("#333333"));
-                prefs.put(ELEMENT,"earth");
+                prefs.put(ELEMENT,Misc.Avatar.EARTH.toString());
             }
         });
 
@@ -644,7 +652,7 @@ public class UI extends Application {
                 earthbutton.setTextFill(Color.valueOf("#333333"));
                 windbutton.setTextFill(Color.valueOf("#333333"));
                 firebutton.setTextFill(Color.valueOf("#333333"));
-                prefs.put(ELEMENT,"water");
+                prefs.put(ELEMENT,Misc.Avatar.WATER.toString());
             }
         });
 
@@ -657,7 +665,7 @@ public class UI extends Application {
                 waterbutton.setTextFill(Color.valueOf("#333333"));
                 earthbutton.setTextFill(Color.valueOf("#333333"));
                 firebutton.setTextFill(Color.valueOf("#333333"));
-                prefs.put(ELEMENT,"wind");
+                prefs.put(ELEMENT,Misc.Avatar.WIND.toString());
             }
         });
 
@@ -670,7 +678,7 @@ public class UI extends Application {
                 waterbutton.setTextFill(Color.valueOf("#333333"));
                 windbutton.setTextFill(Color.valueOf("#333333"));
                 earthbutton.setTextFill(Color.valueOf("#333333"));
-                prefs.put(ELEMENT,"fire");
+                prefs.put(ELEMENT,Misc.Avatar.FIRE.toString());
             }
         });
 
@@ -705,8 +713,6 @@ public class UI extends Application {
         grid.add(fullscreen, 0, 4);
 
         int on=Integer.valueOf(prefs.get(FULLSCREEN,"1"));
-//        if(prefs.get(FULLSCREEN,"1").equals("fire"));
-//        int on=1;
         int off=0;
         if(on==0)off=1;
         Button onFullScreen = getsettingsButton("ON",on);
@@ -719,11 +725,8 @@ public class UI extends Application {
                 onFullScreen.setTextFill(Color.valueOf("#B4B0AB"));
                 offFullScreen.setTextFill(Color.valueOf("#333333"));
                 prefs.put(FULLSCREEN,"0");
-//                stage.sizeToScene();
-//                stage.setFullScreen(false);
-//                stage.setFullScreen(true);
-                stage.setMaximized(true);
-//                stage.setFullScreen(true);
+                primaryStage.setFullScreen(true);
+                full=0;
             }
         });
 
@@ -734,7 +737,8 @@ public class UI extends Application {
                 offFullScreen.setTextFill(Color.valueOf("#B4B0AB"));
                 onFullScreen.setTextFill(Color.valueOf("#333333"));
                 prefs.put(FULLSCREEN,"1");
-                stage.setMaximized(false);
+                primaryStage.setFullScreen(false);
+                full=1;
             }
         });
 
@@ -756,7 +760,8 @@ public class UI extends Application {
                     prefs.put(PLAYER_NAME,player_name);
 
                     Scene sc = getLandingScene();
-                    stage.setScene(sc);
+                    primaryStage.setScene(sc);
+                if(full==0)primaryStage.setFullScreen(true);
                 Misc.pop();
 
             }
@@ -842,26 +847,30 @@ public class UI extends Application {
 
             @Override
             public void handle(ActionEvent e) {
+
                 if(gsc==gameScreen.SETTINGS){
                     Scene sc = getSettingsScene();
-                    stage.setScene(sc);
+                    primaryStage.setScene(sc);
                     Misc.pop();
-
+                    if(full==0)primaryStage.setFullScreen(true);
                 }
                 if(gsc==gameScreen.LANDING){
                     Scene sc = getLandingScene();
-                    stage.setScene(sc);
+                    primaryStage.setScene(sc);
                     Misc.pop();
+                    if(full==0)primaryStage.setFullScreen(true);
                 }
                 if(gsc==gameScreen.CREATESERVER){
                     Scene sc = getCreateServerScene();
-                    stage.setScene(sc);
+                    primaryStage.setScene(sc);
                     Misc.pop();
+                    if(full==0)primaryStage.setFullScreen(true);
                 }
                 if(gsc==gameScreen.FINDSERVER){
                     Scene sc = getFindServerScene();
-                    stage.setScene(sc);
+                    primaryStage.setScene(sc);
                     Misc.pop();
+                    if(full==0)primaryStage.setFullScreen(true);
                 }
             }
         });
