@@ -16,10 +16,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
@@ -46,6 +43,7 @@ public class UI extends Application {
     private static final String FULLSCREEN = "fullscreen";
     MediaPlayer mediaPlayer;
     private ping pee=null;
+    private Scene scene;
     private Stage primaryStage;
     private int full=1;
     public enum gameScreen{
@@ -67,19 +65,22 @@ public class UI extends Application {
         mediaPlayer = new MediaPlayer(sound);
         mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
         mediaPlayer.play();
-        Preferences prefs = Preferences.userRoot().node(packagePath);
 
+        Preferences prefs = Preferences.userRoot().node(packagePath);
         mediaPlayer.setVolume(((double)Integer.valueOf(prefs.get(MUSIC_VOLUME,"10")))/10);
-        primaryStage.setTitle("Ping Pong!");
-        primaryStage.setScene(getLandingScene());
+
+        this.primaryStage.setTitle("Ping Pong!");
+        scene = new Scene(getLandingScene(), 800,600);
+        this.primaryStage.setScene(scene);
+
         if(prefs.get(FULLSCREEN,"1").equals("0")){
-            full=0;
             this.primaryStage.setFullScreen(true);
         }
-        primaryStage.show();
+
+        this.primaryStage.show();
     }
 
-    public Scene getLandingScene(){
+    public BorderPane getLandingScene() {
         GridPane landingHeader = getheader("PING PONG",false);
 
         GridPane grid = new GridPane();
@@ -105,14 +106,10 @@ public class UI extends Application {
         border.setCenter(grid);
         border.setStyle("-fx-background-color: #000000");
 
-//        Screen screen = Screen.getPrimary();
-//        Rectangle2D bounds = screen.getVisualBounds();
-
-        Scene scene = new Scene(border, 800,600);
-        return scene;
+        return border;
     }
 
-    public Scene getCreateServerScene(){
+    public BorderPane getCreateServerScene(){
         GridPane createserverheader = getheader("CREATE SERVER",false);
 
         GridPane grid = new GridPane();
@@ -229,15 +226,12 @@ public class UI extends Application {
                 String password = passwordField.getText();
                 String maxplayers = maxplayersField.getText();
 
-                Scene sc = getcreatingserver(server_name,password,maxplayers);
-                primaryStage.setScene(sc);
-                if(full==0)primaryStage.setFullScreen(true);
+                BorderPane bp = getcreatingserver(server_name,password,maxplayers);
+                scene.setRoot(bp);
                 Misc.pop();
-
             }
         });
         grid.add(btn,1,4);
-
 
         final ImageView LogoView = new ImageView();
         final Image logoPNG = new Image(UI.class.getResourceAsStream("../../res/back.png"));
@@ -250,9 +244,8 @@ public class UI extends Application {
 
             @Override
             public void handle(MouseEvent event) {
-                Scene sc= getLandingScene();
-                primaryStage.setScene(sc);
-                if(full==0)primaryStage.setFullScreen(true);
+                BorderPane bp = getLandingScene();
+                scene.setRoot(bp);
                 Misc.pop();
 
             }
@@ -264,14 +257,10 @@ public class UI extends Application {
         border.setRight(LogoView);
         border.setStyle("-fx-background-color: #000000");
 
-//        Screen screen = Screen.getPrimary();
-//        Rectangle2D bounds = screen.getVisualBounds();
-
-        Scene scene = new Scene(border, 800,600);
-        return scene;
+        return border;
     }
 
-    public Scene getcreatingserver(String server_name,String password,String maxplayers){
+    public BorderPane getcreatingserver(String server_name,String password,String maxplayers){
         GridPane createserverheader = getheader("Waiting",true);
         Platform.setImplicitExit(false);
 
@@ -333,9 +322,8 @@ public class UI extends Application {
 
             @Override
             public void handle(MouseEvent event) {
-                Scene sc = getLandingScene();
-                primaryStage.setScene(sc);
-                if(full==0)primaryStage.setFullScreen(true);
+                BorderPane bp = getLandingScene();
+                scene.setRoot(bp);
                 Misc.pop();
                 if(pee!=null) pee.Stop();
                 grid1I=0;
@@ -362,17 +350,16 @@ public class UI extends Application {
         border.setRight(LogoView);
         border.setStyle("-fx-background-color: #000000");
 
-//        Screen screen = Screen.getPrimary();
-//        Rectangle2D bounds = screen.getVisualBounds();
-
-        Scene scene = new Scene(border, 800, 600);
-        return scene;
+        return border;
     }
 
     GridPane grid2;
     int grid1I=0,grid2I=0,grid3I=0;
 
-    public Scene getwaitingserver(){
+    public BorderPane getNewGameScene(){
+
+    }
+    public BorderPane getwaitingserver(){
         GridPane createserverheader = getheader("Waiting",true);
         Platform.setImplicitExit(false);
 
@@ -396,11 +383,9 @@ public class UI extends Application {
 
             @Override
             public void handle(MouseEvent event) {
-                Scene sc = getLandingScene();
-                primaryStage.setScene(sc);
-                if(full==0)primaryStage.setFullScreen(true);
+                BorderPane bp = getLandingScene();
+                scene.setRoot(bp);
                 Misc.pop();
-
                 if(pee!=null) pee.Stop();
                 grid2=null;
             }
@@ -412,13 +397,10 @@ public class UI extends Application {
         border.setRight(LogoView);
         border.setStyle("-fx-background-color: #000000");
 
-        Screen screen = Screen.getPrimary();
-        Rectangle2D bounds = screen.getVisualBounds();
-
-        Scene scene = new Scene(border, bounds.getWidth(), bounds.getHeight());
-        return scene;
+        return border;
     }
-    public Scene getFindServerScene(){
+
+    public BorderPane getFindServerScene(){
         GridPane createserverheader = getheader("Finding Servers",true);
         Platform.setImplicitExit(false);
 
@@ -444,7 +426,7 @@ public class UI extends Application {
                         if(grid2==null)
                         {
                             grid2I=0;
-                            Platform.runLater(() -> primaryStage.setScene(getwaitingserver()));
+                            Platform.runLater(() -> scene.setRoot(getwaitingserver()));
                             Misc.pop();
                         }
                         Platform.runLater(() -> Platform.runLater(() -> grid2.add(getplayerview(name, element), 0, grid2I++)));
@@ -471,9 +453,7 @@ public class UI extends Application {
 
             @Override
             public void handle(MouseEvent event) {
-                Scene sc = getLandingScene();
-                primaryStage.setScene(sc);
-                if(full==0)primaryStage.setFullScreen(true);
+                scene.setRoot(getLandingScene());
                 Misc.pop();
 
                 if(pee!=null) pee.Stop();
@@ -488,11 +468,7 @@ public class UI extends Application {
         border.setRight(LogoView);
         border.setStyle("-fx-background-color: #000000");
 
-//        Screen screen = Screen.getPrimary();
-//        Rectangle2D bounds = screen.getVisualBounds();
-
-        Scene scene = new Scene(border, 800,600);
-        return scene;
+        return border;
     }
 
     public HBox getplayerview(String name, String element){
@@ -563,7 +539,7 @@ public class UI extends Application {
         return hBox;
     }
 
-    public Scene getSettingsScene(){
+    public BorderPane getSettingsScene(){
         GridPane settingsHeader = getheader("SETTINGS",false);
 
         GridPane grid = new GridPane();
@@ -605,11 +581,11 @@ public class UI extends Application {
 
         String ch=prefs.get(ELEMENT,"void");
         int[] charcols= {1,1,1,1,1};
-        if(ch.equals("void"))charcols[0]=0;
-        else if(ch.equals("earth"))charcols[1]=0;
-        else if(ch.equals("wind"))charcols[2]=0;
-        else if(ch.equals("water"))charcols[3]=0;
-        else if(ch.equals("fire"))charcols[4]=0;
+        if(ch.equals(Misc.Avatar.VOID.toString()))charcols[0]=0;
+        else if(ch.equals(Misc.Avatar.EARTH.toString()))charcols[1]=0;
+        else if(ch.equals(Misc.Avatar.WIND.toString()))charcols[2]=0;
+        else if(ch.equals(Misc.Avatar.WATER.toString()))charcols[3]=0;
+        else if(ch.equals(Misc.Avatar.FIRE.toString()))charcols[4]=0;
 
         Button voidbutton  = getsettingsButton("VOID",charcols[0]);
         Button earthbutton= getsettingsButton("/EARTH",charcols[1]);
@@ -726,7 +702,6 @@ public class UI extends Application {
                 offFullScreen.setTextFill(Color.valueOf("#333333"));
                 prefs.put(FULLSCREEN,"0");
                 primaryStage.setFullScreen(true);
-                full=0;
             }
         });
 
@@ -755,13 +730,11 @@ public class UI extends Application {
 
             @Override
             public void handle(ActionEvent e) {
-                    String player_name = userTextField.getText();
-                    Preferences prefs = Preferences.userRoot().node(packagePath);
-                    prefs.put(PLAYER_NAME,player_name);
+                String player_name = userTextField.getText();
+                Preferences prefs = Preferences.userRoot().node(packagePath);
+                prefs.put(PLAYER_NAME,player_name);
 
-                    Scene sc = getLandingScene();
-                    primaryStage.setScene(sc);
-                if(full==0)primaryStage.setFullScreen(true);
+                scene.setRoot(getLandingScene());
                 Misc.pop();
 
             }
@@ -773,11 +746,7 @@ public class UI extends Application {
         border.setCenter(grid);
         border.setStyle("-fx-background-color: #000000");
 
-//        Screen screen = Screen.getPrimary();
-//        Rectangle2D bounds = screen.getVisualBounds();
-
-        Scene scene = new Scene(border, 800, 600);
-        return scene;
+        return border;
     }
 
     public HBox getVolumeHBox(int vol_type, int vol){
@@ -849,28 +818,20 @@ public class UI extends Application {
             public void handle(ActionEvent e) {
 
                 if(gsc==gameScreen.SETTINGS){
-                    Scene sc = getSettingsScene();
-                    primaryStage.setScene(sc);
+                    scene.setRoot(getSettingsScene());
                     Misc.pop();
-                    if(full==0)primaryStage.setFullScreen(true);
                 }
                 if(gsc==gameScreen.LANDING){
-                    Scene sc = getLandingScene();
-                    primaryStage.setScene(sc);
+                    scene.setRoot(getLandingScene());
                     Misc.pop();
-                    if(full==0)primaryStage.setFullScreen(true);
                 }
                 if(gsc==gameScreen.CREATESERVER){
-                    Scene sc = getCreateServerScene();
-                    primaryStage.setScene(sc);
+                    scene.setRoot(getCreateServerScene());
                     Misc.pop();
-                    if(full==0)primaryStage.setFullScreen(true);
                 }
                 if(gsc==gameScreen.FINDSERVER){
-                    Scene sc = getFindServerScene();
-                    primaryStage.setScene(sc);
+                    scene.setRoot(getFindServerScene());
                     Misc.pop();
-                    if(full==0)primaryStage.setFullScreen(true);
                 }
             }
         });
