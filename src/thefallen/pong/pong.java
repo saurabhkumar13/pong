@@ -94,7 +94,7 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                game = new pong(2,diff);
+                game = new pong(2,diff,false);
                 SwingUtilities.invokeLater(new Runnable() {
                     @Override
                     public void run() {
@@ -109,7 +109,7 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
     final double r;
     final Point2D center;
 
-    public pong(int n,int dif) {
+    public pong(int n,int dif,boolean F) {
 
         final String rendererType = JRendererFactory.useActiveRenderer() ? "Active" : "Passive";
         f_frame = new JFrame("ping pong " + rendererType + " Rendering");
@@ -156,11 +156,14 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
         f_panel = new JRendererPanel();
         f_frame.add(f_panel, BorderLayout.CENTER);
 //        f_panel.setPreferredSize(new Dimension(800,600));
-        f_panel.setPreferredSize(new Dimension(1200,900));
-//        f_panel.setPreferredSize(new Dimension(1366 ,768));
-//        f_frame.setUndecorated(true);
-//        f_frame.setPreferredSize(Toolkit.getDefaultToolkit().getScreenSize());
-//        f_frame.setExtendedState( f_frame.getExtendedState()|JFrame.MAXIMIZED_HORIZ );
+        if (!F) f_panel.setPreferredSize(new Dimension(1200, 900));
+        else
+
+        {
+            f_frame.setUndecorated(true);
+            f_frame.setPreferredSize(Toolkit.getDefaultToolkit().getScreenSize());
+//        f_frame.setExtendedState(f_frame.getExtendedState() | JFrame.MAXIMIZED_HORIZ);
+        }
         f_renderer = JRendererFactory.getDefaultRenderer(f_panel, this, false);
 
         f_infoTimer.addTickListener(new TickListener() {
