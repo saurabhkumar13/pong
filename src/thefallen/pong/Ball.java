@@ -116,85 +116,93 @@ public class Ball {
         void onDied(int index);
     }
 
-    boolean mew;
+    /*
+        name : update
+        input : void
+        output : void
+        function : calculates the next position of the ball and also determines whether a racket will lose health
+     */
+
     public void update(){
 
+        vx += ax * dt;
+        vy += ay * dt;
+        theta += omega * dt * 0.05;
 
-        vx+=ax*dt;
-        vy+=ay*dt;
+        double theta = -Math.atan2(y - center.getY(), x - center.getX()), f = 0.9;
 
-        theta+=omega*dt*0.05;
+        if (gravity + dt > 1) isGDecreasing = true;
 
-        double theta =- Math.atan2(y - center.getY(), x - center.getX()),f=0.9;
-        if(gravity+dt>1) isGDecreasing=true;
-        else if(gravity-dt<-1) isGDecreasing=false;
-        if(isGDecreasing) gravity-=ddt;
-        else gravity+=ddt;
-        ax = gravity*.1*cos(theta);
-        ay = -1*gravity*.1*sin(theta);
-        double modv = vx*vx+vy*vy;
+        else if (gravity - dt < -1) isGDecreasing = false;
 
-        if(modv>100) {vx*=f;vy*=f;}
+        if (isGDecreasing) gravity -= ddt;
 
-        if(!base.contains(x+vx*dt,y+vy*dt))
-        {
-            int n=getSideOfPolygon();
+        else gravity += ddt;
 
-            if(twoP)
-            {
-                if((n==1 && vx > 0) || (n==3 && vx <0))
-                    {
-                        vx = -vx;
-                        return;
-                    }
+        ay = -1 * gravity * 0.1 * sin(theta);
+        ax = gravity * 0.1 * cos(theta);
+        double modV = vx * vx + vy * vy;
 
-                n/=2;
+        if(modV>100) {
+            vx *= f;
+            vy *= f;
             }
 
-//            out.println("Condition of the Racket "+n+" "+rackets[n].safe);
+        if (!base.contains(x + vx * dt, y + vy * dt)) {
 
-            if (!rackets[n].safe&&(rackets[n].sentient||rackets[n].user))
-            {
-//                out.println(n+" "+rackets[n].hp);
+            int n = getSideOfPolygon();
 
-                if (rackets[n].hp >= 0)
-                {
-//                    err.println(n+" "+(master==null));
-                    if (n == 0 && master != null)
-                    {
-                        master.broadcastToGroup((new JSONObject().accumulate("command",Misc.Command.SyncHP).accumulate("HP",rackets[n].hp-20)).toString());
-                    }
-                    rackets[n].hp -= rackets[n].hp_dec;
+            if (twoP) {
+                if ((n == 1 && vx > 0) || (n == 3 && vx < 0)) {
+
+                    vx = -vx;
+                    return;
                 }
 
-                else if(diedListener!=null)
-                {
+                n /= 2;
+            }
+
+
+            if (!rackets[n].safe && (rackets[n].sentient || rackets[n].user)) {
+
+                if (rackets[n].hp >= 0) {
+
+                    if (n == 0 && master != null) {
+
+                        master.broadcastToGroup((new JSONObject().accumulate("command", Misc.Command.SyncHP).accumulate("HP", rackets[n].hp - 20)).toString());
+                    }
+
+                    rackets[n].hp -= rackets[n].hp_dec;
+
+                } else if (diedListener != null) {
 
                     diedListener.onDied(n);
                     rackets[n].diedOnce = true;
-                }
-                else
-                {
-                    err.println("dead "+n);
+
+                } else {
+
+                    err.println("dead " + n);
                 }
 
             }
 
-            double angleInRadians = Math.atan2(-vy,vx);
-            double normal = 2*PI*n/N-PI/2;
-            if(twoP) normal = 2*PI*2/N-PI/2;
-            double toRotate = 2*(angleInRadians-normal)+PI;
-            double vn,vt,vn_,vt_;
+            double angleInRadians = Math.atan2(-vy, vx);
+            double normal = 2 * PI * n / N - PI / 2;
 
-            if(angleInRadians-normal<PI/2)
-            {
-                vn = vx*cos(normal)-vy*sin(normal);
-                vt = vx*sin(normal)+vy*cos(normal);
-                vn_=-vn;
+            if (twoP) normal = 2 * PI * 2 / N - PI / 2;
+
+//            double toRotate = 2 * (angleInRadians - normal) + PI;
+            double vn, vt, vn_, vt_;
+
+            if (angleInRadians - normal < PI / 2) {
+
+                vn = vx * cos(normal) - vy * sin(normal);
+                vt = vx * sin(normal) + vy * cos(normal);
+                vn_ = -vn;
                 vt_ = vt;
-                  omega = omega + mininum(vt-omega*r,2*mu*vn)/r;
-                vx = (vt_*sin(normal) + vn_*cos(normal));
-                vy = (vt_*cos(normal) - vn_*sin(normal));
+                omega = omega + mininum(vt - omega * r, 2 * mu * vn) / r;
+                vx = (vt_ * sin(normal) + vn_ * cos(normal));
+                vy = (vt_ * cos(normal) - vn_ * sin(normal));
             }
         }
 
@@ -203,7 +211,14 @@ public class Ball {
 
     }
 
-    void padCollision(int state,int i) {
+    /*
+        name : padCollision
+        input : state - int, i - int
+        output : void
+        function :
+     */
+
+    public void padCollision(int state,int i) {
         int num;
         if(twoP) num = 2;
         else num = N;
@@ -231,17 +246,12 @@ public class Ball {
         }
 
         if(i==0&&master!=null)
-        {
-            Misc.pop2();
             master.broadcastToGroup((new JSONObject().accumulate("command",Misc.Command.SyncBall)
             .accumulate("vx",vx)
             .accumulate("vy",vy)
             .accumulate("x",x)
             .accumulate("y",y)
             ).toString());
-        }
-        else if(master==null)
-            Misc.pop2();
     }
 
     double pos(double a)
