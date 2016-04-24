@@ -355,8 +355,10 @@ public class ping extends Thread {
         broadcast((new JSONObject().accumulate("command", Misc.Command.FIND)).toString(),myIP,Port);
     }
 
-    public void joinserver(String name,String element, String ip){
+    public void joinserver(String name,String element, String ip,String mode){
         State = Misc.state.WAITslave;
+        if(mode.equals(Misc.Modes.DEATHMATCH))
+            GameMode = 2;
         sendMessage((new JSONObject().accumulate("command", Misc.Command.JOIN).accumulate("name",name).accumulate("element",element)).toString(),ip,Port);
     }
 
@@ -383,7 +385,7 @@ public class ping extends Thread {
                     }
 
                     else if(a.equals("join")) {
-                        messageSender.joinserver("name","water",scanner.nextLine());
+                        messageSender.joinserver("name","water",scanner.nextLine(),"NORMAL");
                     }
                     else if(a.equals("joined"))
                         out.println(messageSender.IPset.size());
