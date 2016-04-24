@@ -1104,6 +1104,7 @@ public class UI extends Application {
                     if(vol_type==1){
                         Preferences prefs = Preferences.userRoot().node(packagePath);
                         prefs.put(SFX_VOLUME,t+"");
+                        Misc.sfxvol=t;
                     }
                 }
             });
