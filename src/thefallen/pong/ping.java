@@ -150,6 +150,8 @@ public class ping extends Thread {
             Misc.INITballvx = message.getDouble("vx");
             Misc.INITballvy = message.getDouble("vy");
 
+            normal = -normal;
+
             vx = (Misc.INITballvx*cos(normal) + Misc.INITballvy*sin(normal));
             vy = (-Misc.INITballvx*sin(normal) + Misc.INITballvy*cos(normal));
 
