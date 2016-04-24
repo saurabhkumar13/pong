@@ -11,6 +11,7 @@ import static java.lang.System.out;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
 import java.awt.*;
+import java.awt.Font;
 import java.awt.event.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
@@ -34,6 +35,7 @@ import javax.tools.Tool;
 
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
+import javafx.scene.text.*;
 import org.jdesktop.core.animation.rendering.JRenderer;
 import org.jdesktop.core.animation.rendering.JRendererTarget;
 import org.jdesktop.core.animation.timing.Animator;
@@ -332,18 +334,19 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
         double th = 0;
 
         g2d.setColor(Color.white);
-        g2d.setFont(new Font("SansSerif", Font.BOLD, 12));
+
+        g2d.setFont(new Font("Tahoma", Font.BOLD, 12));
         switch(diff) {
 
-            case 1 : g2d.drawString("DIFFICULTY : EASY", width/2 - 50, height/10);
+            case 1 : g2d.drawString("DIFFICULTY : EASY", 50, height/10);
                 break;
-            case 2 : g2d.drawString("DIFFICULTY : MEDIUM", width/2 - 50, height/10);
+            case 2 : g2d.drawString("DIFFICULTY : MEDIUM",50, height/10);
                 break;
-            case 3 : g2d.drawString("DIFFICULTY : HARD", width/2 - 50, height/10);
+            case 3 : g2d.drawString("DIFFICULTY : HARD",50, height/10);
                 break;
-            case 4 : g2d.drawString("DIFFICULTY : HARDER", width/2 - 50, height/10);
+            case 4 : g2d.drawString("DIFFICULTY : HARDER", 50, height/10);
                 break;
-            case 5 : g2d.drawString("DIFFICULTY : HARDEST", width/2 - 50, height/10);
+            case 5 : g2d.drawString("DIFFICULTY : HARDEST", 50, height/10);
                 break;
             default: break;
         }

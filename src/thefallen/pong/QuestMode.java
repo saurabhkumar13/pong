@@ -179,6 +179,7 @@ public class QuestMode {
 
     public void endQuest()
     {
+        game.f_frame.setVisible(false);
         if(gameOverListener != null)
         {
             gameOverListener.onGameOver(success,score);
