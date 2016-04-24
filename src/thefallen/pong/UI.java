@@ -868,7 +868,7 @@ public class UI extends Application {
     }
 
     public BorderPane getAboutScene(){
-
+        return null;
     }
 
     public BorderPane getSettingsScene(){

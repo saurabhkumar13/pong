@@ -137,6 +137,11 @@ public class ping extends Thread {
         }
         else if (command.equals(Misc.Command.SyncBall.toString()))
         {
+            try {
+                Misc.pop2();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             double vx,vy,normal= - 2 * PI * (IPset.headSet(sender).size() - IPset.headSet(myIP).size()) / IPset.size(),x,y;
 
             x = message.getDouble("x");
