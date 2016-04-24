@@ -198,12 +198,12 @@ public class ping extends Thread {
             }
             else
             {
-                game.pause();
-                game.f_frame.setVisible(false);
                 if(listener!=null)
                     listener.onGameOver(!sender.equals(myIP),0);
             }
-
+            game.pause();
+            game.f_frame.setVisible(false);
+            initset = new TreeSet<>();
         }
     }
 
