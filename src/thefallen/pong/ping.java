@@ -191,16 +191,16 @@ public class ping extends Thread {
         }
         else if(command.equals(Misc.Command.Died.toString()))
         {
-            if(IPset.size()>2)
+            if(IPset.size()>2) {
                 IPset.remove(sender);
-            else
+                broadcastToGroup((new JSONObject().accumulate("command",Misc.Command.START)).toString());
+            }else
             {
                 game.pause();
                 game.f_frame.setVisible(false);
                 if(listener!=null)
                     listener.onGameOver(!sender.equals(myIP),0);
             }
-            broadcastToGroup((new JSONObject().accumulate("command",Misc.Command.START)).toString());
 
         }
     }
