@@ -80,13 +80,15 @@ public class ping extends Thread {
 //            sendMessage(serverDetails.toString(),m,Port);
 //            out.println("Found server "+sender+" "+message.getJSONObject("server_details"));
             JSONObject serverDetails = message.getJSONObject("server_details");
-            if(joinListener!=null) joinListener.onfind(serverDetails.getString("name"),serverDetails.getString("password"),serverDetails.getInt("maxPlayers"),serverDetails.getString("mode"),sender);
+            if(joinListener!=null)
+                joinListener.onfind(serverDetails.getString("name"),serverDetails.getString("password"),serverDetails.getInt("maxPlayers"),serverDetails.getString("mode"),sender);
         }
         else if(command.equals(Misc.Command.JOIN.toString())&&State== Misc.state.WAITmaster)
         {
             if(IPset.size()<serverDetails.getInt("maxPlayers")||serverDetails.getInt("maxPlayers")==-1) {
                 IPset.add(sender);
-                if(serverDetails.getString("mode").equals(Misc.Modes.DEATHMATCH))
+                String mode = serverDetails.get("mode")+"";
+                if(mode.equals(Misc.Modes.DEATHMATCH.toString()))
                     GameMode = 2;
                 players.add(message.accumulate("IP",sender).toString());
                 JSONArray slaves = new JSONArray();
@@ -322,6 +324,7 @@ public class ping extends Thread {
                 game.master=master;
                 for(Racket r : game.rackets) {
                     r.sentient = false;
+                    err.println(master.GameMode);
                     if(master.GameMode==2)
                         r.hp = 0;
                 }
