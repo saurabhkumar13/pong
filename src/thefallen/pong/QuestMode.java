@@ -73,7 +73,8 @@ public class QuestMode {
                 }
 
                 game = new pong(num_ai + 1, level,full);
-
+                if(G)
+                    game.ball.setGravity();
                 game.ball.diedListener = diedListener;
                 game.ball.setVel();
                 pause();

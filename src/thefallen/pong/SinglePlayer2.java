@@ -39,14 +39,24 @@ public class SinglePlayer2 {
             }
             else if(index==0)
             {
+                if (game != null) {
+                    game.pause();
+                    game.f_frame.setVisible(false);
+                }
+
                 if(listener!=null)
                     listener.onGameOver(false,42);
                 out.println("YOU DIED");
             }
             else if(N==2)
             {
+                if (game != null) {
+                    game.pause();
+                    game.f_frame.setVisible(false);
+                }
+
                 if(listener!=null)
-                listener.onGameOver(true,42);
+                        listener.onGameOver(true,42);
                 out.println("YOU WON");
             }
         }
