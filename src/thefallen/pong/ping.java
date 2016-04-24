@@ -176,7 +176,7 @@ public class ping extends Thread {
         }
         else if(command.equals(Misc.Command.ACTION.toString()))
         {
-            int index = (IPset.headSet(sender).size() - IPset.headSet(myIP).size());
+            int index = -(IPset.headSet(sender).size() - IPset.headSet(myIP).size());
             if(index<0) index+=IPset.size();
             if(index==0) return;
             String action = message.getString("action");
@@ -190,7 +190,7 @@ public class ping extends Thread {
         }
         else if(command.equals(Misc.Command.SyncHP.toString()))
         {
-            int index = (IPset.headSet(sender).size() - IPset.headSet(myIP).size());
+            int index = -(IPset.headSet(sender).size() - IPset.headSet(myIP).size());
             if(index<0) index+=IPset.size();
             if(index==0) return;
             game.rackets[index].hp = message.getInt("HP");
@@ -302,7 +302,7 @@ public class ping extends Thread {
                 game = new pong(size, 0, true);
                 for (String slaves : master.players){
                     JSONObject slav = (new JSONObject(slaves));
-                    int index = (master.IPset.headSet(slav.getString("IP")).size() - master.IPset.headSet(master.myIP).size());
+                    int index = -(master.IPset.headSet(slav.getString("IP")).size() - master.IPset.headSet(master.myIP).size());
                     if(index<0) index+=master.IPset.size();
                     String element = slav.getString("element");
                     if(element.equals(Misc.Avatar.EARTH.toString()))
