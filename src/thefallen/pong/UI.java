@@ -439,9 +439,7 @@ public class UI extends Application {
                             Misc.pop();
                         }
                         Platform.runLater(() -> Platform.runLater(() -> grid2.add(getplayerview(name, element), 0, grid2I++)));
-
                     }
-
                     @Override
                     public void onfind(String name, String password, int maxPlayers, String mode,String IP) {
                         Platform.runLater(() -> grid.add(getServerView(name,mode,password,maxPlayers,IP), 0, grid3I++));

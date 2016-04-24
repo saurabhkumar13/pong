@@ -41,6 +41,7 @@ public class ping extends Thread {
         initset = new TreeSet<>();
         start();
         players = new TreeSet<>();
+        theSocket = new DatagramSocket();
     }
 
     public void run() {
@@ -202,12 +203,12 @@ public class ping extends Thread {
             sendMessage(message,ips,Port);
         }
     }
+    static DatagramSocket theSocket;
 
     public static boolean sendMessage(String message,String recIP,int Port) {
         try {
             out.print("Sending to " + recIP + " socket " + Port + " data: " + message);
             byte[] data = message.getBytes();
-            DatagramSocket theSocket = new DatagramSocket();
             DatagramPacket theOutput = new DatagramPacket(data, data.length, InetAddress.getByName(recIP), Port);
             theSocket.send(theOutput);
             // Screen.writeText(message);
