@@ -115,15 +115,12 @@ public class Ball {
                 n/=2;
             }
 
-//            out.println("Condition of the Racket "+n+" "+rackets[n].safe);
 
             if (!rackets[n].safe&&(rackets[n].sentient||rackets[n].user))
             {
-//                out.println(n+" "+rackets[n].hp);
 
                 if (rackets[n].hp >= 0)
                 {
-//                    err.println(n+" "+(master==null));
                     if (n == 0 && master != null)
                     {
                         master.broadcastToGroup((new JSONObject().accumulate("command",Misc.Command.SyncHP).accumulate("HP",rackets[n].hp-20)).toString());
@@ -143,8 +140,6 @@ public class Ball {
                 }
 
             }
-//            else
-//                rackets[n].safe=false;
 
             double angleInRadians = Math.atan2(-vy,vx);
             double normal = 2*PI*n/N-PI/2;
@@ -195,7 +190,6 @@ public class Ball {
             vx = rackets[i].e * (vx_ * cos(delta) + vy_ * sin(delta));
             vy = vy_ * cos(delta) - vx_ * sin(delta);
         }
-//        err.println(i+" "+N+state+" "+(vx_-vx)+" "+(vy_-vy));
 
         if(i==0&&master!=null)
             master.broadcastToGroup((new JSONObject().accumulate("command",Misc.Command.SyncBall)
