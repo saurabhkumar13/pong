@@ -357,7 +357,7 @@ public class ping extends Thread {
 
     public void joinserver(String name,String element, String ip,String mode){
         State = Misc.state.WAITslave;
-        if(mode.equals(Misc.Modes.DEATHMATCH))
+        if(mode.equals(Misc.Modes.DEATHMATCH.toString()))
             GameMode = 2;
         sendMessage((new JSONObject().accumulate("command", Misc.Command.JOIN).accumulate("name",name).accumulate("element",element)).toString(),ip,Port);
     }
