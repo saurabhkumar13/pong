@@ -15,17 +15,23 @@ public class Misc {
 
     static int Port = 6969;
 
+    static int sfxvol=3;
     static Media popSound = new Media(new File("src/res/pop.wav").toURI().toString());
     static void pop ()
     {
-        (new MediaPlayer(popSound)).play();
+        MediaPlayer mp=new MediaPlayer(popSound);
+        mp.play();
+        mp.setVolume(((double)Integer.valueOf(sfxvol))/10);
+
     }
 
     static Media popSound2 = new Media(new File("src/res/pop2.wav").toURI().toString());
     static void pop2 ()
     {
         try {
-            (new MediaPlayer(popSound2)).play();
+            MediaPlayer mp=new MediaPlayer(popSound2);
+            mp.play();
+            mp.setVolume(((double)Integer.valueOf(sfxvol))/10);
         } catch (Exception e) {
             e.printStackTrace();
         }
