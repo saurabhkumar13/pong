@@ -277,8 +277,22 @@ public class ping extends Thread {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                if(game!=null) game.pause();
-                game = new pong(size,0,false);
+                if (game != null) game.pause();
+                game = new pong(size, 0, false);
+                for (String slaves : master.players){
+                    JSONObject slav = (new JSONObject(slaves));
+                    int index = (master.IPset.headSet(slav.getString("IP")).size() - master.IPset.headSet(master.myIP).size());
+                    if(index<0) index+=master.IPset.size();
+                    String element = slav.getString("element");
+                    if(element.equals(Misc.Avatar.EARTH.toString()))
+                        game.rackets[index].setPowerup(Misc.Avatar.EARTH);
+                    else if(element.equals(Misc.Avatar.FIRE.toString()))
+                        game.rackets[index].setPowerup(Misc.Avatar.FIRE);
+                    else if(element.equals(Misc.Avatar.WIND.toString()))
+                        game.rackets[index].setPowerup(Misc.Avatar.WIND);
+                    else if(element.equals(Misc.Avatar.WATER.toString()))
+                        game.rackets[index].setPowerup(Misc.Avatar.WATER);
+                }
                 game.addBall(master);
                 game.rackets[0].master=master;
                 game.master=master;

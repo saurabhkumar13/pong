@@ -104,6 +104,7 @@ public class SinglePlayer {
                 temp=game;
                 game = new pong(N,0,false);
                 game.lol = quest;
+                game.ball.setGravity();
                 game.onDiedListener = diedListener;
                     pause();
                     game.ball.vx = 1;

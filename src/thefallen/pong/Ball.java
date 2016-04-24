@@ -17,7 +17,7 @@ public class Ball {
 
     double x, y, vx, vy, ax, ay, omega, theta, mu = 0.3, r = 1;
     int imageIndex;
-    float dt = 1, ddt = 0.001f;
+    float dt = 1, ddt = 0.0f;
     Animator animator;
     Polygon base;
     Point2D center;
@@ -43,6 +43,15 @@ public class Ball {
         diff = dif;
     }
 
+
+    void setGravity()
+    {
+        gravity=1;
+        if(ddt==0)
+            ddt=0.01f;
+        else
+            ddt=0;
+    }
 
     /*
         name : setVel
@@ -131,22 +140,23 @@ public class Ball {
 
         double theta = -Math.atan2(y - center.getY(), x - center.getX()), f = 0.9;
 
-        if (gravity + dt > 1) isGDecreasing = true;
+        if (gravity + ddt > 1) isGDecreasing = true;
 
-        else if (gravity - dt < -1) isGDecreasing = false;
+        else if (gravity - ddt < -1) isGDecreasing = false;
 
         if (isGDecreasing) gravity -= ddt;
 
         else gravity += ddt;
-        err.println(gravity+" ");
+
         ay = -1 * gravity * 0.1 * sin(theta);
         ax = gravity * 0.1 * cos(theta);
+
         double modV = vx * vx + vy * vy;
 
         if(modV>100) {
             vx *= f;
             vy *= f;
-            }
+        }
 
         if (!base.contains(x + vx * dt, y + vy * dt)) {
 
