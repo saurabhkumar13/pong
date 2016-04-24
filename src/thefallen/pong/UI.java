@@ -638,18 +638,7 @@ public class UI extends Application {
         @Override
         public void onGameOver(boolean success, int score)
         {
-            if(quest1!=null)
-            {
-                quest1.game.pause();
-                quest1.game.f_frame.setVisible(false);
                 scene.setRoot(getGameOverScene(success));
-            }
-            else
-            {
-                quest2.game.pause();
-                quest2.game.f_frame.setVisible(false);
-                scene.setRoot(getGameOverScene(success));
-            }
         }
     };
 
