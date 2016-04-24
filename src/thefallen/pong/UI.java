@@ -15,6 +15,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.InputMethodRequests;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.media.Media;
@@ -355,10 +356,273 @@ public class UI extends Application {
 
     GridPane grid2;
     int grid1I=0,grid2I=0,grid3I=0;
-
+    QuestMode quest1;
+    SinglePlayer2 quest2;
     public BorderPane getNewGameScene(){
+        GridPane settingsHeader = getheader("New Game",false);
 
+        GridPane grid = new GridPane();
+        grid.setAlignment(Pos.CENTER);
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(25, 25, 25, 25));
+
+        Label userName = new Label("Number of bots :");
+        userName.setFont(Font.loadFont(thefallen.pong.Resources.getResource(thefallen.pong.Resources.FONT1).toString(), 26));
+        userName.setTextFill(Color.valueOf("#B4B0AB"));
+        grid.add(userName, 0, 0);
+
+        Label back = new Label("");
+        back.setStyle("-fx-background-color: #B4B0AB");
+        back.setMinWidth(200);
+        back.setMinHeight(40);
+        grid.add(back, 1, 0);
+
+        TextField userTextField = new TextField();
+        userTextField.setText("1");
+        userTextField.setStyle("-fx-background-color: #7C7E7C; -fx-text-fill: #333333");
+        userTextField.setPadding(new Insets(0,5,0,5));
+        userTextField.setAlignment(Pos.CENTER);
+        userTextField.setMaxHeight(30);
+        userTextField.setTranslateX(20);
+        userTextField.setMaxWidth(160);
+        userTextField.setFont(Font.loadFont(thefallen.pong.Resources.getResource(thefallen.pong.Resources.FONT1).toString(), 26));
+        grid.add(userTextField, 1, 0);
+
+        //test
+
+        Label modelabel= new Label("MODE     :");
+        modelabel.setFont(Font.loadFont(thefallen.pong.Resources.getResource(thefallen.pong.Resources.FONT1).toString(), 26));
+        modelabel.setTextFill(Color.valueOf("#B4B0AB"));
+        grid.add(modelabel, 0, 1);
+
+        Preferences prefs = Preferences.userRoot().node(packagePath);
+        prefs.put("mode","1");
+
+        Button quest  = getsettingsButton("Quest",0);
+        Button broyal = getsettingsButton("/Battle Royale",1);
+        quest.setTextFill(Color.valueOf("#B4B0AB"));
+
+        quest.setOnAction(new EventHandler<ActionEvent>() {
+
+            @Override
+            public void handle(ActionEvent e) {
+                quest.setTextFill(Color.valueOf("#B4B0AB"));
+                broyal.setTextFill(Color.valueOf("#333333"));
+                prefs.put("mode","1");
+            }
+        });
+
+        broyal.setOnAction(new EventHandler<ActionEvent>() {
+
+            @Override
+            public void handle(ActionEvent e) {
+                broyal.setTextFill(Color.valueOf("#B4B0AB"));
+                quest.setTextFill(Color.valueOf("#333333"));
+                prefs.put("mode","2");
+            }
+        });
+
+        HBox hBox4 = new HBox();
+        hBox4.setPadding(new Insets(5,5,5,20));
+        hBox4.getChildren().addAll(quest,broyal);
+        grid.add(hBox4,1,1);
+
+        //end
+        int off=0;
+        int on=1;
+        Button onFullScreen = getsettingsButton("ON",on);
+        Button offFullScreen= getsettingsButton("/0FF",off);
+
+        Label characterlabel= new Label("CHARACTER     :");
+        characterlabel.setFont(Font.loadFont(thefallen.pong.Resources.getResource(thefallen.pong.Resources.FONT1).toString(), 26));
+        characterlabel.setTextFill(Color.valueOf("#B4B0AB"));
+        grid.add(characterlabel, 0, 2);
+
+        prefs.put("diff","0");
+
+        String ch=prefs.get(ELEMENT,"void");
+        Button voidbutton  = getsettingsButton("Easy",0);
+        Button earthbutton= getsettingsButton("/Medium",1);
+        Button waterbutton= getsettingsButton("/Hard",1);
+        Button windbutton= getsettingsButton("/Harder",1);
+        Button firebutton= getsettingsButton("/Hardest",1);
+
+        voidbutton.setOnAction(new EventHandler<ActionEvent>() {
+
+            @Override
+            public void handle(ActionEvent e) {
+                voidbutton.setTextFill(Color.valueOf("#B4B0AB"));
+                earthbutton.setTextFill(Color.valueOf("#333333"));
+                windbutton.setTextFill(Color.valueOf("#333333"));
+                waterbutton.setTextFill(Color.valueOf("#333333"));
+                firebutton.setTextFill(Color.valueOf("#333333"));
+                prefs.put("diff","0");
+            }
+        });
+
+        earthbutton.setOnAction(new EventHandler<ActionEvent>() {
+
+            @Override
+            public void handle(ActionEvent e) {
+                earthbutton.setTextFill(Color.valueOf("#B4B0AB"));
+                voidbutton.setTextFill(Color.valueOf("#333333"));
+                waterbutton.setTextFill(Color.valueOf("#333333"));
+                windbutton.setTextFill(Color.valueOf("#333333"));
+                firebutton.setTextFill(Color.valueOf("#333333"));
+                prefs.put("diff","1");
+            }
+        });
+
+        waterbutton.setOnAction(new EventHandler<ActionEvent>() {
+
+            @Override
+            public void handle(ActionEvent e) {
+                waterbutton.setTextFill(Color.valueOf("#B4B0AB"));
+                voidbutton.setTextFill(Color.valueOf("#333333"));
+                earthbutton.setTextFill(Color.valueOf("#333333"));
+                windbutton.setTextFill(Color.valueOf("#333333"));
+                firebutton.setTextFill(Color.valueOf("#333333"));
+                prefs.put("diff","2");
+            }
+        });
+
+        windbutton.setOnAction(new EventHandler<ActionEvent>() {
+
+            @Override
+            public void handle(ActionEvent e) {
+                windbutton.setTextFill(Color.valueOf("#B4B0AB"));
+                voidbutton.setTextFill(Color.valueOf("#333333"));
+                waterbutton.setTextFill(Color.valueOf("#333333"));
+                earthbutton.setTextFill(Color.valueOf("#333333"));
+                firebutton.setTextFill(Color.valueOf("#333333"));
+                prefs.put("diff","3");
+            }
+        });
+
+        firebutton.setOnAction(new EventHandler<ActionEvent>() {
+
+            @Override
+            public void handle(ActionEvent e) {
+                firebutton.setTextFill(Color.valueOf("#B4B0AB"));
+                voidbutton.setTextFill(Color.valueOf("#333333"));
+                waterbutton.setTextFill(Color.valueOf("#333333"));
+                windbutton.setTextFill(Color.valueOf("#333333"));
+                earthbutton.setTextFill(Color.valueOf("#333333"));
+                prefs.put("diff","4");
+            }
+        });
+
+        HBox hBox8 = new HBox();
+        hBox8.setPadding(new Insets(5,5,5,20));
+        hBox8.getChildren().addAll(voidbutton,earthbutton,waterbutton,windbutton,firebutton);
+        grid.add(hBox8,1,2);
+
+        //end
+        Label gravity = new Label("Gravity :");
+        gravity.setFont(Font.loadFont(thefallen.pong.Resources.getResource(thefallen.pong.Resources.FONT1).toString(), 26));
+        gravity.setTextFill(Color.valueOf("#B4B0AB"));
+        grid.add(gravity, 0, 3);
+
+        prefs.put("gravity","1");
+
+        onFullScreen.setOnAction(new EventHandler<ActionEvent>() {
+
+            @Override
+            public void handle(ActionEvent e) {
+                onFullScreen.setTextFill(Color.valueOf("#B4B0AB"));
+                offFullScreen.setTextFill(Color.valueOf("#333333"));
+                prefs.put("gravity","0");
+            }
+        });
+
+        offFullScreen.setOnAction(new EventHandler<ActionEvent>() {
+
+            @Override
+            public void handle(ActionEvent e) {
+                offFullScreen.setTextFill(Color.valueOf("#B4B0AB"));
+                onFullScreen.setTextFill(Color.valueOf("#333333"));
+                prefs.put("gravity","1");
+            }
+        });
+
+        HBox hbox3 = new HBox();
+        hbox3.setPadding(new Insets(5,5,5,20));
+        hbox3.getChildren().addAll(onFullScreen,offFullScreen);
+        grid.add(hbox3,1,3);
+
+        Button btn = getButton("Start",gameScreen.LANDING);
+        btn.setTranslateX(-60);
+        btn.setTranslateY(30);
+        btn.setMinWidth(100);
+        btn.setOnAction(new EventHandler<ActionEvent>() {
+
+            @Override
+            public void handle(ActionEvent e) {
+                Misc.pop();
+                boolean G=false;
+                if(prefs.get("gravity","1").equals("0"))
+                    G=true;
+                int diff = Integer.valueOf(prefs.get("diff", "1"));
+                int bots = 1;
+                try {
+                    bots = Integer.valueOf(userTextField.getText());
+                } catch (NumberFormatException e1) {
+                    e1.printStackTrace();
+                }
+                String element = prefs.get(ELEMENT, Misc.Avatar.VOID.toString());
+                Misc.Avatar ele = Misc.Avatar.VOID;
+                if(element.equals(Misc.Avatar.EARTH.toString()))
+                    ele = Misc.Avatar.EARTH;
+                else if(element.equals(Misc.Avatar.FIRE.toString()))
+                    ele = Misc.Avatar.FIRE;
+                else if(element.equals(Misc.Avatar.WIND.toString()))
+                    ele = Misc.Avatar.WIND;
+                else if(element.equals(Misc.Avatar.WATER.toString()))
+                    ele = Misc.Avatar.WATER;
+
+                if(prefs.get("mode","1").equals("2"))
+                {
+                    quest2 = new SinglePlayer2();
+                    quest2.Diff = diff;
+                    quest2.startQuest(G, bots + 1, ele);
+                    quest2.listener = gameOverListener;
+                }
+                else
+                {
+                    quest1 = new QuestMode();
+                    quest1.max_ai = diff+1;
+                    quest1.num_ai = bots;
+                    quest1.G = G;
+                    quest1.startQuest();
+                    quest1.gameOverListener = gameOverListener;
+                }
+            }
+        });
+        grid.add(btn,1,5);
+
+        BorderPane border = new BorderPane();
+        border.setTop(settingsHeader);
+        border.setCenter(grid);
+        border.setStyle("-fx-background-color: #000000");
+
+        return border;
     }
+    QuestMode.onGameOverListener gameOverListener = new QuestMode.onGameOverListener() {
+        @Override
+        public void onGameOver(boolean success, int score) {
+            if(quest1!=null)
+            {
+                quest1.game.pause();
+                quest1.game.f_frame.setVisible(false);
+            }
+            else
+            {
+                quest2.game.pause();
+                quest2.game.f_frame.setVisible(false);
+            }
+        }
+    };
     public BorderPane getwaitingserver(){
         GridPane createserverheader = getheader("Waiting",true);
         Platform.setImplicitExit(false);
@@ -833,6 +1097,11 @@ public class UI extends Application {
                     scene.setRoot(getFindServerScene());
                     Misc.pop();
                 }
+                if(gsc == gameScreen.NEWGAME){
+                    scene.setRoot(getNewGameScene());
+                    Misc.pop();
+                }
+
             }
         });
         return btn;

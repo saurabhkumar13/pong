@@ -20,7 +20,7 @@ public class SinglePlayer2 {
     pong game;
     int N;
     int uHP = 80;
-    static int init_num = 5;
+    static int init_num = 4;
     static int init_hp = 40;
     boolean pause_flag = false,constructing;
     SinglePlayer2 quest;
@@ -39,11 +39,19 @@ public class SinglePlayer2 {
             }
             else if(index==0)
             {
+                if(listener!=null)
+                    listener.onGameOver(false,42);
                 out.println("YOU DIED");
             }
-
+            else if(N==2)
+            {
+                if(listener!=null)
+                listener.onGameOver(true,42);
+                out.println("YOU WON");
+            }
         }
     };
+    QuestMode.onGameOverListener listener;
     public SinglePlayer2()
     {
         quest = this;
@@ -73,7 +81,9 @@ public class SinglePlayer2 {
         }
 
     }
-
+    boolean G;
+    Misc.Avatar mode;
+    int Diff;
     void startGame(int n)
     {
         System.setProperty("swing.defaultlaf", "com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
@@ -84,7 +94,10 @@ public class SinglePlayer2 {
                     game.pause();
                     game.f_frame.setVisible(false);
                 }
-                game = new pong(n,2,false);
+                game = new pong(n,Diff,true);
+                if(G)
+                    game.ball.setGravity();
+                game.rackets[0].setPowerup(mode);
                 game.ball.diedListener= diedListener;
                 pause();
                 game.ball.setVel();
@@ -118,9 +131,12 @@ public class SinglePlayer2 {
     }
 
 
-      public void startQuest()
+      public void startQuest(boolean G,int Start,Misc.Avatar mode)
     {
+        init_num = Start;
         N = init_num;
+        this.G = G;
+        this.mode = mode;
         startGame(N);
         pause();
     }
@@ -128,6 +144,6 @@ public class SinglePlayer2 {
     static public void main(String[] args)
     {
         SinglePlayer2 quest = new SinglePlayer2();
-        quest.startQuest();
+        quest.startQuest(false,10, Misc.Avatar.WATER);
     }
 }

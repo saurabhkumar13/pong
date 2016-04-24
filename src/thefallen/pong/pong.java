@@ -136,12 +136,10 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
         f_panel = new JRendererPanel();
         f_frame.add(f_panel, BorderLayout.CENTER);
 //        f_panel.setPreferredSize(new Dimension(800,600));
-        if (!F) f_panel.setPreferredSize(new Dimension(1200, 900));
-        else
-
+        f_frame.setPreferredSize(Toolkit.getDefaultToolkit().getScreenSize());
+        if (F)
         {
             f_frame.setUndecorated(true);
-            f_frame.setPreferredSize(Toolkit.getDefaultToolkit().getScreenSize());
 //        f_frame.setExtendedState(f_frame.getExtendedState() | JFrame.MAXIMIZED_HORIZ);
         }
         f_renderer = JRendererFactory.getDefaultRenderer(f_panel, this, false);
@@ -162,22 +160,7 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
         rackets = new Racket[N_];
         base = new Polygon();
         base.npoints=N+1;
-        double scale=2;
-
-        if(n%2==1)
-        {
-            scale = 1+ .5 * exp((-n + 3)*10);
-        }
-        else if (n>2)
-        {
-            scale = 1+ exp((-n + 4)*20);
-        }
-        else if (n == 2)
-        {
-            scale = 1.5;
-        }
-
-        r=(floor(min(f_frame.getHeight(),f_frame.getWidth())/200)*100-50)*scale;
+        r=400;
         center = new Point(f_frame.getWidth()/2,f_frame.getHeight()/2);
         System.out.println(f_frame.getHeight());
         System.out.println(f_frame.getWidth());
@@ -302,6 +285,7 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
         final TimingTarget circularMovement = new TimingTargetAdapter() {
             @Override
             public void timingEvent(Animator source, double fraction) {
+                if(ball!=null)
                 ball.update();
             }
         };

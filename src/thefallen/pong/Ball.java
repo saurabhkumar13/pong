@@ -156,7 +156,7 @@ public class Ball {
 
         double modV = vx * vx + vy * vy;
 
-        if(modV>100) {
+        if(modV>500) {
             vx *= f;
             vy *= f;
         }
@@ -195,7 +195,8 @@ public class Ball {
                     rackets[n].diedOnce = true;
 
                 } else {
-
+                    if(n==0&&master!=null)
+                        master.broadcastToGroup((new JSONObject().accumulate("command",Misc.Command.Died)).toString());
                     err.println("dead " + n);
                 }
 

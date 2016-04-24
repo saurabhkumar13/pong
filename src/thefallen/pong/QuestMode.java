@@ -17,9 +17,9 @@ public class QuestMode {
     //Declaring and initialising variables
 
     pong game;
-    static final int num_ai = 1, init_hp = 80, max_ai = 5;
+    int num_ai = 1, init_hp = 80, max_ai = 5;
     int userHp = 80, score = 0, aiLevel = 1;
-    boolean uDied = false, aiDied = false, pause_flag = false, constructing = false, gOver = false,success = false;
+    boolean uDied = false, aiDied = false, pause_flag = false, constructing = false, gOver = false,success = false,G;
     QuestMode quest;
     onGameOverListener gameOverListener;
 
@@ -44,7 +44,7 @@ public class QuestMode {
                 failedQuest();
             } else {
                 aiDied = true;
-                out.println("AI DIED "+constructing+" "+aiLevel);
+                out.println("AI DIED "+constructing+" "+aiLevel+" "+max_ai);
 
                 if (!constructing && aiLevel < max_ai)
                 {
@@ -72,7 +72,7 @@ public class QuestMode {
                     game.f_frame.setVisible(false);
                 }
 
-                game = new pong(num_ai + 1, level,false);
+                game = new pong(num_ai + 1, level,G);
 
                 game.ball.diedListener = diedListener;
                 game.ball.setVel();
