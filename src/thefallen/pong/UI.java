@@ -291,6 +291,7 @@ public class UI extends Application {
             }
             else {
                 pee = new ping(ip, Misc.Port);
+                pee.listener=gameOverListener;
                 int MaxPlayers = -1;
                 try {
                     if(!maxplayers.equals("")) MaxPlayers = Integer.parseInt(maxplayers);
@@ -653,9 +654,22 @@ public class UI extends Application {
     };
 
     public BorderPane getGameOverScene(boolean success){
-        String res="logo_small.png";
+        String res="polebunny.gif";
         if(!success)
             res = "youdied.png";
+
+        GridPane grid = new GridPane();
+        grid.setAlignment(Pos.CENTER);
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(25, 25, 25, 25));
+
+        Label userName = new Label("YOU WON, HERE'S A POLE DANCING BUNNY FOR YOU HAWTIE (n˘v˘•)¬\nCLICK ON DA HAWT BUNNY TO GO TO HOME SCREEN");
+//        userName.setFont(Font.loadFont(thefallen.pong.Resources.getResource(thefallen.pong.Resources.FONT1).toString(), 26));
+        userName.setFont(Font.font("Tahoma",24));
+        userName.setTextFill(Color.valueOf("#B4B0AB"));
+        grid.add(userName, 0, 0);
+
         final Image logoPNG2 = new Image(UI.class.getResourceAsStream("../../res/"+res));
         final ImageView LogoView2 = new ImageView();
         LogoView2.setImage(logoPNG2);
@@ -668,9 +682,10 @@ public class UI extends Application {
                 Misc.pop();
             }
         });
+        grid.add(LogoView2,0,1);
 
         BorderPane border = new BorderPane();
-        border.setCenter(LogoView2);
+        border.setCenter(grid);
         border.setStyle("-fx-background-color: #000000");
 
         return border;
@@ -735,6 +750,7 @@ public class UI extends Application {
             }
             else {
                 pee = new ping(ip, Misc.Port);
+                pee.listener=gameOverListener;
                 pee.findserver();
                 pee.joinListener = new ping.onJoinListener() {
                     @Override
