@@ -32,7 +32,7 @@ public class Misc {
     }
 
     public enum Avatar{
-        EARTH,WIND,FIRE,WATER
+        VOID,EARTH,WIND,FIRE,WATER
     }
 
     public enum Command{
