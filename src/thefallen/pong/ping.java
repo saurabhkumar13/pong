@@ -168,6 +168,7 @@ public class ping extends Thread {
         {
             int index = (IPset.headSet(sender).size() - IPset.headSet(myIP).size());
             if(index<0) index+=IPset.size();
+            if(index==0) return;
             String action = message.getString("action");
             game.rackets[index].x = message.getInt("x");
             if(action.equals(Misc.Command.L.toString())) game.rackets[index].pressed(KeyMap.left);
@@ -181,6 +182,7 @@ public class ping extends Thread {
         {
             int index = (IPset.headSet(sender).size() - IPset.headSet(myIP).size());
             if(index<0) index+=IPset.size();
+            if(index==0) return;
             game.rackets[index].hp = message.getInt("HP");
         }
         else if(command.equals(Misc.Command.Died.toString()))
