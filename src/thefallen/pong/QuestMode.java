@@ -37,7 +37,7 @@ public class QuestMode {
     Ball.onDiedListener diedListener = new Ball.onDiedListener() {
 
         @Override
-        public void onDied(int index, SinglePlayer lol) {
+        public void onDied(int index) {
             if (index == 0) {
                 uDied = true;
                 out.println("USER DIED");

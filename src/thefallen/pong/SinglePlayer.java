@@ -23,7 +23,7 @@ public class SinglePlayer {
     String time;
     Ball.onDiedListener diedListener = new Ball.onDiedListener() {
         @Override
-        public void onDied(int index, SinglePlayer lol) {
+        public void onDied(int index) {
             if(index==0)
             {
                 died = true;

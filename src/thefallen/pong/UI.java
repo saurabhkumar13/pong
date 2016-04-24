@@ -362,8 +362,10 @@ public class UI extends Application {
         Scene scene = new Scene(border, bounds.getWidth(), bounds.getHeight());
         return scene;
     }
+
     GridPane grid2;
     int grid1I=0,grid2I=0,grid3I=0;
+
     public Scene getwaitingserver(){
         GridPane createserverheader = getheader("Waiting",true);
         Platform.setImplicitExit(false);
