@@ -84,7 +84,7 @@ public class SinglePlayer2 {
                     game.pause();
                     game.f_frame.setVisible(false);
                 }
-                game = new pong(n,2);
+                game = new pong(n,2,false);
                 game.ball.diedListener= diedListener;
                 pause();
                 game.ball.setVel();

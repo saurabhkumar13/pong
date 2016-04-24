@@ -72,7 +72,7 @@ public class QuestMode {
                     game.f_frame.setVisible(false);
                 }
 
-                game = new pong(num_ai + 1, level);
+                game = new pong(num_ai + 1, level,false);
 
                 game.ball.diedListener = diedListener;
                 game.ball.setVel();

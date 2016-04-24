@@ -138,7 +138,7 @@ public class Ball {
         if (isGDecreasing) gravity -= ddt;
 
         else gravity += ddt;
-
+        err.println(gravity+" ");
         ay = -1 * gravity * 0.1 * sin(theta);
         ax = gravity * 0.1 * cos(theta);
         double modV = vx * vx + vy * vy;
