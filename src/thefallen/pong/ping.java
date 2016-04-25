@@ -273,18 +273,21 @@ public class ping extends Thread {
             if(IPset.size()>2&&!sender.equals(myIP)) {
 
                 IPset.remove(sender);
-                if(myIP.equals(IPset.first()))
-                broadcastToGroup((new JSONObject().accumulate("command",Misc.Command.START)).toString());
+                if(myIP.equals(IPset.first())&&game!=null)
+                    broadcastToGroup((new JSONObject().accumulate("command",Misc.Command.START)).toString());
             }
             else
             {
 
-                if(listener!=null)
+                if(listener!=null&&game!=null)
                     listener.onGameOver(!sender.equals(myIP),0);
             }
 
-            game.pause();
-            game.f_frame.setVisible(false);
+            if(game!=null)
+            {
+                game.pause();
+                game.f_frame.setVisible(false);
+            }
             initset = new TreeSet<>();
         }
     }
