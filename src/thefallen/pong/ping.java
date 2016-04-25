@@ -80,16 +80,12 @@ public class ping extends Thread {
 //            sendMessage(serverDetails.toString(),m,Port);
 //            out.println("Found server "+sender+" "+message.getJSONObject("server_details"));
             JSONObject serverDetails = message.getJSONObject("server_details");
-            if(joinListener!=null)
-                joinListener.onfind(serverDetails.getString("name"),serverDetails.getString("password"),serverDetails.getInt("maxPlayers"),serverDetails.getString("mode"),sender);
+            if(joinListener!=null) joinListener.onfind(serverDetails.getString("name"),serverDetails.getString("password"),serverDetails.getInt("maxPlayers"),serverDetails.getString("mode"),sender);
         }
         else if(command.equals(Misc.Command.JOIN.toString())&&State== Misc.state.WAITmaster)
         {
             if(IPset.size()<serverDetails.getInt("maxPlayers")||serverDetails.getInt("maxPlayers")==-1) {
                 IPset.add(sender);
-                String mode = serverDetails.get("mode")+"";
-                if(mode.equals(Misc.Modes.DEATHMATCH.toString()))
-                    GameMode = 2;
                 players.add(message.accumulate("IP",sender).toString());
                 JSONArray slaves = new JSONArray();
                 joinListener.onjoin(message.getString("name"),message.getString("element"),sender);
@@ -200,7 +196,7 @@ public class ping extends Thread {
             if(index==0) return;
             game.rackets[index].hp = message.getInt("HP");
         }
-        else if(command.equals(Misc.Command.Died.toString())||command.equals(Misc.Command.Disconnect.toString()))
+        else if(command.equals(Misc.Command.Died.toString()))
         {
             if(IPset.size()>2&&!sender.equals(myIP)) {
                 IPset.remove(sender);
@@ -223,11 +219,11 @@ public class ping extends Thread {
     public void Stop() {
         if (ds != null) {
             ds.close();
-            broadcastToGroup((new JSONObject().accumulate("command", Misc.Command.Disconnect)).toString());
+//            broadcastToGroup(goodbye.toString());
             ds = null;
         }
     }
-    int GameMode=1;
+
     public void broadcastToGroup(String message)
     {
         out.println("trying to broadcast: "+message+" "+IPset.size());
@@ -324,9 +320,6 @@ public class ping extends Thread {
                 game.master=master;
                 for(Racket r : game.rackets) {
                     r.sentient = false;
-                    err.println(master.GameMode);
-                    if(master.GameMode==2)
-                        r.hp = 0;
                 }
             }
         });
@@ -334,8 +327,6 @@ public class ping extends Thread {
 
     public void createserver(String server_name, String password, int maxplayers, Misc.Modes mode,String masterName,String masterElement){
         State = Misc.state.WAITmaster;
-        if(mode== Misc.Modes.DEATHMATCH)
-            GameMode = 2;
         IPset.add(myIP);
         players.add((new JSONObject().accumulate("name",masterName).accumulate("element",masterElement).accumulate("IP",myIP)).toString());
         serverDetails = new JSONObject()
@@ -355,10 +346,8 @@ public class ping extends Thread {
         broadcast((new JSONObject().accumulate("command", Misc.Command.FIND)).toString(),myIP,Port);
     }
 
-    public void joinserver(String name,String element, String ip,String mode){
+    public void joinserver(String name,String element, String ip){
         State = Misc.state.WAITslave;
-        if(mode.equals(Misc.Modes.DEATHMATCH.toString()))
-            GameMode = 2;
         sendMessage((new JSONObject().accumulate("command", Misc.Command.JOIN).accumulate("name",name).accumulate("element",element)).toString(),ip,Port);
     }
 
@@ -385,7 +374,7 @@ public class ping extends Thread {
                     }
 
                     else if(a.equals("join")) {
-                        messageSender.joinserver("name","water",scanner.nextLine(),"NORMAL");
+                        messageSender.joinserver("name","water",scanner.nextLine());
                     }
                     else if(a.equals("joined"))
                         out.println(messageSender.IPset.size());
