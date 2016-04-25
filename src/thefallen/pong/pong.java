@@ -93,8 +93,7 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
 
     public pong(int n,int dif,boolean F) {
 
-        final String rendererType = JRendererFactory.useActiveRenderer() ? "Active" : "Passive";
-        f_frame = new JFrame("ping pong " + rendererType + " Rendering");
+        f_frame = new JFrame("ping pong ");
         f_frame.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
 
         f_frame.setResizable(false);

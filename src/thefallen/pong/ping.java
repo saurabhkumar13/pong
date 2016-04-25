@@ -171,122 +171,130 @@ public class ping extends Thread {
             }
         }
         else if(command.equals(Misc.Command.START.toString())) {
-
+            State = Misc.state.GAMING;
             startGame(this,IPset.size());
             if(myIP.equals(IPset.first()))
                 broadcastToGroup((new JSONObject().accumulate("command",Misc.Command.INITBall).accumulate("vx",2.0).accumulate("vy",2.0)).toString());
         }
-        else if (command.equals(Misc.Command.INITBall.toString())) {
+        else if(State== Misc.state.GAMING)
+        {
+            if (command.equals(Misc.Command.INITBall.toString())) {
 
-            Misc.INITballvx = message.getDouble("vx");
-            Misc.INITballvy = message.getDouble("vy");
+                Misc.INITballvx = message.getDouble("vx");
+                Misc.INITballvy = message.getDouble("vy");
 
-            double vx,vy,normal= - 2 * PI * (IPset.headSet(sender).size() - IPset.headSet(myIP).size()) / IPset.size();
-            vx = (Misc.INITballvx*cos(normal) + Misc.INITballvy*sin(normal));
-            vy = (-Misc.INITballvx*sin(normal) + Misc.INITballvy*cos(normal));
+                double vx,vy,normal= - 2 * PI * (IPset.headSet(sender).size() - IPset.headSet(myIP).size()) / IPset.size();
+                vx = (Misc.INITballvx*cos(normal) + Misc.INITballvy*sin(normal));
+                vy = (-Misc.INITballvx*sin(normal) + Misc.INITballvy*cos(normal));
 
-            Misc.INITballvx = vx;
-            Misc.INITballvy = vy;
+                Misc.INITballvx = vx;
+                Misc.INITballvy = vy;
 //
-            if(game!=null) {
+                if(game!=null) {
 
-                Ball ball = game.ball;
-                if (ball!=null) {
-                    ball.vx = Misc.INITballvx;
-                    ball.vy = Misc.INITballvy;
+                    Ball ball = game.ball;
+                    if (ball!=null) {
+                        ball.vx = Misc.INITballvx;
+                        ball.vy = Misc.INITballvy;
+                    }
                 }
             }
-        }
-        else if (command.equals(Misc.Command.SyncBall.toString())) {
+            else if (command.equals(Misc.Command.SyncBall.toString())) {
 
-            try {
-                Misc.pop2();
-            } catch (Exception e) {
-                e.printStackTrace();
+                try {
+                    Misc.pop2();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                double vx,vy,normal =  2 * PI * (IPset.headSet(sender).size() - IPset.headSet(myIP).size()) / IPset.size(),x,y;
+                err.println("rotating by "+normal*180/PI);
+                x = message.getDouble("x");
+                y = message.getDouble("y");
+
+                Misc.INITballvx = message.getDouble("vx");
+                Misc.INITballvy = message.getDouble("vy");
+
+                normal = -normal;
+
+                vx = (Misc.INITballvx*cos(normal) + Misc.INITballvy*sin(normal));
+                vy = (-Misc.INITballvx*sin(normal) + Misc.INITballvy*cos(normal));
+
+                if(game!=null) {
+
+                    Ball ball = game.ball;
+                    if (ball!=null) {
+                        ball.vx = vx;
+                        ball.vy = vy;
+                        ball.x = game.center.getX() + (x - game.center.getX())*cos(normal) + (y - game.center.getY())*sin(normal);
+                        ball.y = game.center.getY() - (x - game.center.getX())*sin(normal) + (y - game.center.getY())*cos(normal);
+                    }
+                }
             }
+            else if (command.equals(Misc.Command.BallReady.toString())) {
 
-            double vx,vy,normal =  2 * PI * (IPset.headSet(sender).size() - IPset.headSet(myIP).size()) / IPset.size(),x,y;
-            err.println("rotating by "+normal*180/PI);
-            x = message.getDouble("x");
-            y = message.getDouble("y");
-
-            Misc.INITballvx = message.getDouble("vx");
-            Misc.INITballvy = message.getDouble("vy");
-
-            normal = -normal;
-
-            vx = (Misc.INITballvx*cos(normal) + Misc.INITballvy*sin(normal));
-            vy = (-Misc.INITballvx*sin(normal) + Misc.INITballvy*cos(normal));
-
-            if(game!=null) {
-
-                Ball ball = game.ball;
-                if (ball!=null) {
-                    ball.vx = vx;
-                    ball.vy = vy;
-                    ball.x = game.center.getX() + (x - game.center.getX())*cos(normal) + (y - game.center.getY())*sin(normal);
-                    ball.y = game.center.getY() - (x - game.center.getX())*sin(normal) + (y - game.center.getY())*cos(normal);
-                 }
-            }
-        }
-        else if (command.equals(Misc.Command.BallReady.toString())) {
-
-            initset.add(sender);
-            if(initset.size()==IPset.size()) {
+                initset.add(sender);
+                if(initset.size()==IPset.size()) {
 
 //                err.println(System.currentTimeMillis());
-                State = Misc.state.GAMING;
-                game.ball.vx = Misc.INITballvx;
-                game.ball.vy = Misc.INITballvy;
+                    State = Misc.state.GAMING;
+                    game.ball.vx = Misc.INITballvx;
+                    game.ball.vy = Misc.INITballvy;
+                }
+            }
+            else if(command.equals(Misc.Command.ACTION.toString())) {
+
+                int index = -(IPset.headSet(sender).size() - IPset.headSet(myIP).size());
+
+                if(index<0) index+=IPset.size();
+
+                if(index==0) return;
+
+                String action = message.getString("action");
+                game.rackets[index].x = message.getInt("x");
+
+                if(action.equals(Misc.Command.L.toString())) game.rackets[index].pressed(KeyMap.left);
+                else if(action.equals(Misc.Command.R.toString())) game.rackets[index].pressed(KeyMap.right);
+                else if(action.equals(Misc.Command.LT.toString())) game.rackets[index].pressed(KeyMap.tiltLeft);
+                else if(action.equals(Misc.Command.RT.toString())) game.rackets[index].pressed(KeyMap.tiltRight);
+                else if(action.equals(Misc.Command.ReleaseKeyT.toString())) game.rackets[index].released(KeyMap.tiltRight);
+                else if(action.equals(Misc.Command.ReleaseKeyV.toString())) game.rackets[index].released(KeyMap.right);
+            }
+            else if(command.equals(Misc.Command.SyncHP.toString())) {
+
+                int index = -(IPset.headSet(sender).size() - IPset.headSet(myIP).size());
+
+                if(index<0) index+=IPset.size();
+
+                if(index==0) return;
+
+                game.rackets[index].hp = message.getInt("HP");
+            }
+            else if(command.equals(Misc.Command.Died.toString())||command.equals(Misc.Command.Disconnect.toString())) {
+
+                if(IPset.size()>2&&!sender.equals(myIP)) {
+
+                    IPset.remove(sender);
+                    if(myIP.equals(IPset.first()))
+                        broadcastToGroup((new JSONObject().accumulate("command",Misc.Command.START)).toString());
+                }
+                else
+                {
+
+                    if(listener!=null)
+                        listener.onGameOver(!sender.equals(myIP),0);
+                }
+
+                game.pause();
+                game.f_frame.setVisible(false);
+                initset = new TreeSet<>();
             }
         }
-        else if(command.equals(Misc.Command.ACTION.toString())) {
-
-            int index = -(IPset.headSet(sender).size() - IPset.headSet(myIP).size());
-
-            if(index<0) index+=IPset.size();
-
-            if(index==0) return;
-
-            String action = message.getString("action");
-            game.rackets[index].x = message.getInt("x");
-
-            if(action.equals(Misc.Command.L.toString())) game.rackets[index].pressed(KeyMap.left);
-            else if(action.equals(Misc.Command.R.toString())) game.rackets[index].pressed(KeyMap.right);
-            else if(action.equals(Misc.Command.LT.toString())) game.rackets[index].pressed(KeyMap.tiltLeft);
-            else if(action.equals(Misc.Command.RT.toString())) game.rackets[index].pressed(KeyMap.tiltRight);
-            else if(action.equals(Misc.Command.ReleaseKeyT.toString())) game.rackets[index].released(KeyMap.tiltRight);
-            else if(action.equals(Misc.Command.ReleaseKeyV.toString())) game.rackets[index].released(KeyMap.right);
+        else if(command.equals(Misc.Command.Disconnect.toString()))
+        {
+            IPset.remove(sender);
         }
-        else if(command.equals(Misc.Command.SyncHP.toString())) {
 
-            int index = -(IPset.headSet(sender).size() - IPset.headSet(myIP).size());
-
-            if(index<0) index+=IPset.size();
-
-            if(index==0) return;
-
-            game.rackets[index].hp = message.getInt("HP");
-        }
-        else if(command.equals(Misc.Command.Died.toString())||command.equals(Misc.Command.Disconnect.toString())) {
-
-            if(IPset.size()>2&&!sender.equals(myIP)) {
-
-                IPset.remove(sender);
-                if(myIP.equals(IPset.first()))
-                broadcastToGroup((new JSONObject().accumulate("command",Misc.Command.START)).toString());
-            }
-            else
-            {
-
-                if(listener!=null)
-                    listener.onGameOver(!sender.equals(myIP),0);
-            }
-
-            game.pause();
-            game.f_frame.setVisible(false);
-            initset = new TreeSet<>();
-        }
     }
 
     /*
