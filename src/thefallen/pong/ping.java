@@ -281,7 +281,8 @@ public class ping extends Thread {
                 }
                 else
                 {
-
+                    if(sender.equals(myIP))
+                        IPset =null;
                     if(listener!=null)
                         listener.onGameOver(!sender.equals(myIP),0);
                 }
