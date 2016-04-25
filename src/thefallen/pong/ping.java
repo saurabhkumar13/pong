@@ -281,11 +281,9 @@ public class ping extends Thread {
                 }
                 else
                 {
-                    if(sender.equals(myIP)) {
-                        IPset =new TreeSet<>();
-                        game.pause();
-                        game.f_frame.setVisible(false);
-                    }
+                    IPset =new TreeSet<>();
+                    game.pause();
+                    game.f_frame.setVisible(false);
                     if(listener!=null)
                         listener.onGameOver(!sender.equals(myIP),0);
                 }
