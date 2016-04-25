@@ -296,17 +296,23 @@ public class ping extends Thread {
         name : Stop
         input : void
         output : void
-        function : closes the data sockets and disconnects from the game network
+        function : closes the data sockets
      */
-
     public void Stop() {
 
         if (ds != null) {
-
             ds.close();
-            broadcastToGroup((new JSONObject().accumulate("command", Misc.Command.Disconnect)).toString());
             ds = null;
         }
+    }
+    /*
+        name : disconnect
+        input : void
+        output : void
+        function : disconnects from the network
+     */
+    public void disconnect() {
+        broadcastToGroup((new JSONObject().accumulate("command", Misc.Command.Disconnect)).toString());
     }
 
     /*
