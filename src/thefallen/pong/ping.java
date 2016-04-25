@@ -310,11 +310,14 @@ public class ping extends Thread {
         if (ds != null) {
 
             ds.close();
-            broadcastToGroup((new JSONObject().accumulate("command", Misc.Command.Disconnect)).toString());
             ds = null;
         }
     }
 
+    public void Disconnect()
+    {
+        broadcastToGroup((new JSONObject().accumulate("command", Misc.Command.Disconnect)).toString());
+    }
     /*
         name : broadcastToGroup
         input : message - String
