@@ -854,7 +854,7 @@ public class UI extends Application {
             @Override
             public void handle(ActionEvent e) {
                 if(passField.getText().equals(pass))
-                    pee.joinserver(player_name,element,IP,mode);
+                    pee.joinserver(player_name,element,IP);
             }
         });
         HBox hBox = new HBox();
