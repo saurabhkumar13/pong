@@ -1,6 +1,7 @@
 package thefallen.pong;
 
 
+import com.sun.org.apache.xerces.internal.xs.ItemPSVI;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -205,6 +206,8 @@ public class ping extends Thread {
             }
             else
             {
+                if(myIP.equals(sender))
+                    IPset = null;
                 if(listener!=null)
                     listener.onGameOver(!sender.equals(myIP),0);
             }
