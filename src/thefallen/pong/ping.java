@@ -276,7 +276,7 @@ public class ping extends Thread {
                 if(myIP.equals(IPset.first())&&game!=null)
                     broadcastToGroup((new JSONObject().accumulate("command",Misc.Command.START)).toString());
             }
-            else
+            else if(IPset.size()==2)
             {
 
                 if(listener!=null&&game!=null)
