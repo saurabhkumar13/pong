@@ -119,7 +119,7 @@ public class ping extends Thread {
 
         JSONObject message = new JSONObject(m);
         String command = message.getString("command");
-//        out.println("got msg: \""+m+"\" sender: "+sender+" "+System.currentTimeMillis());
+        out.println("got msg: \""+m+"\" sender: "+sender+" "+System.currentTimeMillis());
 
         if(command.equals(Misc.Command.FIND.toString())&&State== Misc.state.WAITmaster) {
 
