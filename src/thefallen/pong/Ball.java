@@ -56,6 +56,16 @@ public class Ball {
             ddt=0;
     }
 
+    public static void getVel()
+    {
+        Random r = new Random();
+        int lel = r.nextInt(19)+1;
+        if(lel == 10) lel = 9;
+        double v = 12;
+        double theta = 2 * PI * lel / 20;
+        Misc.INITballvx = v * cos(theta);
+        Misc.INITballvy = v * sin(theta);
+    }
     /*
         name : setVel
         input : void
@@ -72,7 +82,6 @@ public class Ball {
         double theta = 2 * PI * lel / 20;
         vx = v * cos(theta);
         vy = v * sin(theta);
-
     }
 
     public double getX() {
