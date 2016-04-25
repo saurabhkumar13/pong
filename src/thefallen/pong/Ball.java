@@ -61,7 +61,7 @@ public class Ball {
         Random r = new Random();
         int lel = r.nextInt(19)+1;
         if(lel == 10) lel = 9;
-        double v = 12;
+        double v = 6;
         double theta = 2 * PI * lel / 20;
         Misc.INITballvx = v * cos(theta);
         Misc.INITballvy = v * sin(theta);
