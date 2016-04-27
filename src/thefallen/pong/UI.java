@@ -868,7 +868,42 @@ public class UI extends Application {
     }
 
     public BorderPane getAboutScene(){
-        return null;
+        GridPane aboutHeader = getheader("ABOUT",false);
+
+        GridPane grid = new GridPane();
+        grid.setAlignment(Pos.CENTER);
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(25, 25, 25, 25));
+
+        Label gModes = new Label(Misc.aboutDesc);
+        gModes.setFont(Font.loadFont(thefallen.pong.Resources.getResource(thefallen.pong.Resources.FONT1).toString(), 26));
+        gModes.setTextFill(Color.valueOf("#B4B0AB"));
+        grid.add(gModes, 0, 0);
+
+        final ImageView LogoView = new ImageView();
+        final Image logoPNG = new Image(thefallen.pong.Resources.getResource("back.png").toExternalForm());
+        LogoView.setImage(logoPNG);
+        LogoView.setFitWidth(50);
+        LogoView.setFitHeight(50);
+        LogoView.setTranslateX(-30);
+        LogoView.setTranslateY(-50);
+        LogoView.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+
+            @Override
+            public void handle(MouseEvent event) {
+                scene.setRoot(getLandingScene());
+                Misc.pop();
+            }
+        });
+
+        BorderPane border = new BorderPane();
+        border.setTop(aboutHeader);
+        border.setCenter(grid);
+        border.setRight(LogoView);
+        border.setStyle("-fx-background-color: #000000");
+
+        return border;
     }
 
     public BorderPane getSettingsScene(){
