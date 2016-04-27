@@ -45,7 +45,7 @@ public class Racket {
         difficulty = dif;
     }
 
-    // SEts values of parameters according to the powerup assigned
+    // Sets values of parameters according to the powerup assigned
     public void setPowerup(Misc.Avatar id) {
 
 
@@ -62,7 +62,7 @@ public class Racket {
                         break;
             case WATER : width = 150;
                         speed = 18;
-                        e = 0.8f;
+                        e = 0.95f;
                         break;
             default: break;
         }

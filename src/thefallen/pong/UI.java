@@ -909,7 +909,7 @@ public class UI extends Application {
         Label characterlabel= new Label("CHARACTER     :");
         characterlabel.setFont(Font.loadFont(thefallen.pong.Resources.getResource(thefallen.pong.Resources.FONT1).toString(), 26));
         characterlabel.setTextFill(Color.valueOf("#B4B0AB"));
-        grid.add(characterlabel, 0, 1);
+        grid.add(characterlabel, 0, 4);
 
         String ch=prefs.get(ELEMENT,"void");
         int[] charcols= {1,1,1,1,1};
@@ -925,6 +925,21 @@ public class UI extends Application {
         Button waterbutton= getsettingsButton("/WATER",charcols[3]);
         Button firebutton= getsettingsButton("/FIRE",charcols[4]);
 
+        Label description = new Label("DESCRIPTION :");
+        description.setFont(Font.loadFont(thefallen.pong.Resources.getResource(thefallen.pong.Resources.FONT1).toString(), 26));
+        description.setTextFill(Color.valueOf("#B4B0AB"));
+        grid.add(description, 1, 5);
+
+        String desc = "LOL";
+
+        if(charcols[0] == 0) desc = Misc.Void;
+        else if (charcols[1] == 0) desc = Misc.Earth;
+        else if (charcols[2] == 0) desc = Misc.Wind;
+        else if (charcols[3] == 0) desc = Misc.Water;
+        else if (charcols[4] == 0) desc = Misc.Fire;
+
+        description.setText(desc);
+
         voidbutton.setOnAction(new EventHandler<ActionEvent>() {
 
             @Override
@@ -935,6 +950,7 @@ public class UI extends Application {
                 waterbutton.setTextFill(Color.valueOf("#333333"));
                 firebutton.setTextFill(Color.valueOf("#333333"));
                 prefs.put(ELEMENT,Misc.Avatar.VOID.toString());
+                description.setText(Misc.Void);
             }
         });
 
@@ -948,6 +964,7 @@ public class UI extends Application {
                 windbutton.setTextFill(Color.valueOf("#333333"));
                 firebutton.setTextFill(Color.valueOf("#333333"));
                 prefs.put(ELEMENT,Misc.Avatar.EARTH.toString());
+                description.setText(Misc.Earth);
             }
         });
 
@@ -961,6 +978,7 @@ public class UI extends Application {
                 windbutton.setTextFill(Color.valueOf("#333333"));
                 firebutton.setTextFill(Color.valueOf("#333333"));
                 prefs.put(ELEMENT,Misc.Avatar.WATER.toString());
+                description.setText(Misc.Water);
             }
         });
 
@@ -974,6 +992,7 @@ public class UI extends Application {
                 earthbutton.setTextFill(Color.valueOf("#333333"));
                 firebutton.setTextFill(Color.valueOf("#333333"));
                 prefs.put(ELEMENT,Misc.Avatar.WIND.toString());
+                description.setText(Misc.Wind);
             }
         });
 
@@ -987,38 +1006,39 @@ public class UI extends Application {
                 windbutton.setTextFill(Color.valueOf("#333333"));
                 earthbutton.setTextFill(Color.valueOf("#333333"));
                 prefs.put(ELEMENT,Misc.Avatar.FIRE.toString());
+                description.setText(Misc.Fire);
             }
         });
 
         HBox hBox4 = new HBox();
         hBox4.setPadding(new Insets(5,5,5,20));
         hBox4.getChildren().addAll(voidbutton,waterbutton,earthbutton,windbutton,firebutton);
-        grid.add(hBox4,1,1);
+        grid.add(hBox4,1,4);
 
         //end
 
         Label musicvol = new Label("MUSIC VOLUME  :");
         musicvol.setFont(Font.loadFont(thefallen.pong.Resources.getResource(thefallen.pong.Resources.FONT1).toString(), 26));
         musicvol.setTextFill(Color.valueOf("#B4B0AB"));
-        grid.add(musicvol, 0, 2);
+        grid.add(musicvol, 0, 1);
 
         HBox hBox = getVolumeHBox(0,Integer.valueOf(prefs.get(MUSIC_VOLUME,"0")));
         hBox.setPadding(new Insets(5,5,5,20));
-        grid.add(hBox,1,2);
+        grid.add(hBox,1,1);
 
         Label sfxvol= new Label("SFX VOLUME    :");
         sfxvol.setFont(Font.loadFont(thefallen.pong.Resources.getResource(thefallen.pong.Resources.FONT1).toString(), 26));
         sfxvol.setTextFill(Color.valueOf("#B4B0AB"));
-        grid.add(sfxvol, 0, 3);
+        grid.add(sfxvol, 0, 2);
 
         HBox hBox2 = getVolumeHBox(1,Integer.valueOf(prefs.get(SFX_VOLUME,"0")));
         hBox2.setPadding(new Insets(5,5,5,20));
-        grid.add(hBox2,1,3);
+        grid.add(hBox2,1,2);
 
         Label fullscreen= new Label("FULLSCREEN     :");
         fullscreen.setFont(Font.loadFont(thefallen.pong.Resources.getResource(thefallen.pong.Resources.FONT1).toString(), 26));
         fullscreen.setTextFill(Color.valueOf("#B4B0AB"));
-        grid.add(fullscreen, 0, 4);
+        grid.add(fullscreen, 0, 3);
 
         int on=Integer.valueOf(prefs.get(FULLSCREEN,"1"));
         int off=0;
@@ -1052,7 +1072,7 @@ public class UI extends Application {
         HBox hbox3 = new HBox();
         hbox3.setPadding(new Insets(5,5,5,20));
         hbox3.getChildren().addAll(onFullScreen,offFullScreen);
-        grid.add(hbox3,1,4);
+        grid.add(hbox3,1,3);
 
         Button btn = getButton("BACK",gameScreen.LANDING);
         btn.setTranslateX(-60);
@@ -1071,7 +1091,7 @@ public class UI extends Application {
 
             }
         });
-        grid.add(btn,1,5);
+        grid.add(btn,1,6);
 
         BorderPane border = new BorderPane();
         border.setTop(settingsHeader);

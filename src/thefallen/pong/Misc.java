@@ -17,11 +17,13 @@ public class Misc {
 
     // Avatar Descriptions
 
-    static String Water = "The element of calmness and protectiveness gives you the advantage of a longer paddle and helps calm the game down a little by slowing the ball down on rebound.";
-    static String Wind = "Rising from the speedy nature of the wind this element imparts your paddle with the special power of moving faster than everyone else.";
-    static String Earth = "The personification of strength itself , this elemant gives an extra moment of respite in tis cruel world of ping pong, gives you an extra HP.";
-    static String Fire = "The fiercest element of the game true to it's name spices up the game by speeding up the ball every time it the paddle meets it.";
-    static String Void = "The all encompassing power of space might just do the trick for you.Without any special powers or handicaps experience the power of simplicity ";
+    static String Water = "";
+    static String Wind =  "";
+    static String Earth = "";
+    static String Fire =   "  Most destructive of the elements, a force \n" +
+                           "  of nature springing from celestial sources";
+
+    static String Void =  "";
 
     // Music and SFX managing functions and variables
 
