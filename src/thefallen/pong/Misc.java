@@ -19,13 +19,17 @@ public class Misc {
 
     // Avatar Descriptions
 
-    static String Water = "";
-    static String Wind =  "";
-    static String Earth = "";
+    static String Water =  "  Water extinguishes the flame, by stretching\n" +
+                           "  forth and challenging the heavens    ";
+    static String Wind =   "  the manifestation of movement, freshness,  \n" +
+                           "  communication and of the intelligence   ";
+    static String Earth =  "  the element of stability, foundations and  \n" +
+                           "  of the body ";
     static String Fire =   "  Most destructive of the elements, a force \n" +
                            "  of nature springing from celestial sources";
 
-    static String Void =  "";
+    static String Void =   "   \"nihil fit ex nihilo\" Out of nothing   \n" +
+                           "   nothing becomes";
 
     // Music and SFX managing functions and variables
 

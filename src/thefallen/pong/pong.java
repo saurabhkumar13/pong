@@ -109,8 +109,11 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
 
             @Override
             public void windowClosing(WindowEvent e) {
-                if (master != null)
+                if (master != null) {
                     master.Disconnect();
+                    err.println("trying to interrupt");
+                    master.interrupt();
+                }
 
             }
         });

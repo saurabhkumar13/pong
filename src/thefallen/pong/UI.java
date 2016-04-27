@@ -946,7 +946,7 @@ public class UI extends Application {
         characterlabel.setTextFill(Color.valueOf("#B4B0AB"));
         grid.add(characterlabel, 0, 4);
 
-        String ch=prefs.get(ELEMENT,"void");
+        String ch=prefs.get(ELEMENT,Misc.Avatar.VOID.toString());
         int[] charcols= {1,1,1,1,1};
         if(ch.equals(Misc.Avatar.VOID.toString()))charcols[0]=0;
         else if(ch.equals(Misc.Avatar.EARTH.toString()))charcols[1]=0;
@@ -955,23 +955,37 @@ public class UI extends Application {
         else if(ch.equals(Misc.Avatar.FIRE.toString()))charcols[4]=0;
 
         Button voidbutton  = getsettingsButton("VOID",charcols[0]);
-        Button earthbutton= getsettingsButton("/EARTH",charcols[1]);
-        Button windbutton= getsettingsButton("/WIND",charcols[2]);
-        Button waterbutton= getsettingsButton("/WATER",charcols[3]);
-        Button firebutton= getsettingsButton("/FIRE",charcols[4]);
+        Button earthbutton= getsettingsButton(" GNOMUS",charcols[1]);
+        Button windbutton= getsettingsButton(" SYLPH",charcols[2]);
+        Button waterbutton= getsettingsButton(" UNDINA",charcols[3]);
+        Button firebutton= getsettingsButton(" VULCANUS",charcols[4]);
 
         Label description = new Label("DESCRIPTION :");
         description.setFont(Font.loadFont(thefallen.pong.Resources.getResource(thefallen.pong.Resources.FONT1).toString(), 26));
         description.setTextFill(Color.valueOf("#B4B0AB"));
-        grid.add(description, 1, 5);
 
         String desc = "LOL";
 
-        if(charcols[0] == 0) desc = Misc.Void;
-        else if (charcols[1] == 0) desc = Misc.Earth;
-        else if (charcols[2] == 0) desc = Misc.Wind;
-        else if (charcols[3] == 0) desc = Misc.Water;
-        else if (charcols[4] == 0) desc = Misc.Fire;
+        if(charcols[0] == 0) {
+            desc = Misc.Void;
+            description.setTextFill(Color.valueOf("#B4B0AB"));
+        } else if (charcols[1] == 0) {
+            desc = Misc.Earth;
+            earthbutton.setTextFill(Color.valueOf("#006400"));
+            description.setTextFill(Color.valueOf("#006400"));
+        } else if (charcols[2] == 0) {
+            desc = Misc.Wind;
+            windbutton.setTextFill(Color.valueOf("#add8e6"));
+            description.setTextFill(Color.valueOf("#add8e6"));
+        } else if (charcols[3] == 0) {
+            desc = Misc.Water;
+            waterbutton.setTextFill(Color.valueOf("#000080"));
+            description.setTextFill(Color.valueOf("#000080"));
+        } else if (charcols[4] == 0) {
+            desc = Misc.Fire;
+            firebutton.setTextFill(Color.valueOf("#ce2029"));
+            description.setTextFill(Color.valueOf("#ce2029"));
+        }
 
         description.setText(desc);
 
@@ -986,6 +1000,7 @@ public class UI extends Application {
                 firebutton.setTextFill(Color.valueOf("#333333"));
                 prefs.put(ELEMENT,Misc.Avatar.VOID.toString());
                 description.setText(Misc.Void);
+                description.setTextFill(Color.valueOf("#B4B0AB"));
             }
         });
 
@@ -993,13 +1008,14 @@ public class UI extends Application {
 
             @Override
             public void handle(ActionEvent e) {
-                earthbutton.setTextFill(Color.valueOf("#B4B0AB"));
+                earthbutton.setTextFill(Color.valueOf("#006400"));
                 voidbutton.setTextFill(Color.valueOf("#333333"));
                 waterbutton.setTextFill(Color.valueOf("#333333"));
                 windbutton.setTextFill(Color.valueOf("#333333"));
                 firebutton.setTextFill(Color.valueOf("#333333"));
                 prefs.put(ELEMENT,Misc.Avatar.EARTH.toString());
                 description.setText(Misc.Earth);
+                description.setTextFill(Color.valueOf("#006400"));
             }
         });
 
@@ -1007,13 +1023,14 @@ public class UI extends Application {
 
             @Override
             public void handle(ActionEvent e) {
-                waterbutton.setTextFill(Color.valueOf("#B4B0AB"));
+                waterbutton.setTextFill(Color.valueOf("#000080"));
                 voidbutton.setTextFill(Color.valueOf("#333333"));
                 earthbutton.setTextFill(Color.valueOf("#333333"));
                 windbutton.setTextFill(Color.valueOf("#333333"));
                 firebutton.setTextFill(Color.valueOf("#333333"));
                 prefs.put(ELEMENT,Misc.Avatar.WATER.toString());
                 description.setText(Misc.Water);
+                description.setTextFill(Color.valueOf("#000080"));
             }
         });
 
@@ -1021,13 +1038,14 @@ public class UI extends Application {
 
             @Override
             public void handle(ActionEvent e) {
-                windbutton.setTextFill(Color.valueOf("#B4B0AB"));
+                windbutton.setTextFill(Color.valueOf("#add8e6"));
                 voidbutton.setTextFill(Color.valueOf("#333333"));
                 waterbutton.setTextFill(Color.valueOf("#333333"));
                 earthbutton.setTextFill(Color.valueOf("#333333"));
                 firebutton.setTextFill(Color.valueOf("#333333"));
                 prefs.put(ELEMENT,Misc.Avatar.WIND.toString());
                 description.setText(Misc.Wind);
+                description.setTextFill(Color.valueOf("#add8e6"));
             }
         });
 
@@ -1035,13 +1053,14 @@ public class UI extends Application {
 
             @Override
             public void handle(ActionEvent e) {
-                firebutton.setTextFill(Color.valueOf("#B4B0AB"));
+                firebutton.setTextFill(Color.valueOf("#ce2029"));
                 voidbutton.setTextFill(Color.valueOf("#333333"));
                 waterbutton.setTextFill(Color.valueOf("#333333"));
                 windbutton.setTextFill(Color.valueOf("#333333"));
                 earthbutton.setTextFill(Color.valueOf("#333333"));
                 prefs.put(ELEMENT,Misc.Avatar.FIRE.toString());
                 description.setText(Misc.Fire);
+                description.setTextFill(Color.valueOf("#ce2029"));
             }
         });
 
@@ -1110,8 +1129,8 @@ public class UI extends Application {
         grid.add(hbox3,1,3);
 
         Button btn = getButton("BACK",gameScreen.LANDING);
-        btn.setTranslateX(-60);
-        btn.setTranslateY(30);
+        btn.setTranslateX(-30);
+        btn.setTranslateY(80);
         btn.setMinWidth(100);
         btn.setOnAction(new EventHandler<ActionEvent>() {
 
@@ -1128,9 +1147,13 @@ public class UI extends Application {
         });
         grid.add(btn,1,6);
 
+        description.setTranslateX(500);
+        description.setTranslateY(-220);
+
         BorderPane border = new BorderPane();
         border.setTop(settingsHeader);
         border.setCenter(grid);
+        border.setBottom(description);
         border.setStyle("-fx-background-color: #000000");
 
         return border;

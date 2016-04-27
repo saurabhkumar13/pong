@@ -151,7 +151,6 @@ public class Racket {
     }
 
     public void pressed(int e) {
-        err.println(e+" pressed");
         if (e == KeyMap.left && v != -speed) {
             v = -speed;
             if (master != null) {
@@ -185,7 +184,6 @@ public class Racket {
 
     public void released(int e)
     {
-        err.println(e+" released");
         if (master!=null&&(v!=0||state!=0)) {
             if(e==KeyMap.tiltLeft||e==KeyMap.tiltRight)
                 master.broadcastToGroup((new JSONObject().accumulate("command", Misc.Command.ACTION).accumulate("action", Misc.Command.ReleaseKeyT).accumulate("x",x)).toString());
