@@ -31,9 +31,22 @@ public class Misc {
     static String Void =   "   \"nihil fit ex nihilo\" Out of nothing   \n" +
                            "   nothing becomes";
 
+    static String quest_desc = "Fight your way through the elements \n" +
+                                "though beware the further you go \n" +
+                                "the harder it becomes";
+    static String br_desc = "Kill 'em all";
+    static String controls ="Left Arrow  : left movement\n" +
+                            "Right Arrow : right movement\n" +
+                            "      A     : left tilt\n"+
+                            "      D     : right tilt\n";
+
+    static String cites = "Fundamentum  - Soundtrack by Ridiculon\n" +
+                          "Ping-Pong Pan Taisou - Soundtrack by Morning Musume\n" +
+                          "SFX - Dark Souls, www.freesoundeffects.com";
+
     // Music and SFX managing functions and variables
 
-    static int sfxvol=3;
+    static int sfxvol=10;
 
     // Button Click sound
 

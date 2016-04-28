@@ -4,6 +4,7 @@ import javax.swing.*;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.Random;
 
 import static java.lang.System.err;
 import static java.lang.System.out;
@@ -22,6 +23,7 @@ public class QuestMode {
     boolean uDied = false, aiDied = false, pause_flag = false, constructing = false, gOver = false,success = false,G,full=true;
     QuestMode quest;
     onGameOverListener gameOverListener;
+    Random rand = new Random();
 
     interface onGameOverListener{
         void onGameOver(boolean success, int score);
@@ -100,6 +102,17 @@ public class QuestMode {
                         }
                     } else {
                         game.rackets[i].hp = init_hp;
+                        switch (rand.nextInt(5)) {
+                            case 1 : game.rackets[i].setPowerup(Misc.Avatar.EARTH);
+                                break;
+                            case 2 : game.rackets[i].setPowerup(Misc.Avatar.FIRE);
+                                break;
+                            case 3 : game.rackets[i].setPowerup(Misc.Avatar.WIND);
+                                break;
+                            case 4 : game.rackets[i].setPowerup(Misc.Avatar.WATER);
+                                break;
+                            default: break;
+                        }
                     }
                 }
 
