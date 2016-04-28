@@ -277,11 +277,14 @@ public class UI extends Application {
         grid.setVgap(10);
         grid.setPadding(new Insets(25, 25, 25, 25));
         Button btn = getButton("START GAME",gameScreen.LANDING);
+        Label myIP= new Label("");
+        myIP.setFont(Font.loadFont(thefallen.pong.Resources.getResource(thefallen.pong.Resources.FONT1).toString(), 26));
+        myIP.setTextFill(Color.valueOf("#B4B0AB"));
 
         Preferences prefs = Preferences.userRoot().node(packagePath);
         String player_name= prefs.get(PLAYER_NAME,"");
         String element= prefs.get(ELEMENT,"");
-        grid.add(getplayerview(player_name,element), 0, grid1I++);
+        grid.add(getplayerview(player_name,element), 0, 2+grid1I++);
         Misc.Modes gamemode;
         if(mode==0)
             gamemode= Misc.Modes.NORMAL;
@@ -290,9 +293,10 @@ public class UI extends Application {
         String ip = ping.getmyIP();
         try {
             if(ip.equals("")) {
-                out.println("Could not get host .. Are You connected to a network?");
+                myIP.setText("Could not get host .. Are You connected to a network?");
             }
             else {
+                myIP.setText("Yerr IP : "+ip);
                 pee = new ping(ip, Misc.Port);
                 pee.listener=gameOverListener;
                 int MaxPlayers = -1;
@@ -306,7 +310,7 @@ public class UI extends Application {
                     @Override
                     public void onjoin(String name, String element, String ip) {
                         grid1I++;
-                        Platform.runLater(() -> grid.add(getplayerview(name,element), 0, grid1I));
+                        Platform.runLater(() -> grid.add(getplayerview(name,element), 0, grid1I+2));
                         if (grid1I > 0) Platform.runLater(() -> btn.setVisible(true));
                     }
 
@@ -351,7 +355,7 @@ public class UI extends Application {
             }
         });
         grid.add(btn,1,4);
-
+        grid.add(myIP,0,0);
         BorderPane border = new BorderPane();
         border.setTop(createserverheader);
         border.setCenter(grid);
