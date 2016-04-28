@@ -40,8 +40,7 @@ public class SinglePlayer2 {
             else if(index==0)
             {
                 if (game != null) {
-                    game.pause();
-                    game.f_frame.setVisible(false);
+                    game.shutdown();
                 }
 
                 if(listener!=null)
@@ -51,8 +50,7 @@ public class SinglePlayer2 {
             else if(N==2)
             {
                 if (game != null) {
-                    game.pause();
-                    game.f_frame.setVisible(false);
+                    game.shutdown();
                 }
 
                 if(listener!=null)
@@ -102,8 +100,7 @@ public class SinglePlayer2 {
             @Override
             public void run() {
                 if(game!=null) {
-                    game.pause();
-                    game.f_frame.setVisible(false);
+                    game.shutdown();
                 }
                 game = new pong(n,Diff,full);
                 if(G)
