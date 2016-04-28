@@ -299,7 +299,6 @@ public class UI extends Application {
         Preferences prefs = Preferences.userRoot().node(packagePath);
         String player_name= prefs.get(PLAYER_NAME,"");
         String element= prefs.get(ELEMENT,"");
-        grid.add(getplayerview(player_name,element), 0, 2+grid1I++);
         Misc.Modes gamemode;
         if(mode==0)
             gamemode= Misc.Modes.NORMAL;
@@ -311,7 +310,8 @@ public class UI extends Application {
                 myIP.setText("Could not get host .. Are You connected to a network?");
             }
             else {
-                myIP.setText("Yerr IP : "+ip);
+                myIP.setText("Your IP : "+ip);
+                grid.add(getplayerview(player_name,element), 0, 2+grid1I++);
                 pee = new ping(ip, Misc.Port);
                 ui_media.stop();
                 game_media.play();
@@ -333,6 +333,7 @@ public class UI extends Application {
 
                     @Override
                     public void onfind(String name, String password, int maxPlayers, String mode,String IP) {
+
                     }
                 };
             }
@@ -360,8 +361,8 @@ public class UI extends Application {
         });
 
 
-        btn.setTranslateX(-60);
-        btn.setTranslateY(30);
+        btn.setTranslateX(600);
+        btn.setTranslateY(-100);
         btn.setMinWidth(100);
         btn.setVisible(false);
         btn.setOnAction(new EventHandler<ActionEvent>() {
@@ -371,12 +372,12 @@ public class UI extends Application {
                 pee.broadcastToGroup((new JSONObject().accumulate("command",Misc.Command.START)).toString());
             }
         });
-        grid.add(btn,1,4);
         grid.add(myIP,0,0);
         BorderPane border = new BorderPane();
         border.setTop(createserverheader);
         border.setCenter(grid);
         border.setRight(LogoView);
+        border.setBottom(btn);
         border.setStyle("-fx-background-color: #000000");
 
         return border;
@@ -794,14 +795,13 @@ public class UI extends Application {
         String ip = ping.getmyIP();
         try {
             if(ip.equals("")) {
-                out.println("Could not get host .. Are You connected to a network?");
+                grid2.add(getplayerview("Could not get host .. Are You connected to a network?",""),0,1);
             }
             else {
                 pee = new ping(ip, Misc.Port);
                 ui_media.stop();
                 game_media.play();
                 pee.listener=gameOverListener;
-                pee.findserver();
                 pee.joinListener = new ping.onJoinListener() {
                     @Override
                     public void onjoin(String name, String element, String ip) {
@@ -819,6 +819,7 @@ public class UI extends Application {
                         System.err.print("\n"+"shit\n"+name+"\n");
                     }
                 };
+                pee.findserver();
             }
         } catch (Exception e1) {
             e1.printStackTrace();
@@ -843,11 +844,41 @@ public class UI extends Application {
             }
         });
 
+        Label Name = new Label("CONNECT TO IP");
+        Name.setFont(Font.loadFont(thefallen.pong.Resources.getResource(thefallen.pong.Resources.FONT1).toString(), 26));
+        Name.setPadding(new Insets(0,50,0,400));
+        Name.setTextFill(Color.valueOf("#B4B0AB"));
+
+        TextField dstIP = new TextField();
+        dstIP.setStyle("-fx-background-color: #7C7E7C; -fx-text-fill: #333333");
+        dstIP.setPadding(new Insets(0,5,0,5));
+        dstIP.setAlignment(Pos.CENTER);
+        dstIP.setMaxHeight(30);
+        dstIP.setTranslateX(20);
+        dstIP.setMaxWidth(160);
+        dstIP.setFont(Font.loadFont(thefallen.pong.Resources.getResource(thefallen.pong.Resources.FONT1).toString(), 26));
+
+        Button btn = getButton("CONNECT",gameScreen.LANDING);
+        btn.setTranslateX(60);
+//        btn.setTranslateY(30);
+        String element = prefs.get(ELEMENT,"");
+
+        btn.setMinWidth(100);
+        btn.setOnAction(new EventHandler<ActionEvent>() {
+
+            @Override
+            public void handle(ActionEvent e) {
+                    pee.joinserver(player_name,element,dstIP.getText(), Misc.Modes.NORMAL.toString());
+            }
+        });
+        HBox hBox = new HBox();
+        hBox.getChildren().addAll(Name,dstIP,btn);
 
         BorderPane border = new BorderPane();
         border.setTop(createserverheader);
         border.setCenter(grid);
         border.setRight(LogoView);
+        border.setBottom(hBox);
         border.setStyle("-fx-background-color: #000000");
 
         return border;
@@ -909,7 +940,7 @@ public class UI extends Application {
         Players.setTextFill(Color.valueOf("#B4B0AB"));
 
         Button btn = getButton("CONNECT",gameScreen.LANDING);
-//        btn.setTranslateX(-60);
+        btn.setTranslateX(60);
 //        btn.setTranslateY(30);
         Preferences prefs = Preferences.userRoot().node(packagePath);
         String player_name= prefs.get(PLAYER_NAME,"Player1");
