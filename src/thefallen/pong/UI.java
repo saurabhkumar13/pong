@@ -672,9 +672,11 @@ public class UI extends Application {
         @Override
         public void onGameOver(boolean success, int score)
         {
-                game_media.stop();
+            if (success) {
                 ui_media.play();
-                scene.setRoot(getGameOverScene(success));
+            }
+            game_media.stop();
+            scene.setRoot(getGameOverScene(success));
                 if(pee!=null){pee.Stop();pee=null;}
         }
     };
@@ -711,6 +713,9 @@ public class UI extends Application {
 
             @Override
             public void handle(MouseEvent event) {
+                if (!success) {
+                    ui_media.play();
+                }
                 BorderPane bp = getLandingScene();
                 scene.setRoot(bp);
                 Misc.pop();

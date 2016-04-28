@@ -361,7 +361,7 @@ public class ping extends Thread {
         String[] prefix = myIP.split("\\.");
         int lim = Integer.valueOf(prefix[1]);
 //        for(int i=0;i<=lim;i++){
-            for(int j=1;j<10;j++) {
+            for(int j=1;j<255;j++) {
             sendMessage(message,prefix[0]+"."+prefix[1]+"."+prefix[2]+"."+j,Port);
         }
 //    }
