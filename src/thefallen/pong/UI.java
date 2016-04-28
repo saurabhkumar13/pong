@@ -979,8 +979,8 @@ public class UI extends Application {
             description.setTextFill(Color.valueOf("#add8e6"));
         } else if (charcols[3] == 0) {
             desc = Misc.Water;
-            waterbutton.setTextFill(Color.valueOf("#000080"));
-            description.setTextFill(Color.valueOf("#000080"));
+            waterbutton.setTextFill(Color.valueOf("#0000ff"));
+            description.setTextFill(Color.valueOf("#0000ff"));
         } else if (charcols[4] == 0) {
             desc = Misc.Fire;
             firebutton.setTextFill(Color.valueOf("#ce2029"));
@@ -1023,14 +1023,14 @@ public class UI extends Application {
 
             @Override
             public void handle(ActionEvent e) {
-                waterbutton.setTextFill(Color.valueOf("#000080"));
+                waterbutton.setTextFill(Color.valueOf("#0000ff"));
                 voidbutton.setTextFill(Color.valueOf("#333333"));
                 earthbutton.setTextFill(Color.valueOf("#333333"));
                 windbutton.setTextFill(Color.valueOf("#333333"));
                 firebutton.setTextFill(Color.valueOf("#333333"));
                 prefs.put(ELEMENT,Misc.Avatar.WATER.toString());
                 description.setText(Misc.Water);
-                description.setTextFill(Color.valueOf("#000080"));
+                description.setTextFill(Color.valueOf("#0000ff"));
             }
         });
 
