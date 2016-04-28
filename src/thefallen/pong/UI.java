@@ -1,21 +1,17 @@
 package thefallen.pong;
 
-import com.sun.glass.ui.EventLoop;
-import com.sun.javafx.font.freetype.HBGlyphLayout;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.InputMethodRequests;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.media.Media;
@@ -23,17 +19,11 @@ import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
-import javafx.stage.Screen;
 import javafx.stage.Stage;
 import org.json.JSONObject;
-import sun.rmi.runtime.Log;
 
-import java.io.File;
-import thefallen.pong.Resources;
 import java.util.prefs.Preferences;
 
-import static com.surelogic.Part.Static;
-import static java.lang.System.err;
 import static java.lang.System.out;
 
 public class UI extends Application {
@@ -43,7 +33,8 @@ public class UI extends Application {
     private static final String MUSIC_VOLUME = "music_volume";
     private static final String SFX_VOLUME = "sfx_volume";
     private static final String FULLSCREEN = "fullscreen";
-    MediaPlayer mediaPlayer;
+    MediaPlayer ui_media;
+    MediaPlayer game_media;
     private ping pee=null;
     private Scene scene;
     private Stage primaryStage;
@@ -53,6 +44,7 @@ public class UI extends Application {
     }
     public static String packagePath = "/thefallen/pong";
     public int mode=0;
+
     public static void main(String[] args) {
         Application.launch(args);
     }
@@ -62,14 +54,18 @@ public class UI extends Application {
 
         this.primaryStage=primaryStage;
 
-        Media sound = new Media(Resources.getResource(Resources.music).toExternalForm());
-        mediaPlayer = new MediaPlayer(sound);
-        mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
-        mediaPlayer.play();
+        Media ui_sound = new Media(thefallen.pong.Resources.getResource(thefallen.pong.Resources.music).toExternalForm());
+        Media game_sound = new Media(thefallen.pong.Resources.getResource(thefallen.pong.Resources.game_music).toExternalForm());
+        ui_media = new MediaPlayer(ui_sound);
+        ui_media.setCycleCount(MediaPlayer.INDEFINITE);
+        game_media = new MediaPlayer(game_sound);
+        game_media.setCycleCount(MediaPlayer.INDEFINITE);
+        ui_media.play();
 
         Preferences prefs = Preferences.userRoot().node(packagePath);
-        mediaPlayer.setVolume(((double)Integer.valueOf(prefs.get(MUSIC_VOLUME,"10")))/10);
-
+        ui_media.setVolume(((double)Integer.valueOf(prefs.get(MUSIC_VOLUME,"10")))/10);
+        game_media.setVolume(((double)Integer.valueOf(prefs.get(MUSIC_VOLUME,"10")))/10);
+        Misc.sfxvol = Integer.valueOf(prefs.get(SFX_VOLUME,"10"));
         this.primaryStage.setTitle("Ping Pong!");
         scene = new Scene(getLandingScene(), 800,600);
         this.primaryStage.setScene(scene);
@@ -298,6 +294,8 @@ public class UI extends Application {
             else {
                 myIP.setText("Yerr IP : "+ip);
                 pee = new ping(ip, Misc.Port);
+                ui_media.stop();
+                game_media.play();
                 pee.listener=gameOverListener;
                 int MaxPlayers = -1;
                 try {
@@ -591,11 +589,12 @@ public class UI extends Application {
                     ele = Misc.Avatar.WIND;
                 else if(element.equals(Misc.Avatar.WATER.toString()))
                     ele = Misc.Avatar.WATER;
-
+                ui_media.stop();
+                game_media.play();
                 if(prefs.get("mode","1").equals("2"))
                 {
                     quest2 = new SinglePlayer2();
-                    quest2.Diff = diff;
+                    quest2.Diff = diff+1;
                     quest2.full=prefs.get(FULLSCREEN,"1").equals("0");
                     quest2.startQuest(G, bots + 1, ele);
                     quest2.listener = gameOverListener;
@@ -645,6 +644,8 @@ public class UI extends Application {
         @Override
         public void onGameOver(boolean success, int score)
         {
+                game_media.stop();
+                ui_media.play();
                 scene.setRoot(getGameOverScene(success));
                 if(pee!=null){pee.Stop();pee=null;}
         }
@@ -749,6 +750,8 @@ public class UI extends Application {
             }
             else {
                 pee = new ping(ip, Misc.Port);
+                ui_media.stop();
+                game_media.play();
                 pee.listener=gameOverListener;
                 pee.findserver();
                 pee.joinListener = new ping.onJoinListener() {
@@ -1190,7 +1193,8 @@ public class UI extends Application {
                     if(vol_type==0){
                         Preferences prefs = Preferences.userRoot().node(packagePath);
                         prefs.put(MUSIC_VOLUME,t+"");
-                        mediaPlayer.setVolume(((double)t)/10);
+                        ui_media.setVolume(((double)t)/10);
+                        game_media.setVolume(((double)t)/10);
                     }
                     if(vol_type==1){
                         Preferences prefs = Preferences.userRoot().node(packagePath);
