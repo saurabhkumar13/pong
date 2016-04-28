@@ -248,10 +248,14 @@ public class Ball {
         else num = N;
 
         double vy_ = vy, vx_ = vx;
+        double modv = vx*vx + vy*vy;
         double theta = (2 * PI * i) / num - (3 * PI * state) / 10;
         double temp = (vx_ * sin(theta) + vy_ * cos(theta));
         double alpha = atan2(-vy_, vx_);
         double delta = 2 * (theta - alpha);
+        float e = 1f;
+
+        if(modv < 24 && modv > 7) e = rackets[i].e;
 
         if (temp < 0) return;
 
@@ -260,10 +264,10 @@ public class Ball {
         if (num == 2 || i % 2 == 0) {
 
             vx = vx_ * cos(delta) + vy_ * sin(delta);
-            vy = rackets[i].e * (vy_ * cos(delta) - vx_ * sin(delta));
+            vy = e * (vy_ * cos(delta) - vx_ * sin(delta));
         } else {
 
-            vx = rackets[i].e * (vx_ * cos(delta) + vy_ * sin(delta));
+            vx = e * (vx_ * cos(delta) + vy_ * sin(delta));
             vy = vy_ * cos(delta) - vx_ * sin(delta);
         }
 

@@ -101,6 +101,7 @@ public class Racket {
 
                 Random rand = new Random();
                 int t1 = 2;
+                int t2 = rand.nextInt(30)+1;
 
                 if (dir_x - x > width * t1 / 20)
                     dir_x = 1;
@@ -110,12 +111,14 @@ public class Racket {
 
                 else dir_x = 0;
 
-                if(dir_y - inity + 2 * bvy > - (20 + difficulty * 30))
+                int dist = - (100 + difficulty * 50);
+
+                if (t2%(10+difficulty) == 0) dist = - (20 + 10 * difficulty);
+
+                if(dir_y - inity + 2 * bvy > dist)
                 {
                     x += ai_speed * (1+(float)(difficulty/15)) * dir_x * dt;
                 }
-
-                int t2 = rand.nextInt(30);
 
                 if(dir_y - inity + 2 * bvy > - 40)
                 {
