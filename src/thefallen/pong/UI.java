@@ -322,7 +322,6 @@ public class UI extends Application {
                 } catch (NumberFormatException e) {
                     e.printStackTrace();
                 }
-                pee.createserver(server_name,password,MaxPlayers,gamemode,player_name,element);
                 pee.joinListener = new ping.onJoinListener() {
                     @Override
                     public void onjoin(String name, String element, String ip) {
@@ -336,6 +335,7 @@ public class UI extends Application {
 
                     }
                 };
+                pee.createserver(server_name,password,MaxPlayers,gamemode,player_name,element);
             }
         } catch (Exception e1) {
             e1.printStackTrace();
