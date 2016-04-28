@@ -77,6 +77,12 @@ public class UI extends Application {
         this.primaryStage.show();
     }
 
+    /*
+        name : getLandingScreen()
+        input : void
+        output : BorderPane
+        function : returns borderpane for the landing screen of game
+     */
     public BorderPane getLandingScene() {
         GridPane landingHeader = getheader("PING PONG",false);
 
@@ -112,6 +118,12 @@ public class UI extends Application {
         return border;
     }
 
+    /*
+        name : getCreateServerScene()
+        input : void
+        output : BorderPane
+        function : returns borderpane for create server screen
+     */
     public BorderPane getCreateServerScene(){
         GridPane createserverheader = getheader("CREATE SERVER",false);
 
@@ -263,6 +275,13 @@ public class UI extends Application {
         return border;
     }
 
+
+    /*
+        name : getcreatingserver()
+        input : void
+        output : BorderPane
+        function : returns borderpane for the waiting for players screen
+     */
     public BorderPane getcreatingserver(String server_name,String password,String maxplayers){
         GridPane createserverheader = getheader("Waiting",true);
         Platform.setImplicitExit(false);
@@ -367,6 +386,13 @@ public class UI extends Application {
     int grid1I=0,grid2I=0,grid3I=0;
     QuestMode quest1;
     SinglePlayer2 quest2;
+
+    /*
+        name : getNewGameScene()
+        input : void
+        output : BorderPane
+        function : returns borderpane for new game screen
+     */
     public BorderPane getNewGameScene(){
         GridPane settingsHeader = getheader("NEW GAME",false);
 
@@ -640,6 +666,8 @@ public class UI extends Application {
         return border;
     }
 
+    // game over listener for quest mode
+
     QuestMode.onGameOverListener gameOverListener = new QuestMode.onGameOverListener() {
         @Override
         public void onGameOver(boolean success, int score)
@@ -651,6 +679,13 @@ public class UI extends Application {
         }
     };
 
+
+    /*
+        name : getGameOverScene()
+        input : void
+        output : BorderPane
+        function : returns borderpane for game over screen
+     */
     public BorderPane getGameOverScene(boolean success){
         String res="polebunny.gif";
         if(!success)
@@ -663,7 +698,7 @@ public class UI extends Application {
         grid.setVgap(10);
         grid.setPadding(new Insets(25, 25, 25, 25));
 
-        Label userName = new Label("YOU WON, HERE'S A POLE DANCING BUNNY FOR YOU HAWTIE (n˘v˘•)¬\nCLICK ON DA HAWT BUNNY TO GO TO HOME SCREEN");
+        Label userName = new Label("YOU WON, HERE'S A POLE DANCING BUNNY FOR YOU (n˘v˘•)¬\nCLICK ON THE BUNNY TO GO TO HOME SCREEN");
 //        userName.setFont(Font.loadFont(thefallen.pong.Resources.getResource(thefallen.pong.Resources.FONT1).toString(), 26));
         userName.setFont(Font.font("Tahoma",24));
         userName.setTextFill(Color.valueOf("#B4B0AB"));
@@ -690,6 +725,13 @@ public class UI extends Application {
 
         return border;
     }
+
+    /*
+        name : getwaitingserver()
+        input : void
+        output : BorderPane
+        function : returns borderpane for waiting for servers screen
+     */
     public BorderPane getwaitingserver(){
         GridPane createserverheader = getheader("Waiting",true);
         Platform.setImplicitExit(false);
@@ -731,6 +773,12 @@ public class UI extends Application {
         return border;
     }
 
+    /*
+        name : getFindServerScene()
+        input : void
+        output : BorderPane
+        function : returns borderpane for Find servers screen
+     */
     public BorderPane getFindServerScene(){
         GridPane createserverheader = getheader("FIND SERVER",true);
         Platform.setImplicitExit(false);
@@ -805,6 +853,12 @@ public class UI extends Application {
         return border;
     }
 
+    /*
+        name : getplayerview()
+        input : String name, String element
+        output : HBox
+        function : returns Horizontal box for player view in waiting for players screen
+     */
     public HBox getplayerview(String name, String element){
 
         Label userName = new Label(name.toUpperCase());
@@ -821,6 +875,12 @@ public class UI extends Application {
         return hBox;
     }
 
+    /*
+        name : getServerView()
+        input : String name, String mode,String pass, int masPlayers, String IP
+        output : HBox
+        function : returns Horizontal box for server view in finding servers screen
+     */
     public HBox getServerView(String name, String mode,String pass,int maxPlayers,String IP){
 
         Label Name = new Label(name.toUpperCase());
@@ -874,6 +934,12 @@ public class UI extends Application {
         return hBox;
     }
 
+    /*
+        name : getAboutScene()
+        input : void
+        output : BorderPane
+        function : returns BorderPane for about screen
+     */
     public BorderPane getAboutScene(){
         GridPane aboutHeader = getheader("ABOUT",false);
 
@@ -913,6 +979,12 @@ public class UI extends Application {
         return border;
     }
 
+    /*
+        name : getSettingScene()
+        input : void
+        output : BorderPane
+        function : returns BorderPane for settings screen
+     */
     public BorderPane getSettingsScene(){
         GridPane settingsHeader = getheader("SETTINGS",false);
 
@@ -1166,6 +1238,12 @@ public class UI extends Application {
         return border;
     }
 
+    /*
+        name : getVolumeHBox()
+        input : int vol_type, int vol;
+        output : HBox
+        function : returns Horizontal Box for volume box in settings
+     */
     public HBox getVolumeHBox(int vol_type, int vol){
         Button[] buttons=new Button[11];
 
@@ -1209,6 +1287,12 @@ public class UI extends Application {
         return hBox;
     }
 
+    /*
+        name : getsettingsButton()
+        input : String str, int color
+        output : Button
+        function : returns Button for buttons on setting screen
+     */
     public Button getsettingsButton(String str,int color){
         Button btn = new Button(str);
         btn.setFont(Font.loadFont(thefallen.pong.Resources.getResource(thefallen.pong.Resources.FONT1).toString(), 26));
@@ -1223,6 +1307,12 @@ public class UI extends Application {
         return btn;
     }
 
+    /*
+        name : getButton()
+        input : String text, gameScreen gsc
+        output : Button
+        function : returns Buttons on landing screen
+     */
     public Button getButton(String text,gameScreen gsc){
         Button btn = new Button(text);
         btn.setFont(Font.loadFont(thefallen.pong.Resources.getResource(thefallen.pong.Resources.FONT1).toString(), 26));
@@ -1269,6 +1359,12 @@ public class UI extends Application {
         return btn;
     }
 
+    /*
+        name : getheader()
+        input : String title, boolean loading
+        output : Gridpane
+        function : returns Gridpane for heading on all screens
+     */
     public GridPane getheader(String title,boolean loading){
 
         GridPane header = new GridPane();
