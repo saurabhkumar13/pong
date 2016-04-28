@@ -131,7 +131,8 @@ public class ping extends Thread {
 //            out.println("Found server "+sender+" "+message.getJSONObject("server_details"));
             JSONObject serverDetails = message.getJSONObject("server_details");
             if(joinListener!=null)
-                joinListener.onfind(serverDetails.getString("name"),serverDetails.getString("password"),serverDetails.getInt("maxPlayers"),serverDetails.getString("mode"),sender);
+                joinListener.onfind(serverDetails.getString("name"), serverDetails.getString("password"), serverDetails.getInt("maxPlayers"), serverDetails.getString("mode"), sender);
+            err.println(joinListener!=null);
         }
         else if(command.equals(Misc.Command.JOIN.toString())&&State== Misc.state.WAITmaster) {
 
@@ -360,10 +361,8 @@ public class ping extends Thread {
     public void broadcast(String message,String myIP,int Port){
         String[] prefix = myIP.split("\\.");
         int lim = Integer.valueOf(prefix[1]);
-        for(int i=0;i<=lim;i++){
             for(int j=1;j<255;j++) {
-            sendMessage(message,prefix[0]+"."+prefix[1]+"."+i+"."+j,Port);
-        }
+            sendMessage(message,prefix[0]+"."+prefix[1]+"."+prefix[2]+"."+j,Port);
     }
     }
 
