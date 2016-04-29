@@ -70,8 +70,7 @@ public class QuestMode {
             public void run() {
 
                 if (game != null) {
-                    game.pause();
-                    game.f_frame.setVisible(false);
+                    game.shutdown();
                 }
 
                 game = new pong(num_ai + 1, level,full);
@@ -192,11 +191,11 @@ public class QuestMode {
 
     public void endQuest()
     {
-        game.f_frame.setVisible(false);
         if(gameOverListener != null)
         {
             gameOverListener.onGameOver(success,score);
         }
+        game.shutdown();
     }
 
     public static void main(String[] args)

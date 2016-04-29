@@ -275,8 +275,7 @@ public class ping extends Thread {
             else if(command.equals(Misc.Command.Died.toString())||command.equals(Misc.Command.Disconnect.toString())) {
 
                 if(IPset.size()>2&&!sender.equals(myIP)) {
-                    game.pause();
-                    game.f_frame.setVisible(false);
+                    game.shutdown();
                     IPset.remove(sender);
                     if(myIP.equals(IPset.first()))
                         broadcastToGroup((new JSONObject().accumulate("command",Misc.Command.START)).toString());
@@ -284,8 +283,7 @@ public class ping extends Thread {
                 else
                 {
                     IPset =new TreeSet<>();
-                    game.pause();
-                    game.f_frame.setVisible(false);
+                    game.shutdown();
                     if(listener!=null)
                         listener.onGameOver(!sender.equals(myIP),0);
                 }

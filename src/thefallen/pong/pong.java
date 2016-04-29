@@ -207,6 +207,14 @@ public class pong implements JRendererTarget<GraphicsConfiguration, Graphics2D> 
         addBall(null);
     }
 
+    void shutdown()
+    {
+        f_renderer.getTimingSource().dispose();
+        f_renderer.shutdown();
+        f_frame.setVisible(false);
+
+    }
+
     void setupBase()
     {
         double th=PI,x,y;
