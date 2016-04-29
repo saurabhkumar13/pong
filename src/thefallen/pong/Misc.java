@@ -2,9 +2,6 @@ package thefallen.pong;
 
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
-import org.json.JSONObject;
-
-import java.io.File;
 
 /**
  * Used for miscellaneous declarations, enumerations etc.
@@ -15,6 +12,7 @@ public class Misc {
 
     static int Port = 6969;
 
+    static String myIP="";
     static String br_desc = "\n\nBATTLE ROYALE\nWut? Just kill 'em all ";
 
     static String controls ="\n\nCONTROLS\nLeft Arrow  : left movement\n" +
