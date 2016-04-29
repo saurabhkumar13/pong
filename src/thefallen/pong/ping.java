@@ -220,7 +220,7 @@ public class ping extends Thread {
                 normal = -normal;
 
                 vx = (Misc.INITballvx*cos(normal) + Misc.INITballvy*sin(normal));
-                vy = (-Misc.INITballvx*sin(normal) + Misc.INITballvy*cos(normal));
+                        vy = (-Misc.INITballvx*sin(normal) + Misc.INITballvy*cos(normal));
 
                 if(game!=null) {
 
@@ -277,6 +277,7 @@ public class ping extends Thread {
                 if(IPset.size()>2&&!sender.equals(myIP)) {
                     game.shutdown();
                     IPset.remove(sender);
+                    players=removeIP(players,sender);
                     if(myIP.equals(IPset.first()))
                         broadcastToGroup((new JSONObject().accumulate("command",Misc.Command.START)).toString());
                 }
@@ -293,6 +294,7 @@ public class ping extends Thread {
         else if(command.equals(Misc.Command.Disconnect.toString()))
         {
             IPset.remove(sender);
+            players=removeIP(players,sender);
         }
 
     }
@@ -364,6 +366,8 @@ public class ping extends Thread {
     }
     }
 
+
+
     public static String getmyIP()
     {
         if(!Misc.myIP.equals(""))
@@ -388,6 +392,15 @@ public class ping extends Thread {
         return "";
     }
 
+    SortedSet<String> removeIP(SortedSet<String> a,String ip) {
+        SortedSet<String> temp = new TreeSet<>();
+        for (String slaves : a) {
+            JSONObject slav = (new JSONObject(slaves));
+            if(!slav.getString("IP").equals(ip))
+                temp.add(slaves);
+        }
+        return temp;
+    }
     static void startGame(ping master,int size)
     {
         System.setProperty("swing.defaultlaf", "com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");

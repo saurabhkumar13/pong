@@ -194,10 +194,8 @@ public class Ball {
                     }
 
                 } else if (diedListener != null) {
-
                     diedListener.onDied(n);
                     rackets[n].diedOnce = true;
-
                 } else {
                     if(n==0&&master!=null)
                         master.broadcastToGroup((new JSONObject().accumulate("command",Misc.Command.Died)).toString());
