@@ -15,9 +15,24 @@ public class Misc {
 
     static int Port = 6969;
 
-    static String myIP = "";
+    static String br_desc = "\n\nBATTLE ROYALE\nWut? Just kill 'em all ";
 
-    static String aboutDesc = "Game Modes :";
+    static String controls ="\n\nCONTROLS\nLeft Arrow  : left movement\n" +
+            "Right Arrow : right movement\n" +
+            "      A     : left tilt\n"+
+            "      D     : right tilt\n" +
+            "      Esc   : Pause/Resume\n" +
+            "      Space : Resume";
+
+    static String cites = "\n\nCREDITS\nFundamentum  - Soundtrack by Ridiculon\n" +
+            "Ping-Pong Pan Taisou - Soundtrack by Morning Musume\n" +
+            "SFX - Dark Souls, www.freesoundeffects.com";
+
+    static String copyright = "\n\n\t\t\t\t © The Fallen Games\n\t\t\t\tDevelopers - L, Flife and Light";
+
+    static String aboutDesc =   "QUEST\nThe world was at peace.The four nations Earth, Water, Air and Fire lived in harmony. " +
+                                "\nBut everything changed when the Fire nation attacked. Only the avatar, the master of all " +
+                                "\n4 elements could restore balance to the world but he disappeared. This world needs you." + br_desc + controls + cites + copyright;
 
     // Avatar Descriptions
 
@@ -33,18 +48,6 @@ public class Misc {
     static String Void =   "   \"nihil fit ex nihilo\" Out of nothing   \n" +
                            "   nothing becomes";
 
-    static String quest_desc = "Fight your way through the elements \n" +
-                                "though beware the further you go \n" +
-                                "the harder it becomes";
-    static String br_desc = "Kill 'em all";
-    static String controls ="Left Arrow  : left movement\n" +
-                            "Right Arrow : right movement\n" +
-                            "      A     : left tilt\n"+
-                            "      D     : right tilt\n";
-
-    static String cites = "Fundamentum  - Soundtrack by Ridiculon\n" +
-                          "Ping-Pong Pan Taisou - Soundtrack by Morning Musume\n" +
-                          "SFX - Dark Souls, www.freesoundeffects.com";
 
     // Music and SFX managing functions and variables
 
