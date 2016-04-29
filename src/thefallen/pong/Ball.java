@@ -188,13 +188,10 @@ public class Ball {
             if (!rackets[n].safe && (rackets[n].sentient || rackets[n].user)) {
 
                 if (rackets[n].hp >= 0) {
-
-                    if (n == 0 && master != null) {
-
-                        master.broadcastToGroup((new JSONObject().accumulate("command", Misc.Command.SyncHP).accumulate("HP", rackets[n].hp - 20)).toString());
-                    }
-
                     rackets[n].hp -= rackets[n].hp_dec;
+                    if (n == 0 && master != null) {
+                        master.broadcastToGroup((new JSONObject().accumulate("command", Misc.Command.SyncHP).accumulate("HP", rackets[n].hp)).toString());
+                    }
 
                 } else if (diedListener != null) {
 
