@@ -366,6 +366,8 @@ public class ping extends Thread {
 
     public static String getmyIP()
     {
+        if(!Misc.myIP.equals(""))
+            return Misc.myIP;
         try {
             Enumeration e = NetworkInterface.getNetworkInterfaces();
             while(e.hasMoreElements())

@@ -1049,12 +1049,27 @@ public class UI extends Application {
         userTextField.setFont(Font.loadFont(thefallen.pong.Resources.getResource(thefallen.pong.Resources.FONT1).toString(), 26));
         grid.add(userTextField, 1, 0);
 
+        Label myIP = new Label("SET IP :");
+        myIP.setFont(Font.loadFont(thefallen.pong.Resources.getResource(thefallen.pong.Resources.FONT1).toString(), 26));
+        myIP.setTextFill(Color.valueOf("#B4B0AB"));
+        grid.add(myIP, 0, 1);
+
+        TextField myIPfield = new TextField();
+        myIPfield.setStyle("-fx-background-color: #7C7E7C; -fx-text-fill: #333333");
+        myIPfield.setPadding(new Insets(0,5,0,5));
+        myIPfield.setAlignment(Pos.CENTER);
+        myIPfield.setMaxHeight(30);
+        myIPfield.setTranslateX(20);
+        myIPfield.setMaxWidth(160);
+        myIPfield.setFont(Font.loadFont(thefallen.pong.Resources.getResource(thefallen.pong.Resources.FONT1).toString(), 26));
+        grid.add(myIPfield, 1, 1);
+
         //test
 
         Label characterlabel= new Label("CHARACTER     :");
         characterlabel.setFont(Font.loadFont(thefallen.pong.Resources.getResource(thefallen.pong.Resources.FONT1).toString(), 26));
         characterlabel.setTextFill(Color.valueOf("#B4B0AB"));
-        grid.add(characterlabel, 0, 4);
+        grid.add(characterlabel, 0, 5);
 
         String ch=prefs.get(ELEMENT,Misc.Avatar.VOID.toString());
         int[] charcols= {1,1,1,1,1};
@@ -1177,32 +1192,32 @@ public class UI extends Application {
         HBox hBox4 = new HBox();
         hBox4.setPadding(new Insets(5,5,5,20));
         hBox4.getChildren().addAll(voidbutton,waterbutton,earthbutton,windbutton,firebutton);
-        grid.add(hBox4,1,4);
+        grid.add(hBox4,1,5);
 
         //end
 
         Label musicvol = new Label("MUSIC VOLUME  :");
         musicvol.setFont(Font.loadFont(thefallen.pong.Resources.getResource(thefallen.pong.Resources.FONT1).toString(), 26));
         musicvol.setTextFill(Color.valueOf("#B4B0AB"));
-        grid.add(musicvol, 0, 1);
+        grid.add(musicvol, 0, 2);
 
         HBox hBox = getVolumeHBox(0,Integer.valueOf(prefs.get(MUSIC_VOLUME,"0")));
         hBox.setPadding(new Insets(5,5,5,20));
-        grid.add(hBox,1,1);
+        grid.add(hBox,1,2);
 
         Label sfxvol= new Label("SFX VOLUME    :");
         sfxvol.setFont(Font.loadFont(thefallen.pong.Resources.getResource(thefallen.pong.Resources.FONT1).toString(), 26));
         sfxvol.setTextFill(Color.valueOf("#B4B0AB"));
-        grid.add(sfxvol, 0, 2);
+        grid.add(sfxvol, 0, 3);
 
         HBox hBox2 = getVolumeHBox(1,Integer.valueOf(prefs.get(SFX_VOLUME,"0")));
         hBox2.setPadding(new Insets(5,5,5,20));
-        grid.add(hBox2,1,2);
+        grid.add(hBox2,1,3);
 
         Label fullscreen= new Label("FULLSCREEN     :");
         fullscreen.setFont(Font.loadFont(thefallen.pong.Resources.getResource(thefallen.pong.Resources.FONT1).toString(), 26));
         fullscreen.setTextFill(Color.valueOf("#B4B0AB"));
-        grid.add(fullscreen, 0, 3);
+        grid.add(fullscreen, 0, 4);
 
         int on=Integer.valueOf(prefs.get(FULLSCREEN,"1"));
         int off=0;
@@ -1236,7 +1251,7 @@ public class UI extends Application {
         HBox hbox3 = new HBox();
         hbox3.setPadding(new Insets(5,5,5,20));
         hbox3.getChildren().addAll(onFullScreen,offFullScreen);
-        grid.add(hbox3,1,3);
+        grid.add(hbox3,1,4);
 
         Button btn = getButton("BACK",gameScreen.LANDING);
         btn.setTranslateX(-30);
@@ -1249,13 +1264,13 @@ public class UI extends Application {
                 String player_name = userTextField.getText();
                 Preferences prefs = Preferences.userRoot().node(packagePath);
                 prefs.put(PLAYER_NAME,player_name);
-
+                Misc.myIP = myIPfield.getText();
                 scene.setRoot(getLandingScene());
                 Misc.pop();
 
             }
         });
-        grid.add(btn,1,6);
+        grid.add(btn,1,7);
 
         description.setTranslateX(500);
         description.setTranslateY(-220);

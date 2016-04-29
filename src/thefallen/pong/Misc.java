@@ -15,6 +15,8 @@ public class Misc {
 
     static int Port = 6969;
 
+    static String myIP = "";
+
     static String aboutDesc = "Game Modes :";
 
     // Avatar Descriptions
