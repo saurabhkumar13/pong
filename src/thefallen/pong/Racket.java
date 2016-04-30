@@ -60,7 +60,7 @@ public class Racket {
                         break;
             case FIRE : e = 1.5f;
                         break;
-            case WATER : width *= 1.2x;
+            case WATER : width *= 1.2;
                         speed = 18;
                         e = 0.95f;
                         break;
