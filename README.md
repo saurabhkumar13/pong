@@ -1,5 +1,5 @@
 # Pong
-_originally takyuu_
+_originally takkyu_
 
 A multiplayer pong game, can be played as single player with bots, or on a local network with people (networking implemented with UDP socket programming).
 
